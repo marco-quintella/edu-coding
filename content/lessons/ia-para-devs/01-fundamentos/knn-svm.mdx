@@ -1,0 +1,69 @@
+# KNN e SVM
+
+Dois algoritmos clássicos de classificação que operam em princípios opostos: o KNN é **baseado em instâncias** (lazy learner), o SVM é **baseado em função** (eager learner).
+
+## KNN — K-Nearest Neighbors
+
+O KNN classifica um novo ponto olhando os **K vizinhos mais próximos** no espaço de features. A classe é a **majoritária** entre esses K.
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+model = KNeighborsClassifier(n_neighbors=3).fit(X, y)
+print(f"accuracy no treino: {model.score(X, y):.2f}")
+```
+
+**Saída:** `accuracy no treino: 0.96`
+
+### Parâmetros
+
+- `n_neighbors`: K. K=1 overfitta, K=N underfitta. Comece com `sqrt(N)`.
+- `metric`: distância (euclidiana default, manhattan, minkowski)
+- `weights`: `uniform` ou `distance` (vizinhos mais próximos pesam mais)
+
+### Quando usar
+
+- Datasets pequenos/médios
+- Quando a fronteira de decisão é **irregular**
+- Quando você precisa de **explicabilidade** (mostrar os vizinhos)
+
+## SVM — Support Vector Machine
+
+O SVM encontra o **hiperplano** que separe as classes com a **maior margem** possível. Os pontos mais próximos do hiperplano são os **support vectors**.
+
+```python
+from sklearn.svm import SVC
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+model = SVC(kernel='linear').fit(X, y)
+print(f"accuracy no treino: {model.score(X, y):.2f}")
+```
+
+### Truque do kernel
+
+Quando os dados não são linearmente separáveis, o SVM usa o **kernel trick**: mapeia os dados para um espaço de maior dimensão onde uma separação linear é possível.
+
+Kernels comuns:
+
+- `linear`: pra dados linearmente separáveis
+- `rbf` (default): gaussiano, funciona bem na maioria dos casos
+- `poly`: polinomial
+
+### Quando usar
+
+- Datasets de tamanho médio com features em alta dimensão
+- Quando a fronteira de decisão é **suave**
+- Quando você precisa de **robustez** (SVM é menos propenso a overfitting que árvores)
+
+## Comparação direta
+
+| | KNN | SVM |
+|---|---|---|
+| Treinamento | Instantâneo | Pode demorar |
+| Predição | Lenta (busca K vizinhos) | Rápida |
+| Memoria | Alto (guarda todos os dados) | Baixo (só support vectors) |
+| Interpretabilidade | Média | Baixa |
+| Escalabilidade | Ruim com N grande | Boa |

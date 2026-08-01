@@ -1,0 +1,55 @@
+# Árvores de Decisão
+
+Uma árvore de decisão é um modelo de aprendizado supervisionado que faz previsões atravessando uma estrutura de árvore. Em cada nó interno, ela testa uma condição sobre um atributo; em cada folha, ela emite uma decisão.
+
+## Estrutura
+
+```
+                [petal_length < 2.45?]
+                /                  \
+              yes                   no
+              /                      \
+        [setosa]            [petal_width < 1.75?]
+                              /              \
+                            yes               no
+                            /                  \
+                     [versicolor]           [virginica]
+```
+
+- **Raiz**: primeiro teste, divide o dataset inteiro
+- **Nós internos**: testes sobre atributos
+- **Folhas**: decisão final (classe ou valor)
+- **Arestas**: resultados do teste (yes/no)
+
+## Exemplo
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+model = DecisionTreeClassifier(max_depth=2).fit(X, y)
+print(f"accuracy no treino: {model.score(X, y):.2f}")
+```
+
+**Saída:** `accuracy no treino: 0.96`
+
+## Parâmetros importantes
+
+- `max_depth`: profundidade máxima. Maior = mais overfitting
+- `min_samples_split`: mínimo de amostras para dividir um nó
+- `criterion`: `gini` (default) ou `entropy`
+
+## Vantagens
+
+- **Interpretável**: dá pra visualizar e explicar a decisão
+- **Sem normalização**: trabalha com features em escalas diferentes
+- **Lida com dados categóricos** direto
+
+## Desvantagens
+
+- Propensas a **overfitting** sem poda
+- **Instáveis**: pequenos cambios nos dados geram árvores muito diferentes
+- Viés para features com mais níveis
+
+Por isso, na prática, usa-se **Random Forest** ou **Gradient Boosting** — ensembles de árvores que mitigam essas limitações.

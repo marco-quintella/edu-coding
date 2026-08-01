@@ -1,4 +1,5 @@
 import { pgTable, uuid, text, timestamp, integer, jsonb } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
 
 /**
  * Tabela `users` — synced com BetterAuth (BetterAuth gera `user`, `session`, etc.)
@@ -6,7 +7,7 @@ import { pgTable, uuid, text, timestamp, integer, jsonb } from 'drizzle-orm/pg-c
  * O id referencia a tabela `user` de BetterAuth.
  */
 export const users = pgTable('users', {
-  id: text('id').primaryKey(),  // mesmo id de BetterAuth `user.id`
+  id: text('id').primaryKey(),
   email: text('email').notNull().unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
@@ -54,3 +55,48 @@ export const quizQuestions = pgTable('quiz_questions', {
   correctOptionId: text('correct_option_id').notNull(),
   position: integer('position').notNull(),
 })
+
+// Relations — Drizzle precisa pra `with: { ... }` funcionar
+export const coursesRelations = relations(courses, ({ many }) => ({
+  phases: many(phases),
+}))
+
+export const phasesRelations = relations(phases, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [phases.courseId],
+    references: [courses.id],
+  }),
+  lessons: many(lessons),
+}))
+
+export const lessonsRelations = relations(lessons, ({ one, many }) => ({
+  phase: one(phases, {
+    fields: [lessons.phaseId],
+    references: [phases.id],
+  }),
+  quizQuestions: many(quizQuestions),
+}))
+
+export const quizQuestionsRelations = relations(quizQuestions, ({ one }) => ({
+  lesson: one(lessons, {
+    fields: [quizQuestions.lessonId],
+    references: [lessons.id],
+  }),
+}))
+
+export const userProgressRelations = relations(userProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [userProgress.userId],
+    references: [users.id],
+  }),
+  lesson: one(lessons, {
+    fields: [userProgress.lessonId],
+    references: [lessons.id],
+  }),
+}))
+
+export type Course = typeof courses.$inferSelect
+export type Phase = typeof phases.$inferSelect
+export type Lesson = typeof lessons.$inferSelect
+export type QuizQuestion = typeof quizQuestions.$inferSelect
+export type QuizOption = { id: string; text: string }
