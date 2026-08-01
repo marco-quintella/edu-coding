@@ -1,0 +1,50 @@
+# NLP — Tokenização e Texto
+
+O Processamento de Linguagem Natural (NLP) é o campo da IA que lida com texto. Antes de qualquer modelo entender texto, precisamos transformar palavras em números — e o primeiro passo é a **tokenização**.
+
+## O que é tokenização
+
+Tokenização é dividir um texto em unidades menores (tokens). Pode ser:
+
+- **Palavras**: "eu amo IA" → `["eu", "amo", "IA"]`
+- **Subpalavras** (BPE): "tokenização" → `["token", "ização"]`
+- **Caracteres**: "IA" → `["I", "A"]`
+
+## Hands-on
+
+<SandboxRunner
+  lessonSlug="nlp-tokenizacao"
+  lessonId="2d84c687-477b-46fb-8207-6c753bbe6f18"
+/>
+
+## Remoção de stop words
+
+Stop words são palavras de alta frequência sem significado próprio ("eu", "o", "de", "para"). Removê-las reduz ruído:
+
+```python
+from sklearn.feature_extraction.text import CountVectorizer
+
+vectorizer = CountVectorizer(stop_words='english')
+X = vectorizer.fit_transform(["this is a test of the system"])
+print(vectorizer.get_feature_names_out())  # sem 'this', 'is', 'a', 'of', 'the'
+```
+
+## Stemming
+
+Reduz palavras à raiz: "correndo", "correu", "corrida" → "corr". Usa `NLTK` ou `spaCy`:
+
+```python
+from nltk.stem import PorterStemmer
+
+stemmer = PorterStemmer()
+print(stemmer.stem("running"))   # run
+print(stemmer.stem("studies"))   # studi
+```
+
+## Pipeline NLP típica
+
+```
+Texto bruto → limpeza → tokenização → stop words → stemming → vetorização → modelo
+```
+
+Cada etapa transforma o texto em algo mais estruturado até virar números que um modelo pode processar.

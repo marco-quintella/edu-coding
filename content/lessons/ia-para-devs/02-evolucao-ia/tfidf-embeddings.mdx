@@ -1,0 +1,45 @@
+# TF-IDF e Word Embeddings
+
+Depois da tokenização, precisamos representar o texto como números. Duas abordagens clássicas: **TF-IDF** (contagem ponderada) e **Word Embeddings** (vetores densos aprendidos).
+
+## TF-IDF
+
+TF-IDF = **Frequência do termo × Frequência inversa do documento**. Mede a importância de uma palavra em um documento, penalizando palavras comuns em todos os documentos.
+
+- **TF** (Term Frequency): quantas vezes a palavra aparece no documento
+- **IDF** (Inverse Document Frequency): log(N / nº documentos que contêm a palavra)
+
+## Hands-on
+
+<SandboxRunner
+  lessonSlug="tfidf-embeddings"
+  lessonId="e97347cc-4d2d-4e77-ae6e-2bce1ac93572"
+/>
+
+Observe como "telhado" (só no doc 1) tem peso alto no doc 1, enquanto "o" (em todos) tem peso próximo de zero.
+
+## Word Embeddings (Word2Vec)
+
+Embeddings são **vetores densos** (ex: 300 dimensões) que capturam **semântica** — palavras similares ficam próximas no espaço vetorial.
+
+```
+rei - homem + mulher ≈ rainha
+```
+
+Isso funciona porque embeddings são treinados para prever o contexto (CBOW) ou a palavra-alvo dado o contexto (Skip-gram).
+
+## Vetorização vs Embeddings
+
+| | TF-IDF | Word2Vec/GloVe |
+|---|---|---|
+| Tipo | Sparse (muitos zeros) | Denso (300 dims) |
+| Semântica | Não captura | Captura |
+| Tamanho | = vocabulário | Fixo (300) |
+| Treinamento | Instantâneo | Preciso de corpus grande |
+| Uso típico | Classificação simples | Modelos profundos, LLMs |
+
+## Document Embeddings
+
+Para representar um documento inteiro, somamos/mediamos os embeddings das palavras, ou usamos modelos tipo Sentence-BERT que geram um embedding por frase.
+
+Na prática moderna, **LLMs já têm embeddings embutidos** — mas entender TF-IDF e Word2Vec é essencial para quando você precisar de soluções leves e interpretáveis.

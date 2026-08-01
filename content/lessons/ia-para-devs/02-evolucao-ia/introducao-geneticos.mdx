@@ -1,0 +1,37 @@
+# Introdução aos Algoritmos Genéticos
+
+Algoritmos Genéticos (GA) são uma técnica de otimização inspirada na **evolução natural**: populações, seleção, cruzamento e mutação. Úteis para problemas onde não existe solução analítica simples.
+
+## Analogia com a evolução
+
+- **Indivíduo**: uma solução candidata (ex: um vetor de parâmetros)
+- **População**: conjunto de soluções candidatas
+- **Fitness**: quão boa é a solução (função objetivo)
+- **Seleção**: os melhores reproduzem mais
+- **Cruzamento (crossover)**: combina dois pais para gerar filhos
+- **Mutação**: altera aleatoriamente um gene (exploração)
+
+## Hands-on
+
+<SandboxRunner
+  lessonSlug="introducao-geneticos"
+  lessonId="4bba3890-3e7c-4e84-9f0c-d4f87d98e0c7"
+/>
+
+## Operadores genéticos
+
+1. **Seleção** — escolhe quem reproduz (torneio, roleta, elitismo)
+2. **Cruzamento** — combina genes dos pais (1-ponto, 2-pontos, uniforme)
+3. **Mutação** — flipa genes com baixa probabilidade (mantém diversidade)
+
+## Quando usar
+
+- Espaço de busca grande e não diferenciável
+- Problemas combinatórios (rotas, escalonamento, layout)
+- Quando não existe heurística específica
+
+## Limitações
+
+- Sem garantia de ótimo global (só converge empiricamente)
+- Custo computacional alto (muitas avaliações de fitness)
+- Muitos hiperparâmetros a calibrar (população, mutação, crossover)

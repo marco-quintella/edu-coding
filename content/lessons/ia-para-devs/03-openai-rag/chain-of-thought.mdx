@@ -1,0 +1,51 @@
+# Chain of Thought com LLMs
+
+**Chain of Thought (CoT)** é a técnica de pedir ao modelo que **raciocine passo a passo** antes de dar a resposta final. Em vez de pular direto pra resposta, o modelo explora o raciocínio intermediário — o que melhora drasticamente a precisão em problemas de lógica, matemática e análise.
+
+## Por que funciona
+
+LLMs são ótimos em continuar padrões. Quando você escreve "Vamos pensar passo a passo", o modelo gera uma cadeia de raciocínio coerente — e a resposta final sai **ancorada** nesse raciocínio, em vez de um chute.
+
+## Exemplo sem CoT
+
+> **P**: Um restaurante tinha 23 mesas. Na terça, recebeu 5 novas. Quantas mesas tem agora?
+> **R**: 28. *(resposta direta, sem raciocínio)*
+
+## Exemplo com CoT
+
+> **P**: Um restaurante tinha 23 mesas. Na terça, recebeu 5 novas. Quantas mesas tem agora? **Vamos pensar passo a passo.**
+> **R**: O restaurante começou com 23 mesas. Depois recebeu 5 novas mesas. 23 + 5 = 28. O restaurante agora tem 28 mesas.
+
+## Hands-on
+
+<SandboxRunner
+  lessonSlug="chain-of-thought"
+  lessonId="f6fd4c49-bd4e-4e6d-9810-2200291d5336"
+/>
+
+## Variações
+
+- **Zero-shot CoT**: basta adicionar "Vamos pensar passo a passo" (Kojima et al., 2022)
+- **Few-shot CoT**: mostrar exemplos resolvidos passo a passo antes da pergunta
+- **Self-consistency**: rodar CoT várias vezes e votar na resposta mais comum
+- **CoT com verificação**: pedir ao modelo para checar seu próprio raciocínio
+
+## Boas práticas
+
+1. **Seja específico** na instrução ("resolva passo a passo, mostrando os cálculos")
+2. **Separe raciocínio e resposta** ("responda com: Raciocínio: ... Resposta: ...")
+3. **Para código**, peça "explique o que este código faz, linha por linha" antes de responder
+4. **Limite o escopo** — CoT em tarefas triviais adiciona latência sem ganho
+
+## Quando usar
+
+- Matemática e aritmética
+- Raciocínio lógico e diagnóstico
+- Análise de código
+- Decisões multi-etapa
+
+## Cuidados
+
+- CoT **não é garantia** de correção — o modelo pode raciocinar errado com confiança
+- Aumenta tokens (custo) e latência
+- Em tarefas de memória (fatos), CoT não ajuda — a resposta direta é melhor

@@ -1,0 +1,66 @@
+# Guia de Prompts
+
+Um **prompt** é a instrução que você dá ao modelo. A qualidade da resposta depende quase inteiramente da qualidade do prompt. Este guia cobre as técnicas essenciais.
+
+## Os 4 pilares de um bom prompt
+
+1. **Instrução clara** — o que exatamente o modelo deve fazer
+2. **Contexto** — informações que o modelo precisa saber
+3. **Exemplos** — formato e tom esperados (few-shot)
+4. **Formato de saída** — estrutura esperada (JSON, lista, markdown)
+
+## Hands-on
+
+<SandboxRunner
+  lessonSlug="guia-prompts"
+  lessonId="d211736b-884b-4e79-bf24-6a056a5a1a40"
+/>
+
+## Técnicas essenciais
+
+### 1. Role prompting
+
+> "Você é um engenheiro de ML sênior. Revise este código e aponte 3 riscos."
+
+O papel define o viés e o nível técnico da resposta.
+
+### 2. Few-shot
+
+Mostrar 2-3 exemplos do formato desejado antes da pergunta real. Funciona como "demonstração".
+
+### 3. Delimitadores
+
+Use `"""`, `###` ou `<tag>` para separar instrução de conteúdo:
+
+```
+Resuma o texto entre <texto>...</texto>:
+<texto>...</texto>
+```
+
+### 4. Saída estruturada
+
+> "Responda em JSON: `{\"sentimento\": \"positivo|negativo\", \"confianca\": 0-1}`"
+
+### 5. Prompt negativo
+
+> "Não mencione limitações a menos que sejam críticas."
+
+## Checklist de otimização
+
+- [ ] Instrução começa com verbo (resuma, classifique, gere, converta)
+- [ ] Formato de saída explícito
+- [ ] Exemplos quando o formato é incomum
+- [ ] Contexto suficiente para a tarefa
+- [ ] Sem ambiguidade ("talvez", "pode ser")
+- [ ] Testado com 2-3 variações
+
+## Erros comuns
+
+- **Vago**: "faça um texto sobre IA" → "escreva um parágrafo de 100 palavras explicando atenção em transformers para um dev junior"
+- **Sem formato**: modelo inventa a estrutura → defina JSON/lista/tabela
+- **Contexto demais**: confunde o modelo → inclua só o necessário
+- **Prompt injection**: nunca concatene input do usuário sem sanitizar
+
+## Iteração é a regra
+
+O primeiro prompt raramente é o melhor. Escreva, teste, meça, ajuste — prompt engineering é um loop de iteração, não um one-shot.

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Editor from '@monaco-editor/react'
+import { getInitialCode } from '@/lib/lessons/initial-codes'
 
 interface ExecResponse {
   stdout?: string
@@ -14,12 +15,22 @@ interface ExecResponse {
 
 interface Props {
   lessonId: string
-  initialCode: string
+  /** Slug da lição — usado para buscar o código inicial no registro central. */
+  lessonSlug?: string
+  /** Fallback legado: código inline (se não houver lessonSlug). */
+  initialCode?: string
   language?: string
 }
 
-export function SandboxRunner({ lessonId, initialCode, language = 'python' }: Props) {
-  const [code, setCode] = useState(initialCode)
+export function SandboxRunner({
+  lessonId,
+  lessonSlug,
+  initialCode,
+  language = 'python',
+}: Props) {
+  // Código inicial: registro central (por slug) > prop inline > vazio
+  const codeFromRegistry = lessonSlug ? getInitialCode(lessonSlug) : ''
+  const [code, setCode] = useState(codeFromRegistry || initialCode || '')
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
   const [exitCode, setExitCode] = useState<number | null>(null)

@@ -1,0 +1,50 @@
+# AWS Textract — Extração de Texto
+
+**Amazon Textract** é o serviço da AWS que extrai texto, tabelas e formulários de documentos digitalizados (PDF, imagem) usando ML — vai além do OCR tradicional, entendendo **estrutura**.
+
+## O que extrai
+
+- **Texto puro**: de qualquer imagem/PDF
+- **Tabelas**: com células e estrutura preservada
+- **Formulários**: pares chave-valor (nome: Maria, CPF: 123...)
+- **Documentos completos**: páginas, blocos e hierarquia
+
+## Hands-on (conceitual)
+
+<SandboxRunner
+  lessonSlug="aws-textract"
+  lessonId="5b6b7b1b-b6be-491f-b9ca-9f727c133ab2"
+/>
+
+## Quando usar
+
+- Digitalizar notas fiscais, contratos, formulários
+- Extrair dados de documentos para processos (KYC, claims)
+- Indexar documentos para busca
+
+## Alternativas
+
+- **AWS Comprehend**: entende o texto (entidades, sentimentos, frases-chave) — o "Textract do significado"
+- **Azure Document Intelligence** (ex-Form Recognizer)
+- **Google Document AI**
+
+## Textract + Comprehend juntos
+
+```
+Documento → Textract (extrai texto + estrutura)
+               → Comprehend (extrai entidades, sentimentos, chaves)
+               → aplicação (busca, validação, dashboard)
+```
+
+## Custos e limites
+
+- Pago por página/1000 palavras
+- Free tier limitado (1º mês)
+- S3 + SQS para processamento em lote grande
+- Quotas regionais por transação
+
+## Segurança
+
+- Documentos contêm dados sensíveis → criptografia em trânsito e em repouso
+- LGPD/GDPR: texto extraído pode ser dado pessoal → minimização e retenção definida
+- Nunca logue o conteúdo dos documentos

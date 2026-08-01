@@ -1,0 +1,75 @@
+# Azure Cognitive Services
+
+**Azure Cognitive Services** é o conjunto de APIs prontas de IA da Microsoft: visão, fala, linguagem e decisão. Você não treina modelos — chama endpoints com resultados de produção.
+
+## Famílias de serviços
+
+| Família | Serviços | O que faz |
+|---|---|---|
+| **Vision** | Computer Vision, Face, OCR | Imagens, rostos, texto em imagem |
+| **Speech** | Speech-to-Text, Text-to-Speech | Transcrição, síntese de fala |
+| **Language** | Text Analytics, Language Understanding (LUIS) | Sentimentos, entidades, QA |
+| **Search** | Cognitive Search | Busca semântica sobre dados próprios |
+| **Decision** | Anomaly Detector, Personalizer | Anomalias, recomendações |
+
+## Hands-on — estrutura (conceitual)
+
+<SandboxRunner
+  lessonSlug="azure-cognitive"
+  lessonId="2489305b-8333-4e19-95a5-2a7d9d9afc78"
+/>
+
+## Computer Vision
+
+```python
+# Extrair texto de imagem (OCR)
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+
+client = ComputerVisionClient(ENDPOINT, AzureKeyCredential(KEY))
+result = client.read_in_stream(imagem_bytes, raw=True)
+# resultado: texto + bounding boxes + confiança
+```
+
+## Cognitive Search
+
+Busca semântica/híbrida sobre documentos próprios:
+
+```
+Documentos → indexador → índice (vetores + texto)
+                 ↓
+query → Cognitive Search → resultados rankeados (semântico)
+```
+
+Ideal para **RAG** corporativo: dados privados + LLM para respostas.
+
+## Azure AI Builder
+
+Ferramenta **low-code** (Power Platform) para treinar modelos custom sem código — classificação, extração de formulários, detecção de objetos.
+
+## Comparação com AWS
+
+| Tarefa | AWS | Azure |
+|---|---|---|
+| OCR estruturado | Textract | Document Intelligence |
+| Sentimentos | Comprehend | Text Analytics |
+| Face | Rekognition | Face API |
+| Busca | OpenSearch | Cognitive Search |
+
+## Custo e operação
+
+- Pago por **transação** (centavos por chamada)
+- Free tier por serviço (ex: 5K transações/mês)
+- **Region matters**: disponibilidade e preço variam
+- Dados saem da região? LGPD/GDPR → escolha região apropriada
+
+## Quando usar vs treinar seu modelo
+
+**Use Cognitive Services quando:**
+- Tarefa genérica (OCR, sentimentos, face) — re-inventar não compensa
+- Preciso de produção imediata com SLA
+- Volume baixo-médio (transação é barata)
+
+**Treine seu modelo quando:**
+- Domínio específico (jargão, formatos proprietários)
+- Dados sensíveis que não podem sair do seu ambiente
+- Controle fino de qualidade/erros

@@ -26,17 +26,8 @@ Uma árvore de decisão é um modelo de aprendizado supervisionado que faz previ
 Vamos treinar uma árvore no dataset Iris e ver a acurácia:
 
 <SandboxRunner
-  lessonId="b58a2f3f-d02c-4487-bcff-2df8a461aa75"
-  initialCode={`from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-
-X, y = load_iris(return_X_y=True)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-model = DecisionTreeClassifier(max_depth=2).fit(X_train, y_train)
-print(f"acurácia treino: {model.score(X_train, y_train):.2%}")
-print(f"acurácia teste:  {model.score(X_test, y_test):.2%}")`}
+  lessonSlug="arvores-decisao"
+  lessonId="30eef13b-7a06-4e42-9aa8-9b2ac497316c"
 />
 
 **Saída esperada:** acurácia treino ~95%, acurácia teste ~95%

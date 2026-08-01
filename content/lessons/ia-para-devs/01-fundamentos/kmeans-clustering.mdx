@@ -1,0 +1,50 @@
+# K-Means Clustering
+
+O K-Means é um algoritmo de **aprendizado não supervisionado** que agrupa dados em `K` clusters baseado em similaridade. Ele não usa rótulos — descobre a estrutura sozinho.
+
+## Como funciona
+
+1. Escolhe `K` centroides iniciais (aleatórios)
+2. Atribui cada ponto ao centroide mais próximo
+3. Recalcula cada centroide como a média dos pontos atribuídos
+4. Repete 2-3 até os centroides pararem de mudar
+
+## Hands-on
+
+<SandboxRunner
+  lessonSlug="kmeans-clustering"
+  lessonId="f971157e-1e60-4d00-970d-fd9468ff2915"
+/>
+
+## Escolhendo K
+
+O **método do cotovelo (elbow)**: roda K-Means com K = 1..10, plota a inércia, e escolhe o K onde a curva "dobra".
+
+```python
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+inertias = []
+for k in range(1, 11):
+    km = KMeans(n_clusters=k, n_init=10, random_state=42)
+    km.fit(X)
+    inertias.append(km.inertia_)
+
+# O "cotovelo" é onde a queda fica suave (~3 neste caso)
+print(inertias)
+```
+
+## Pontos importantes
+
+- **K é hiperparâmetro** — precisa ser escolhido (elbow, silhouette)
+- Sensível à **escala** dos dados — normalizar antes
+- Sensível aos **centroides iniciais** — usar `n_init` alto
+- Assume clusters **esféricos** e de tamanho similar
+
+## Aplicações
+
+- Segmentação de clientes
+- Compressão de imagens (reduzir cores)
+- Detecção de outliers (pontos distantes de todo centroide)
+- Pré-processamento para outros algoritmos

@@ -1,0 +1,63 @@
+# LangChain na Prática
+
+**LangChain** é um framework para construir aplicações com LLMs: encadear chamadas, conectar a ferramentas, gerenciar memória e criar agents. É o "React" do mundo LLM — compõe blocos.
+
+## Componentes principais
+
+- **Models**: wrapper para LLMs (OpenAI, Anthropic, local)
+- **Prompts**: templates de prompt reutilizáveis
+- **Chains**: sequência de passos (prompt → modelo → saída)
+- **Agents**: modelos que **decidem** qual ferramenta usar
+- **Memory**: histórico da conversa
+- **Document Loaders / Retriever**: dados para RAG
+
+## Hands-on
+
+<SandboxRunner
+  lessonSlug="langchain-agents"
+  lessonId="752a32f5-9fe2-439e-a19e-3ef54e20b056"
+/>
+
+## O operador pipe (`|`)
+
+No LangChain moderno, chains são construídas com `|` — cada etapa recebe a saída da anterior:
+
+```python
+chain = prompt | model | parser
+```
+
+## Agents
+
+Um Agent combina LLM + ferramentas. O modelo **decide** qual ferramenta chamar a cada passo (ex: busca, calculadora, API):
+
+```python
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain_community.tools import DuckDuckGoSearchRun
+
+tools = [DuckDuckGoSearchRun()]
+agent = create_tool_calling_agent(model, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools)
+
+resp = executor.invoke({"input": "Qual a capital do Brasil?"})
+```
+
+## Quando usar LangChain
+
+- **Multi-step workflows** com LLMs
+- **RAG** (recuperação + geração)
+- **Agents** com ferramentas
+- Trocar de provider sem reescrever tudo
+
+## Alternativas
+
+- **LangGraph** (do mesmo time): grafo de estados, mais controle que chains lineares
+- **LlamaIndex**: foco em RAG/data
+- **Vercel AI SDK**: se já estiver em Next.js
+- **Raw API calls**: para casos simples, a dependência não vale
+
+## Pitfalls
+
+- Abstração demais esconde o que está acontecendo — logue os passos
+- Chains longas multiplicam custo/latência — meça cada etapa
+- Agents podem "alucinar ferramentas" — valide as chamadas
+- Versionamento do framework muda rápido — pinne versões

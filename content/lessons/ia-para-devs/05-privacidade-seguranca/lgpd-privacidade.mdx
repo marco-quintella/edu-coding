@@ -1,0 +1,59 @@
+# Privacidade e LGPD em IA
+
+Sistemas de IA processam **dados pessoais** — e no Brasil isso é regulado pela **LGPD (Lei Geral de Proteção de Dados)**. Ignorar compliance não é só risco ético, é risco legal.
+
+## O que a LGPD protege
+
+**Dados pessoais**: qualquer informação que identifique uma pessoa (nome, CPF, email, IP, localização, biometria...).
+
+**Dados sensíveis** (proteção reforçada): raça, religião, saúde, biometria, orientação sexual.
+
+## Princípios-chave
+
+1. **Finalidade** — coletar só para propósitos legítimos e específicos
+2. **Necessidade** — mínimo de dados necessário
+3. **Consentimento** — base legal explícita (ou legítimo interesse)
+4. **Transparência** — informar como os dados são usados
+5. **Segurança** — proteger contra vazamento
+6. **Direitos do titular** — acesso, correção, portabilidade, exclusão
+
+## Hands-on — minimização de dados
+
+<SandboxRunner
+  lessonSlug="lgpd-privacidade"
+  lessonId="eb39ebb5-5edb-4c6e-bb00-8c90e40f49b9"
+/>
+
+## LGPD × IA na prática
+
+### Treinamento
+- **Anonimização/pseudonimização** antes de treinar
+- **Avaliação de impacto** (RIPD) para dados sensíveis
+- Base legal documentada para cada dataset
+
+### Inferência
+- Retenção mínima de inputs/outputs
+- Logs sem dados pessoais (IDs opacos)
+- Direito de explicação das decisões automatizadas
+
+### Deploy
+- Contratos com provedores (DPA) — inclusive provedores de LLM
+- Processamento regional quando exigido
+- Deleção sob demanda (direito ao esquecimento)
+
+## Checklist de compliance para apps de IA
+
+- [ ] Mapa de dados: o que coleta, onde armazena, quem acessa
+- [ ] Base legal para cada finalidade
+- [ ] Consentimento claro (não em letra miúda)
+- [ ] TTL/retenção definida para inputs e logs
+- [ ] Procedimento de exclusão a pedido do titular
+- [ ] Incidentes: notificação ANPD em 72h
+
+## Provedores de LLM e LGPD
+
+- OpenAI/Anthropic/Google: check se os dados são usados para treino (API = não, por padrão)
+- **BYOK** (chave do aluno) transfere a responsabilidade — documente isso
+- Em ambientes regulados: modelos self-hosted ou regionais
+
+> **Regra de ouro**: se você não precisa do dado para a tarefa, não colete. A melhor proteção de dados é não ter o dado.
