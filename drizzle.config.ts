@@ -4,6 +4,7 @@ export default {
   schema: [
     './lib/db/schema.ts',
     './drizzle/auth.schema.ts',
+    './drizzle/exec-usage.schema.ts',
   ],
   out: './lib/db/migrations',
   dialect: 'postgresql',
