@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "npx drizzle-kit migrate && npm run start",
+    "startCommand": "npx drizzle-kit migrate && if [ \"$RUN_SEED\" = \"true\" ]; then tsx scripts/seed-ia-para-devs.ts; fi && npm run start",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
