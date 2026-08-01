@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  experimental: {
-    // serverActions: true, // default true in 16
-  },
+  // output: "standalone", // desativado — next start funciona nativamente,
+  // sem precisar copiar static/public/content para o standalone.
 };
 
 export default nextConfig;
