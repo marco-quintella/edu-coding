@@ -4,7 +4,7 @@
     "builder": "RAILPACK"
   },
   "deploy": {
-    "startCommand": "npx drizzle-kit migrate && npm run start",
+    "startCommand": "npm i -g @railway/cli --silent && npx drizzle-kit migrate && npm run start",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
