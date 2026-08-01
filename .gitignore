@@ -13,3 +13,4 @@ build
 .idea
 *.log
 .next-deploy/
+.hermes/
