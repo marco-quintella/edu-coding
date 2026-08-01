@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getLessonById } from '@/lib/db/queries'
 import { mdxComponents } from '@/components/mdx-components'
+import { Quiz } from '@/components/quiz'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'lessons')
 
@@ -72,25 +73,7 @@ export default async function LessonPage({
 
         {questions.length > 0 && (
           <section className="mt-12 pt-8 border-t border-gray-200">
-            <h2 className="text-2xl font-semibold mb-4">Quiz</h2>
-            <p className="text-gray-600 text-sm mb-6">
-              {questions.length} pergunta(s) • Componente interativo virá na
-              Phase 4.
-            </p>
-            <ol className="space-y-4">
-              {questions.map((q) => (
-                <li key={q.id} className="bg-gray-50 p-4 rounded">
-                  <p className="font-medium mb-2">{q.question}</p>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    {(
-                      q.options as { id: string; text: string }[]
-                    ).map((opt) => (
-                      <li key={opt.id}>• {opt.text}</li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ol>
+            <Quiz lessonId={lesson.id} questions={questions} />
           </section>
         )}
       </div>
