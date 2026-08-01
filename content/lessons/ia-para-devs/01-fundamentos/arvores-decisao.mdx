@@ -21,18 +21,27 @@ Uma árvore de decisão é um modelo de aprendizado supervisionado que faz previ
 - **Folhas**: decisão final (classe ou valor)
 - **Arestas**: resultados do teste (yes/no)
 
-## Exemplo
+## Hands-on
 
-```python
-from sklearn.tree import DecisionTreeClassifier
+Vamos treinar uma árvore no dataset Iris e ver a acurácia:
+
+<SandboxRunner
+  lessonId="b58a2f3f-d02c-4487-bcff-2df8a461aa75"
+  initialCode={`from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
 
 X, y = load_iris(return_X_y=True)
-model = DecisionTreeClassifier(max_depth=2).fit(X, y)
-print(f"accuracy no treino: {model.score(X, y):.2f}")
-```
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-**Saída:** `accuracy no treino: 0.96`
+model = DecisionTreeClassifier(max_depth=2).fit(X_train, y_train)
+print(f"acurácia treino: {model.score(X_train, y_train):.2%}")
+print(f"acurácia teste:  {model.score(X_test, y_test):.2%}")`}
+/>
+
+**Saída esperada:** acurácia treino ~95%, acurácia teste ~95%
+
+Tente mudar `max_depth` pra 1, 2, 3, 4 e veja como overfitting aparece (treino sobe, teste fica ou piora).
 
 ## Parâmetros importantes
 

@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getCourseWithPhases, getCompletedLessonIds } from '@/lib/db/queries'
 
-// Mock user até BetterAuth (Phase 3) entrar
 const MOCK_USER_ID = '00000000-0000-0000-0000-000000000001'
 
 export default async function CoursePage({
@@ -41,16 +40,40 @@ export default async function CoursePage({
               const completedInPhase = phase.lessons.filter((l) =>
                 completedIds.has(l.id)
               ).length
+              const allDone =
+                phase.lessons.length > 0 &&
+                completedInPhase === phase.lessons.length
+
               return (
                 <section key={phase.id}>
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 flex items-baseline justify-between">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 flex items-baseline justify-between flex-wrap gap-2">
                     <span>{phase.title}</span>
-                    {phase.lessons.length > 0 && (
-                      <span className="text-sm font-normal text-gray-500">
-                        {completedInPhase}/{phase.lessons.length} concluídas
-                      </span>
-                    )}
+                    <span className="text-sm font-normal text-gray-500">
+                      {completedInPhase}/{phase.lessons.length} concluídas
+                    </span>
                   </h2>
+
+                  {allDone && (
+                    <div className="mb-4 p-4 bg-amber-50 border border-amber-300 rounded-lg flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-amber-900 font-semibold">
+                          🎓 Fase completa!
+                        </p>
+                        <p className="text-sm text-amber-800">
+                          Baixe seu certificado de conclusão.
+                        </p>
+                      </div>
+                      <a
+                        href={`/api/phases/${phase.id}/certificate`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-amber-600 text-white rounded font-medium hover:bg-amber-700 whitespace-nowrap"
+                      >
+                        📄 Certificado
+                      </a>
+                    </div>
+                  )}
+
                   {phase.lessons.length === 0 ? (
                     <p className="text-gray-500 text-sm">Nenhuma lição nesta fase.</p>
                   ) : (

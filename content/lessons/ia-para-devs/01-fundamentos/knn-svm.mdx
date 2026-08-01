@@ -6,16 +6,25 @@ Dois algoritmos clássicos de classificação que operam em princípios opostos:
 
 O KNN classifica um novo ponto olhando os **K vizinhos mais próximos** no espaço de features. A classe é a **majoritária** entre esses K.
 
-```python
-from sklearn.neighbors import KNeighborsClassifier
+### Hands-on
+
+Vamos treinar KNN no Iris e ver como diferentes valores de K afetam a acurácia:
+
+<SandboxRunner
+  lessonId="b1a39723-5ec9-4892-8f86-d423409f2def"
+  initialCode={`from sklearn.neighbors import KNeighborsClassifier
 from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
 
 X, y = load_iris(return_X_y=True)
-model = KNeighborsClassifier(n_neighbors=3).fit(X, y)
-print(f"accuracy no treino: {model.score(X, y):.2f}")
-```
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-**Saída:** `accuracy no treino: 0.96`
+for k in [1, 3, 5, 7, 11]:
+    model = KNeighborsClassifier(n_neighbors=k).fit(X_train, y_train)
+    print(f"K={k:2d} treino={model.score(X_train, y_train):.2%} teste={model.score(X_test, y_test):.2%}")`}
+/>
+
+Note como K=1 **overfitta** (100% treino, ~98% teste) e K>5 **underfitta** um pouco (treino cai pra ~96%).
 
 ### Parâmetros
 
@@ -33,14 +42,23 @@ print(f"accuracy no treino: {model.score(X, y):.2f}")
 
 O SVM encontra o **hiperplano** que separe as classes com a **maior margem** possível. Os pontos mais próximos do hiperplano são os **support vectors**.
 
-```python
-from sklearn.svm import SVC
+### Hands-on
+
+SVM com kernel linear e RBF:
+
+<SandboxRunner
+  lessonId="b1a39723-5ec9-4892-8f86-d423409f2def"
+  initialCode={`from sklearn.svm import SVC
 from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
 
 X, y = load_iris(return_X_y=True)
-model = SVC(kernel='linear').fit(X, y)
-print(f"accuracy no treino: {model.score(X, y):.2f}")
-```
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+for kernel in ['linear', 'rbf', 'poly']:
+    model = SVC(kernel=kernel).fit(X_train, y_train)
+    print(f"kernel={kernel:6s} treino={model.score(X_train, y_train):.2%} teste={model.score(X_test, y_test):.2%}")`}
+/>
 
 ### Truque do kernel
 
