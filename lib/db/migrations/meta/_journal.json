@@ -15,6 +15,13 @@
       "when": 1785599284803,
       "tag": "0001_redundant_veda",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785619000000,
+      "tag": "0002_user_progress_unique",
+      "breakpoints": true
     }
   ]
 }
