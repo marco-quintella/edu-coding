@@ -1,0 +1,7 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "deploy": {
+    "startCommand": "sh scripts/start-prod.sh",
+    "aptPackages": ["python3", "openssh-client"]
+  }
+}
