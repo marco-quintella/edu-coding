@@ -11,10 +11,13 @@ A equação da reta é `y = mx + b`, onde:
 
 O trabalho do algoritmo é encontrar `m` e `b` que minimizam o erro quadrático entre a reta prevista e os dados reais (método dos mínimos quadrados).
 
-## Exemplo em Python
+## Hands-on
 
-```python
-from sklearn.linear_model import LinearRegression
+Clique em **▶ Run** pra executar sklearn num sandbox real:
+
+<SandboxRunner
+  lessonId="ef1d767f-13db-4ed2-926c-95f563df1f91"
+  initialCode={`from sklearn.linear_model import LinearRegression
 import numpy as np
 
 # Dados: y = 2x (sem ruído)
@@ -22,10 +25,13 @@ X = np.array([[1], [2], [3], [4]])
 y = np.array([2, 4, 6, 8])
 
 model = LinearRegression().fit(X, y)
-print(f"slope={model.coef_[0]:.2f}, intercept={model.intercept_:.2f}")
-```
+print(f"slope={model.coef_[0]:.2f}")
+print(f"intercept={model.intercept_:.2f}")`}
+/>
 
-**Saída esperada:** `slope=2.00, intercept=0.00`
+**Saída esperada:** `slope=2.00`, `intercept=0.00`
+
+Tente mudar os valores de `X` e `y` e rode de novo. Por exemplo, se `y = 2x + 10`, qual deve ser `slope` e `intercept`?
 
 ## Conceitos importantes
 

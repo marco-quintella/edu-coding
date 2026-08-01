@@ -14,6 +14,7 @@
     "db:seed": "dotenv -e .env.local -- tsx scripts/seed-ia-para-devs.ts"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "drizzle-orm": "^0.45.2",
     "gray-matter": "^4.0.3",
     "next": "16.2.12",

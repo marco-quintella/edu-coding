@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getLessonById } from '@/lib/db/queries'
+import { mdxComponents } from '@/components/mdx-components'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'lessons')
 
@@ -66,7 +67,7 @@ export default async function LessonPage({
         </header>
 
         <article className="prose prose-gray max-w-none">
-          <MDXRemote source={source} />
+          <MDXRemote source={source} components={mdxComponents} />
         </article>
 
         {questions.length > 0 && (
