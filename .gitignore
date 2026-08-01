@@ -14,3 +14,6 @@ build
 *.log
 .next-deploy/
 .hermes/
+
+# graphify output (generated artifact - never commit)
+graphify-out/
