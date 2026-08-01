@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
-import { runCode } from '@/lib/sandbox/client'
+import { execWarm } from '@/lib/sandbox/pool'
 import { db } from '@/lib/db'
 import { lessons } from '@/lib/db/schema'
 import { execUsage } from '@/drizzle/exec-usage.schema'
@@ -70,13 +70,14 @@ export async function POST(req: NextRequest) {
   if (apiKey) env.OPENAI_API_KEY = apiKey
 
   try {
-    const result = await runCode(code, {
+    // Usa o warm pool (sandbox quente por usuário) — elimina cold start
+    const result = await execWarm(user.id, code, {
       checkpointId: lesson.checkpointId,
       env,
       timeoutSec: 30,
     })
 
-    // Incrementa contador após execução bem-sucedida (não conta falhas de validação)
+    // Incrementa contador após execução bem-sucedida
     await db
       .insert(execUsage)
       .values({ userId: user.id, date, count: 1 })
