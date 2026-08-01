@@ -14,10 +14,10 @@ export function Quiz({ lessonId, questions }: Props) {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
-  const totalCorrect = submitted
-    ? questions.filter((q) => answers[q.id] === q.correctOptionId).length
-    : 0
-  const pct = submitted ? Math.round((totalCorrect / questions.length) * 100) : 0
+  const totalCorrect = questions.filter(
+    (q) => answers[q.id] === q.correctOptionId
+  ).length
+  const pct = Math.round((totalCorrect / questions.length) * 100)
 
   async function submit() {
     setSubmitted(true)

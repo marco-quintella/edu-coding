@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { courses, phases, lessons, userProgress } from '@/lib/db/schema'
 import { eq, and, inArray } from 'drizzle-orm'
+import { getCurrentUser } from '@/lib/auth/server'
 import { generateCertificatePdf } from './pdf'
-
-const MOCK_USER_ID = '00000000-0000-0000-0000-000000000001'
 
 export const runtime = 'nodejs'
 
@@ -14,7 +13,11 @@ export async function GET(
 ) {
   const { id: phaseId } = await ctx.params
 
-  // 1. Phase existe?
+  const user = await getCurrentUser()
+  if (!user) {
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  }
+
   const [phase] = await db
     .select()
     .from(phases)
@@ -23,7 +26,6 @@ export async function GET(
     return NextResponse.json({ error: 'phase_not_found' }, { status: 404 })
   }
 
-  // 2. Course existe?
   const [course] = await db
     .select()
     .from(courses)
@@ -32,7 +34,6 @@ export async function GET(
     return NextResponse.json({ error: 'course_not_found' }, { status: 404 })
   }
 
-  // 3. Todas as lições da fase estão concluídas pelo user?
   const phaseLessons = await db
     .select({ id: lessons.id })
     .from(lessons)
@@ -47,7 +48,7 @@ export async function GET(
     .from(userProgress)
     .where(
       and(
-        eq(userProgress.userId, MOCK_USER_ID),
+        eq(userProgress.userId, user.id),
         inArray(
           userProgress.lessonId,
           phaseLessons.map((l) => l.id)
@@ -69,9 +70,8 @@ export async function GET(
     )
   }
 
-  // 4. Gerar PDF
   const pdf = await generateCertificatePdf({
-    userName: 'Aluno Edu Coding',
+    userName: user.name || user.email,
     phaseTitle: phase.title,
     courseTitle: course.title,
     completedAt: new Date(),

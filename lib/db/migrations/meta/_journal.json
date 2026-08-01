@@ -8,6 +8,13 @@
       "when": 1785561180920,
       "tag": "0000_round_daimon_hellstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785599284803,
+      "tag": "0001_redundant_veda",
+      "breakpoints": true
     }
   ]
 }

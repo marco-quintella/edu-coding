@@ -1,4 +1,5 @@
-import PDFDocument from 'pdfkit'
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { promises as fs } from 'node:fs'
 
 export interface CertificateData {
   userName: string
@@ -10,107 +11,98 @@ export interface CertificateData {
 export async function generateCertificatePdf(
   data: CertificateData
 ): Promise<Buffer> {
-  return new Promise<Buffer>((resolve) => {
-    const doc = new PDFDocument({ size: 'A4', layout: 'landscape', margin: 0 })
-    const chunks: Buffer[] = []
-    doc.on('data', (c) => chunks.push(c))
-    doc.on('end', () => resolve(Buffer.concat(chunks)))
+  const pdfDoc = await PDFDocument.create()
+  const page = pdfDoc.addPage([842, 595]) // A4 landscape (pt units: 1pt = 1/72 inch)
 
-    const w = doc.page.width
-    const h = doc.page.height
-    const innerW = w - 100
+  const helv = await pdfDoc.embedFont(StandardFonts.Helvetica)
+  const helvBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-    // Background
-    doc.rect(0, 0, w, h).fill('#fdf6e3')
+  const w = page.getWidth()
+  const h = page.getHeight()
 
-    // Border
-    doc
-      .lineWidth(4)
-      .strokeColor('#b58900')
-      .rect(20, 20, w - 40, h - 40)
-      .stroke()
-    doc
-      .lineWidth(1)
-      .strokeColor('#b58900')
-      .rect(30, 30, w - 60, h - 60)
-      .stroke()
-
-    // Title
-    doc
-      .fillColor('#586e75')
-      .fontSize(14)
-      .font('Helvetica-Bold')
-      .text('EDU CODING', 50, 70, { width: innerW, align: 'center', characterSpacing: 4 })
-
-    doc
-      .moveDown(2)
-      .fontSize(36)
-      .fillColor('#073642')
-      .text('Certificado de Conclusão', { width: innerW, align: 'center' })
-
-    // Body
-    doc
-      .moveDown(1.5)
-      .fontSize(14)
-      .fillColor('#586e75')
-      .font('Helvetica')
-      .text('Certificamos que', { width: innerW, align: 'center' })
-
-    doc
-      .moveDown(0.5)
-      .fontSize(28)
-      .fillColor('#073642')
-      .font('Helvetica-Bold')
-      .text(data.userName, { width: innerW, align: 'center' })
-
-    doc
-      .moveDown(0.5)
-      .fontSize(14)
-      .fillColor('#586e75')
-      .font('Helvetica')
-      .text('concluiu com sucesso a fase', { width: innerW, align: 'center' })
-
-    doc
-      .moveDown(0.5)
-      .fontSize(22)
-      .fillColor('#268bd2')
-      .font('Helvetica-Bold')
-      .text(`"${data.phaseTitle}"`, { width: innerW, align: 'center' })
-
-    doc
-      .moveDown(0.4)
-      .fontSize(12)
-      .fillColor('#586e75')
-      .font('Helvetica')
-      .text(`do curso ${data.courseTitle}`, { width: innerW, align: 'center' })
-
-    // Date
-    doc
-      .moveDown(3)
-      .fontSize(12)
-      .fillColor('#586e75')
-      .text(
-        `Emitido em ${data.completedAt.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-        })}`,
-        { width: innerW, align: 'center' }
-      )
-
-    // Signature line
-    const sigY = h - 100
-    doc
-      .moveTo(120, sigY)
-      .lineTo(280, sigY)
-      .strokeColor('#586e75')
-      .lineWidth(1)
-      .stroke()
-    doc
-      .fontSize(10)
-      .fillColor('#586e75')
-      .text('Coordenação Edu Coding', 120, sigY + 8, { width: 160, align: 'center' })
-
-    doc.end()
+  // Background warm cream
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: w,
+    height: h,
+    color: rgb(0.99, 0.96, 0.89),
   })
+  // Outer border gold
+  page.drawRectangle({
+    x: 20,
+    y: 20,
+    width: w - 40,
+    height: h - 40,
+    borderColor: rgb(0.71, 0.54, 0),
+    borderWidth: 4,
+  })
+  // Inner border gold (thin)
+  page.drawRectangle({
+    x: 30,
+    y: 30,
+    width: w - 60,
+    height: h - 60,
+    borderColor: rgb(0.71, 0.54, 0),
+    borderWidth: 1,
+  })
+
+  const centerX = w / 2
+  const slate = rgb(0.03, 0.21, 0.26)
+  const slateLight = rgb(0.34, 0.43, 0.45)
+  const blue = rgb(0.15, 0.55, 0.82)
+
+  // Helper: drawText centered at (x, y)
+  const drawCentered = (
+    text: string,
+    y: number,
+    font: typeof helv,
+    size: number,
+    color = slateLight
+  ) => {
+    const textWidth = font.widthOfTextAtSize(text, size)
+    page.drawText(text, {
+      x: centerX - textWidth / 2,
+      y,
+      size,
+      font,
+      color,
+    })
+  }
+
+  // Header brand
+  drawCentered('EDU CODING', h - 60, helvBold, 14, slateLight)
+  // Title
+  drawCentered('Certificado de Conclusão', h - 130, helvBold, 36, slate)
+  // Body line 1
+  drawCentered('Certificamos que', h - 200, helv, 14, slateLight)
+  // Name
+  drawCentered(data.userName, h - 245, helvBold, 28, slate)
+  // Body line 2
+  drawCentered('concluiu com sucesso a fase', h - 295, helv, 14, slateLight)
+  // Phase title
+  drawCentered(`"${data.phaseTitle}"`, h - 340, helvBold, 22, blue)
+  // Course
+  drawCentered(`do curso ${data.courseTitle}`, h - 380, helv, 12, slateLight)
+  // Date
+  const dateStr = `Emitido em ${data.completedAt.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  })}`
+  drawCentered(dateStr, h - 470, helv, 12, slateLight)
+
+  // Signature line at bottom-left
+  page.drawLine({
+    start: { x: 120, y: 80 },
+    end: { x: 280, y: 80 },
+    color: slateLight,
+    thickness: 1,
+  })
+  drawCentered('Coordenação Edu Coding', 60, helv, 10, slateLight)
+
+  const bytes = await pdfDoc.save()
+  // Touch fs import to avoid "unused" warnings; ensures SSR-only path works
+  void fs
+  return Buffer.from(bytes)
 }

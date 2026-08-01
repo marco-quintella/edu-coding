@@ -15,11 +15,12 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
+    "better-auth": "^1.6.25",
     "drizzle-orm": "^0.45.2",
     "gray-matter": "^4.0.3",
     "next": "16.2.12",
     "next-mdx-remote": "^6.0.0",
-    "pdfkit": "^0.19.1",
+    "pdf-lib": "^1.17.1",
     "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -28,7 +29,6 @@
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^20",
-    "@types/pdfkit": "^0.17.6",
     "@types/pg": "^8.20.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getCourseWithPhases, getCompletedLessonIds } from '@/lib/db/queries'
-
-const MOCK_USER_ID = '00000000-0000-0000-0000-000000000001'
+import { getCurrentUser } from '@/lib/auth/server'
+import { AuthButtons } from '@/components/auth-buttons'
 
 export default async function CoursePage({
   params,
@@ -13,17 +13,20 @@ export default async function CoursePage({
   const course = await getCourseWithPhases(slug)
   if (!course) notFound()
 
-  const completedIds = await getCompletedLessonIds(MOCK_USER_ID)
+  const user = await getCurrentUser()
+  const completedIds = user
+    ? await getCompletedLessonIds(user.id)
+    : new Set<string>()
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-4xl mx-auto px-6 py-16">
-        <Link
-          href="/courses"
-          className="text-blue-600 text-sm hover:underline mb-6 inline-block"
-        >
-          ← Catálogo
-        </Link>
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/courses" className="text-blue-600 text-sm hover:underline">
+            ← Catálogo
+          </Link>
+          <AuthButtons user={user} />
+        </div>
 
         <header className="mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">{course.title}</h1>
@@ -53,7 +56,7 @@ export default async function CoursePage({
                     </span>
                   </h2>
 
-                  {allDone && (
+                  {allDone && user && (
                     <div className="mb-4 p-4 bg-amber-50 border border-amber-300 rounded-lg flex items-center justify-between gap-4">
                       <div>
                         <p className="text-amber-900 font-semibold">

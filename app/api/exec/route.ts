@@ -4,16 +4,18 @@ import { runCode } from '@/lib/sandbox/client'
 import { db } from '@/lib/db'
 import { lessons } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { getCurrentUser } from '@/lib/auth/server'
 import { ExecRequest } from './schema'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
-  // 1. Auth — fora do MVP (BetterAuth virá na Phase 3). Por enquanto, IP-based rate limit é suficiente.
-  // TODO: substituir por auth de usuário quando BetterAuth estiver no ar.
+  const user = await getCurrentUser()
+  if (!user) {
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  }
 
-  // 2. Body validation
   let body: unknown
   try {
     body = await req.json()
@@ -29,17 +31,17 @@ export async function POST(req: NextRequest) {
   }
   const { lessonId, code, apiKey } = parsed.data
 
-  // 3. Lesson lookup
-  const [lesson] = await db.select().from(lessons).where(eq(lessons.id, lessonId))
+  const [lesson] = await db
+    .select()
+    .from(lessons)
+    .where(eq(lessons.id, lessonId))
   if (!lesson) {
     return NextResponse.json({ error: 'lesson_not_found' }, { status: 404 })
   }
 
-  // 4. BYOK env injection
   const env: Record<string, string> = {}
   if (apiKey) env.OPENAI_API_KEY = apiKey
 
-  // 5. Run code
   try {
     const result = await runCode(code, {
       checkpointId: lesson.checkpointId,
@@ -47,7 +49,6 @@ export async function POST(req: NextRequest) {
       timeoutSec: 30,
     })
 
-    // Filtra warning informativo do stderr (não é erro do user code)
     const cleanStderr = result.stderr
       .split('\n')
       .filter((l) => !l.startsWith('Warning: Railway sandboxes are experimental'))

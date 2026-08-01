@@ -1,0 +1,109 @@
+'use client'
+
+import Link from 'next/link'
+
+export default function SignupPage() {
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
+      <div className="max-w-md w-full mx-auto px-6 py-16">
+        <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Criar conta</h1>
+          <p className="text-gray-600 mb-6 text-sm">
+            Comece a aprender IA para devs hoje.
+          </p>
+
+          <div id="signup-error" className="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800" />
+
+          <form
+            id="signup-form"
+            className="space-y-4"
+            onSubmit={async (e) => {
+              e.preventDefault()
+              const formData = new FormData(e.currentTarget)
+              const email = String(formData.get('email') ?? '').trim().toLowerCase()
+              const password = String(formData.get('password') ?? '')
+              const name = String(formData.get('name') ?? '').trim()
+              const errEl = document.getElementById('signup-error') as HTMLDivElement
+
+              if (password.length < 8) {
+                errEl.textContent = 'Senha precisa ter 8+ caracteres.'
+                errEl.classList.remove('hidden')
+                return
+              }
+
+              try {
+                const res = await fetch('/api/auth/sign-up/email', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email,
+                    password,
+                    name: name || email.split('@')[0],
+                  }),
+                  credentials: 'include',
+                })
+                if (!res.ok) {
+                  const data = await res.json().catch(() => ({}))
+                  errEl.textContent = data.message || 'Falha ao criar conta'
+                  errEl.classList.remove('hidden')
+                  return
+                }
+                window.location.href = '/courses'
+              } catch (err) {
+                errEl.textContent = String(err)
+                errEl.classList.remove('hidden')
+              }
+            }}
+          >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+              <input
+                type="text"
+                name="name"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Seu nome"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="seu@email.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Senha <span className="text-gray-400">(8+ caracteres)</span>
+              </label>
+              <input
+                type="password"
+                name="password"
+                required
+                minLength={8}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700"
+            >
+              Criar conta
+            </button>
+          </form>
+
+          <p className="text-sm text-gray-600 mt-6 text-center">
+            Já tem conta?{' '}
+            <Link href="/login" className="text-blue-600 hover:underline">Entrar</Link>
+          </p>
+        </div>
+      </div>
+    </main>
+  )
+}

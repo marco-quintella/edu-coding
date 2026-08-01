@@ -1,9 +1,15 @@
 import Link from 'next/link'
+import { getCurrentUser } from '@/lib/auth/server'
+import { AuthButtons } from '@/components/auth-buttons'
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser()
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-2xl mx-auto px-6 py-16 text-center">
+        <div className="flex items-center justify-end mb-6">
+          <AuthButtons user={user} />
+        </div>
         <h1 className="text-5xl font-bold text-gray-900 mb-4">Edu Coding</h1>
         <p className="text-lg text-gray-600 mb-8">
           Aprenda programação e IA com lições interativas, executáveis no browser.

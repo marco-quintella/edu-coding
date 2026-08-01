@@ -2,12 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { lessons, userProgress, users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { getCurrentUser } from '@/lib/auth/server'
 import { CompleteRequest } from './schema'
-
-// Mock user até BetterAuth (Phase 3) entrar.
-// O user é criado on-demand para evitar FK violation.
-const MOCK_USER_ID = '00000000-0000-0000-0000-000000000001'
-const MOCK_USER_EMAIL = 'mock@edu.local'
 
 export const runtime = 'nodejs'
 
@@ -16,6 +12,11 @@ export async function POST(
   ctx: { params: Promise<{ id: string }> }
 ) {
   const { id: lessonId } = await ctx.params
+
+  const user = await getCurrentUser()
+  if (!user) {
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  }
 
   const [lesson] = await db
     .select()
@@ -37,16 +38,16 @@ export async function POST(
     return NextResponse.json({ error: 'bad_request' }, { status: 400 })
   }
 
-  // Garantir que o mock user existe (Phase 3 remove isso)
+  // Sincroniza snapshot na tabela `users` (auth-api já tem o user em `user`)
   await db
     .insert(users)
-    .values({ id: MOCK_USER_ID, email: MOCK_USER_EMAIL })
+    .values({ id: user.id, email: user.email })
     .onConflictDoNothing()
 
   await db
     .insert(userProgress)
     .values({
-      userId: MOCK_USER_ID,
+      userId: user.id,
       lessonId,
       quizScore: parsed.data.quizScore,
     })
