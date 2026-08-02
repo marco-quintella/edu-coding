@@ -19,16 +19,16 @@ interface Props {
 }
 
 export function AuthButtons({ user }: Props) {
-  const { theme, setTheme } = useTheme()
+  const { resolved, setTheme } = useTheme()
   const mounted = useMounted()
 
-  const themeLabel =
-    theme === 'dark' ? '☀ Light' : theme === 'light' ? '◐ Auto' : '☾ Dark'
+  // Label mostra a AÇÃO (para onde o clique leva), baseado no que está na tela.
+  // resolved = tema real renderizado (segue o sistema até o 1º clique).
+  const themeLabel = resolved === 'dark' ? '☀ Claro' : '☾ Escuro'
 
   const cycleTheme = () => {
-    const next =
-      theme === 'system' ? 'dark' : theme === 'dark' ? 'light' : 'system'
-    setTheme(next)
+    // Alterna sempre para o OPOSTO do que está visível — todo clique muda algo.
+    setTheme(resolved === 'dark' ? 'light' : 'dark')
   }
 
   if (user) {

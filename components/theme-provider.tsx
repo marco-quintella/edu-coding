@@ -27,9 +27,11 @@ function getInitialTheme(): Theme {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme)
+  // O script inline no <head> já aplicou .dark antes da hidratação.
+  // Inicializa 'resolved' a partir da classe real para evitar conflito.
   const [resolved, setResolved] = useState<'light' | 'dark'>(() => {
     if (typeof window === 'undefined') return 'light'
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
+    return document.documentElement.classList.contains('dark')
       ? 'dark'
       : 'light'
   })
