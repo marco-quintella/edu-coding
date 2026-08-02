@@ -2,7 +2,7 @@
 
 Plataforma educacional textual-interativa no estilo Educative.io.
 
-Catálogo inaugural: **Pós Tech — IA para Devs** (FIAP/Alura) — 360h, 10 meses, hands-on.
+Catálogo inaugural: **IA para Devs** — ML, NLP, LLMs, GenAI e Cloud, 5 fases, hands-on.
 
 ## Stack
 
@@ -92,7 +92,7 @@ edu-coding/
 1. Abrir `/` (home)
 2. Clicar "Criar conta" → `/signup` → criar conta
 3. Redirect → `/courses`
-4. Clicar no curso "Pós Tech — IA para Devs"
+4. Clicar no curso "IA para Devs"
 5. Ver 3 lições na Fase 01
 6. Abrir "Regressão Linear"
 7. **Clicar ▶ Run** no SandboxRunner → sandbox da Railway roda `sklearn.LinearRegression` → output no terminal-style abaixo do editor

@@ -3,8 +3,9 @@ import { courses, phases, lessons, quizQuestions, userProgress } from '../lib/db
 
 const COURSE = {
   slug: 'ia-para-devs',
-  title: 'Pós Tech — IA para Devs',
-  description: 'Pós-graduação FIAP/Alura — 360h, 10 meses, hands-on.',
+  title: 'IA para Devs',
+  description:
+    'Machine Learning, NLP, LLMs, GenAI e Cloud na prática. 5 fases, certificado por fase, tudo em português.',
   phases: [
     {
       slug: '01-fundamentos',

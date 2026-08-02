@@ -1,27 +1,128 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ============================================================
+   DESIGN SYSTEM C - "Sala de Aula Moderna"
+   Direção: light-first com dark mode nativo (class strategy)
+   Fonte display/body: Satoshi (self-hosted, FFL)
+   Fonte mono: JetBrains Mono (@fontsource)
+   Accent único: esmeralda
+   Shape: cards 16px / inputs 12px / buttons pill
+   ============================================================ */
+
+/* Satoshi - self-hosted (Fontshare Free License) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Dark mode via class (toggle no nav), não só prefers-color-scheme */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Tokens light */
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f4f4f5;
+  --surface: #ffffff;
+  --surface-2: #fafafa;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --text: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  --accent: #059669;
+  --accent-soft: #ecfdf5;
+  --accent-strong: #047857;
+  --danger: #dc2626;
+  --shadow-card: 0 1px 2px rgb(24 24 27 / 0.04), 0 4px 16px rgb(24 24 27 / 0.04);
+  --shadow-pop: 0 4px 12px rgb(24 24 27 / 0.08), 0 16px 40px rgb(24 24 27 / 0.08);
+}
+
+.dark {
+  --bg: #131316;
+  --bg-soft: #18181b;
+  --bg-hover: #1f1f23;
+  --surface: #18181b;
+  --surface-2: #1f1f23;
+  --line: #2e2e33;
+  --line-strong: #3f3f46;
+  --text: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent: #10b981;
+  --accent-soft: #0e2b22;
+  --accent-strong: #34d399;
+  --danger: #f87171;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+  --shadow-pop: 0 4px 12px rgb(0 0 0 / 0.4), 0 16px 40px rgb(0 0 0 / 0.4);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--bg);
+  --color-background-soft: var(--bg-soft);
+  --color-background-hover: var(--bg-hover);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--text);
+  --color-ink-secondary: var(--text-secondary);
+  --color-ink-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
+  --color-danger: var(--danger);
+  --shadow-card: var(--shadow-card);
+  --shadow-pop: var(--shadow-pop);
+  --font-sans: "Satoshi", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --radius-card: 16px;
+  --radius-input: 12px;
+  --radius-pill: 999px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Code blocks e inline code */
+.prose pre {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--line);
+  background: #0e1116 !important;
+}
+.prose code {
+  font-family: var(--font-mono);
+}
+
+/* Focus visible acessível */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }

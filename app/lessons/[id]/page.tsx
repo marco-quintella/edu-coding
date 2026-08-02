@@ -3,9 +3,12 @@ import path from 'node:path'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import { getLessonById } from '@/lib/db/queries'
+import { getLessonById, getCompletedLessonIds } from '@/lib/db/queries'
+import { getCurrentUser } from '@/lib/auth/server'
 import { mdxComponents } from '@/components/mdx-components'
 import { Quiz } from '@/components/quiz'
+import { Nav } from '@/components/nav'
+import { Footer } from '@/components/footer'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'lessons')
 
@@ -18,7 +21,11 @@ export default async function LessonPage({
   const data = await getLessonById(id)
   if (!data) notFound()
 
-  const { lesson, phase, questions } = data
+  const { lesson, phase, questions, phaseLessons } = data
+  const user = await getCurrentUser()
+  const completedIds = user
+    ? await getCompletedLessonIds(user.id)
+    : new Set<string>()
 
   let source = ''
   try {
@@ -27,56 +34,118 @@ export default async function LessonPage({
     source = await fs.readFile(filePath, 'utf-8')
   } catch {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-3xl mx-auto px-6 py-16">
-          <Link
-            href="/courses"
-            className="text-blue-600 text-sm hover:underline mb-6 inline-block"
-          >
-            ← Catálogo
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{lesson.title}</h1>
-          <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded p-4">
-            Conteúdo ainda não escrito. MDX esperado em:{' '}
-            <code className="text-sm">{lesson.mdxPath}</code>
-          </p>
-        </div>
-      </main>
+      <>
+        <Nav user={user} />
+        <main className="px-6 py-16">
+          <div className="mx-auto max-w-3xl">
+            <Link
+              href="/courses"
+              className="mb-6 inline-block text-sm font-medium text-accent-strong hover:underline"
+            >
+              ← Catálogo
+            </Link>
+            <h1 className="mb-2 text-3xl font-bold text-ink">{lesson.title}</h1>
+            <p className="rounded-[16px] border border-line bg-accent-soft p-4 text-sm text-ink-secondary">
+              Conteúdo ainda não escrito. MDX esperado em:{' '}
+              <code className="font-mono text-accent-strong">{lesson.mdxPath}</code>
+            </p>
+          </div>
+        </main>
+        <Footer />
+      </>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <Link
-          href="/courses"
-          className="text-blue-600 text-sm hover:underline mb-6 inline-block"
-        >
-          ← Catálogo
-        </Link>
+    <>
+      <Nav user={user} />
+      <main className="px-6 pb-20 pt-8">
+        <div className="mx-auto grid max-w-[1400px] gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+          {/* Sidebar: trilha da fase */}
+          {phase && (
+            <aside className="hidden self-start lg:sticky lg:top-[88px] lg:block">
+              <p className="text-[13px] font-bold text-ink">{phase.title}</p>
+              <p className="mt-0.5 text-xs text-ink-muted">
+                {phaseLessons.filter((l) => completedIds.has(l.id)).length} de{' '}
+                {phaseLessons.length} concluídas
+              </p>
+              <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-background-hover">
+                <div
+                  className="h-full rounded-full bg-accent"
+                  style={{
+                    width: `${phaseLessons.length > 0 ? (phaseLessons.filter((l) => completedIds.has(l.id)).length / phaseLessons.length) * 100 : 0}%`,
+                  }}
+                />
+              </div>
+              <nav className="mt-4 flex flex-col gap-0.5">
+                {phaseLessons.map((l, idx) => {
+                  const done = completedIds.has(l.id)
+                  const active = l.id === lesson.id
+                  return (
+                    <Link
+                      key={l.id}
+                      href={`/lessons/${l.id}`}
+                      className={`flex items-center gap-2.5 rounded-[12px] px-3 py-2 text-[13.5px] transition-colors ${
+                        active
+                          ? 'bg-accent-soft font-bold text-accent-strong'
+                          : done
+                            ? 'text-ink-secondary hover:bg-background-hover hover:text-ink'
+                            : 'text-ink-secondary hover:bg-background-hover hover:text-ink'
+                      }`}
+                    >
+                      <span
+                        className={`grid h-[22px] w-[22px] shrink-0 place-items-center rounded-full font-mono text-[11px] font-bold ${
+                          done
+                            ? 'bg-accent text-white'
+                            : active
+                              ? 'bg-accent text-white'
+                              : 'border-2 border-line-strong text-ink-muted'
+                        }`}
+                      >
+                        {done ? '✓' : idx + 1}
+                      </span>
+                      <span className="flex-1">{l.title}</span>
+                      <span className="font-mono text-[11px] text-ink-muted">
+                        {l.estimatedMinutes ?? '?'}m
+                      </span>
+                    </Link>
+                  )
+                })}
+              </nav>
+            </aside>
+          )}
 
-        <header className="mb-8 pb-6 border-b border-gray-200">
-          <p className="text-sm text-gray-500 mb-1">
-            {phase?.title ?? 'Fase'}
-          </p>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {lesson.title}
-          </h1>
-          <p className="text-sm text-gray-500">
-            ⏱ {lesson.estimatedMinutes ?? '?'} min
-          </p>
-        </header>
+          {/* Conteúdo */}
+          <div className="min-w-0">
+            <div className="text-[13px] text-ink-muted">
+              <Link href="/courses" className="hover:text-accent-strong">
+                Catálogo
+              </Link>{' '}
+              / <span className="text-ink-secondary">{phase?.title ?? 'Fase'}</span>
+            </div>
 
-        <article className="prose prose-gray max-w-none">
-          <MDXRemote source={source} components={mdxComponents} />
-        </article>
+            <header className="mt-2 border-b border-line pb-6">
+              <h1 className="text-[2.2rem] font-black tracking-tight">
+                {lesson.title}
+              </h1>
+              <p className="mt-1 font-mono text-sm text-ink-muted">
+                {lesson.estimatedMinutes ?? '?'} min
+              </p>
+            </header>
 
-        {questions.length > 0 && (
-          <section className="mt-12 pt-8 border-t border-gray-200">
-            <Quiz lessonId={lesson.id} questions={questions} />
-          </section>
-        )}
-      </div>
-    </main>
+            <article className="prose prose-zinc mt-8 max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-p:text-ink-secondary prose-a:text-accent-strong dark:prose-invert">
+              <MDXRemote source={source} components={mdxComponents} />
+            </article>
+
+            {questions.length > 0 && (
+              <section className="mt-12 border-t border-line pt-8">
+                <Quiz lessonId={lesson.id} questions={questions} />
+              </section>
+            )}
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
   )
 }

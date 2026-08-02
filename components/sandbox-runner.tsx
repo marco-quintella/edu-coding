@@ -72,15 +72,20 @@ export function SandboxRunner({
   }
 
   return (
-    <div className="border border-gray-300 rounded-lg overflow-hidden my-8 bg-white shadow-sm">
-      <div className="bg-gray-100 px-4 py-2 flex items-center justify-between border-b border-gray-300">
-        <span className="font-mono text-sm font-semibold text-gray-700">
-          sandbox · python
+    <div className="my-8 overflow-hidden rounded-[16px] border border-line bg-surface shadow-card transition-all focus-within:border-accent focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--accent)_20%,transparent)]">
+      <div className="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-2.5">
+        <span className="flex gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+        </span>
+        <span className="ml-2 font-mono text-xs text-ink-secondary">
+          main.py
         </span>
         <button
           onClick={run}
           disabled={isPending}
-          className="px-3 py-1 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-[13px] font-bold text-white transition-all hover:bg-accent-strong active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? '⏳ rodando...' : '▶ Run'}
         </button>
@@ -101,16 +106,16 @@ export function SandboxRunner({
       />
 
       {(output || error || duration !== null) && (
-        <div className="bg-gray-900 text-gray-100 font-mono text-xs p-4 min-h-[80px]">
+        <div className="min-h-[80px] bg-[#0e1116] p-4 font-mono text-xs text-gray-100">
           {output && <pre className="whitespace-pre-wrap">{output}</pre>}
           {error && (
-            <pre className="whitespace-pre-wrap text-red-400 mt-2">{error}</pre>
+            <pre className="mt-2 whitespace-pre-wrap text-red-400">{error}</pre>
           )}
-          <div className="text-gray-500 mt-3 flex gap-4 text-xs">
+          <div className="mt-3 flex gap-4 text-xs text-gray-500">
             {exitCode !== null && (
               <span>
                 exit:{' '}
-                <span className={exitCode === 0 ? 'text-green-400' : 'text-red-400'}>
+                <span className={exitCode === 0 ? 'text-emerald-400' : 'text-red-400'}>
                   {exitCode}
                 </span>
               </span>
@@ -121,14 +126,14 @@ export function SandboxRunner({
       )}
 
       <details
-        className="px-4 py-2 bg-gray-50 text-sm border-t border-gray-200"
+        className="border-t border-line bg-surface-2 px-4 py-2 text-sm"
         open={showKey}
         onToggle={(e) => setShowKey((e.target as HTMLDetailsElement).open)}
       >
-        <summary className="cursor-pointer text-gray-700 select-none">
-          ⚙ Configurar LLM API Key (BYOK — opcional)
+        <summary className="cursor-pointer select-none text-ink-secondary">
+          ⚙ Configurar LLM API Key (BYOK, opcional)
         </summary>
-        <p className="text-xs text-gray-500 mt-2 mb-2">
+        <p className="mb-2 mt-2 text-xs text-ink-muted">
           Sua chave é passada como env var ao sandbox via BYOK. Não armazenamos.
         </p>
         <input
@@ -136,7 +141,7 @@ export function SandboxRunner({
           placeholder="sk-..."
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
-          className="w-full border border-gray-300 px-2 py-1 rounded text-sm font-mono"
+          className="w-full rounded-[12px] border border-line-strong bg-surface px-3 py-1.5 font-mono text-sm text-ink transition-colors focus:border-accent"
         />
       </details>
     </div>

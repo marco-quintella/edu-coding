@@ -4,15 +4,24 @@ import Link from 'next/link'
 
 export default function SignupPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-md w-full mx-auto px-6 py-16">
-        <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Criar conta</h1>
-          <p className="text-gray-600 mb-6 text-sm">
+    <main className="flex min-h-screen items-center justify-center px-6 py-16">
+      <div className="w-full max-w-md">
+        <div className="rounded-[16px] border border-line bg-surface p-8 shadow-card">
+          <Link href="/" className="mb-6 flex items-center gap-2.5 font-black tracking-tight">
+            <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent font-mono text-[13px] font-black text-white">
+              &gt;_
+            </span>
+            Edu Coding
+          </Link>
+          <h1 className="text-3xl font-black tracking-tight">Criar conta</h1>
+          <p className="mb-6 mt-1 text-sm text-ink-secondary">
             Comece a aprender IA para devs hoje.
           </p>
 
-          <div id="signup-error" className="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800" />
+          <div
+            id="signup-error"
+            className="mb-4 hidden rounded-[12px] border border-danger/30 bg-danger/5 p-3 text-sm text-danger"
+          />
 
           <form
             id="signup-form"
@@ -20,10 +29,14 @@ export default function SignupPage() {
             onSubmit={async (e) => {
               e.preventDefault()
               const formData = new FormData(e.currentTarget)
-              const email = String(formData.get('email') ?? '').trim().toLowerCase()
+              const email = String(formData.get('email') ?? '')
+                .trim()
+                .toLowerCase()
               const password = String(formData.get('password') ?? '')
               const name = String(formData.get('name') ?? '').trim()
-              const errEl = document.getElementById('signup-error') as HTMLDivElement
+              const errEl = document.getElementById(
+                'signup-error',
+              ) as HTMLDivElement
 
               if (password.length < 8) {
                 errEl.textContent = 'Senha precisa ter 8+ caracteres.'
@@ -56,51 +69,57 @@ export default function SignupPage() {
             }}
           >
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+              <label className="mb-1 block text-sm font-semibold text-ink">
+                Nome
+              </label>
               <input
                 type="text"
                 name="name"
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-[12px] border border-line-strong bg-surface px-3 py-2 text-ink transition-colors placeholder:text-ink-muted focus:border-accent focus:outline-none"
                 placeholder="Seu nome"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="mb-1 block text-sm font-semibold text-ink">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-[12px] border border-line-strong bg-surface px-3 py-2 text-ink transition-colors placeholder:text-ink-muted focus:border-accent focus:outline-none"
                 placeholder="seu@email.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Senha <span className="text-gray-400">(8+ caracteres)</span>
+              <label className="mb-1 block text-sm font-semibold text-ink">
+                Senha <span className="font-normal text-ink-muted">(8+ caracteres)</span>
               </label>
               <input
                 type="password"
                 name="password"
                 required
                 minLength={8}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-[12px] border border-line-strong bg-surface px-3 py-2 text-ink transition-colors placeholder:text-ink-muted focus:border-accent focus:outline-none"
                 placeholder="••••••••"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700"
+              className="w-full rounded-full bg-accent px-4 py-2.5 font-bold text-white transition-all hover:bg-accent-strong active:scale-[0.98]"
             >
               Criar conta
             </button>
           </form>
 
-          <p className="text-sm text-gray-600 mt-6 text-center">
+          <p className="mt-6 text-center text-sm text-ink-secondary">
             Já tem conta?{' '}
-            <Link href="/login" className="text-blue-600 hover:underline">Entrar</Link>
+            <Link href="/login" className="font-semibold text-accent-strong hover:underline">
+              Entrar
+            </Link>
           </p>
         </div>
       </div>

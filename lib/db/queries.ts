@@ -47,6 +47,7 @@ export async function getLessonById(id: string): Promise<{
   lesson: Lesson
   phase: Phase | null
   questions: QuizQuestionWithOptions[]
+  phaseLessons: Lesson[]
 } | null> {
   const [lesson] = await db
     .select()
@@ -72,7 +73,15 @@ export async function getLessonById(id: string): Promise<{
     options: q.options as QuizOption[],
   }))
 
-  return { lesson, phase: phase ?? null, questions }
+  const phaseLessons = phase
+    ? await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.phaseId, phase.id))
+        .orderBy(asc(lessons.position))
+    : []
+
+  return { lesson, phase: phase ?? null, questions, phaseLessons }
 }
 
 export async function getCompletedLessonIds(userId: string): Promise<Set<string>> {

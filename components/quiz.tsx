@@ -15,7 +15,7 @@ export function Quiz({ lessonId, questions }: Props) {
   const [saveError, setSaveError] = useState<string | null>(null)
 
   const totalCorrect = questions.filter(
-    (q) => answers[q.id] === q.correctOptionId
+    (q) => answers[q.id] === q.correctOptionId,
   ).length
   const pct = Math.round((totalCorrect / questions.length) * 100)
 
@@ -48,32 +48,33 @@ export function Quiz({ lessonId, questions }: Props) {
   const allAnswered = Object.keys(answers).length === questions.length
 
   return (
-    <div className="my-8 p-6 border border-gray-300 rounded-lg bg-white shadow-sm">
-      <h2 className="text-2xl font-bold mb-4 text-gray-900">Quiz</h2>
+    <div className="my-8 rounded-[16px] border border-line bg-surface p-6 shadow-card">
+      <h2 className="mb-4 text-2xl font-bold tracking-tight">Quiz</h2>
 
       <ol className="space-y-6">
         {questions.map((q, i) => (
           <li key={q.id}>
-            <p className="font-medium text-gray-900 mb-3">
+            <p className="mb-3 font-semibold text-ink">
               {i + 1}. {q.question}
             </p>
             <div className="space-y-2">
               {q.options.map((opt: QuizOption) => {
                 const isAnswered = answers[q.id] === opt.id
                 const isCorrect = submitted && opt.id === q.correctOptionId
-                const isWrong = submitted && isAnswered && opt.id !== q.correctOptionId
+                const isWrong =
+                  submitted && isAnswered && opt.id !== q.correctOptionId
 
                 return (
                   <label
                     key={opt.id}
-                    className={`flex items-start gap-2 p-3 rounded border cursor-pointer transition-colors ${
+                    className={`flex cursor-pointer items-start gap-3 rounded-[12px] border p-3 transition-colors ${
                       isCorrect
-                        ? 'border-green-500 bg-green-50'
+                        ? 'border-accent bg-accent-soft'
                         : isWrong
-                          ? 'border-red-500 bg-red-50'
+                          ? 'border-danger bg-danger/5'
                           : isAnswered
-                            ? 'border-blue-400 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-accent bg-accent-soft/40'
+                            : 'border-line hover:border-line-strong'
                     }`}
                   >
                     <input
@@ -83,14 +84,14 @@ export function Quiz({ lessonId, questions }: Props) {
                       checked={isAnswered}
                       disabled={submitted}
                       onChange={() => setAnswers({ ...answers, [q.id]: opt.id })}
-                      className="mt-1"
+                      className="mt-1 accent-accent"
                     />
-                    <span className="flex-1 text-gray-800">{opt.text}</span>
+                    <span className="flex-1 text-ink">{opt.text}</span>
                     {submitted && isCorrect && (
-                      <span className="text-green-600 text-sm">✓</span>
+                      <span className="text-sm font-bold text-accent-strong">✓</span>
                     )}
                     {submitted && isWrong && (
-                      <span className="text-red-600 text-sm">✗</span>
+                      <span className="text-sm font-bold text-danger">✗</span>
                     )}
                   </label>
                 )
@@ -105,24 +106,24 @@ export function Quiz({ lessonId, questions }: Props) {
           <button
             onClick={submit}
             disabled={!allAnswered || saving}
-            className="px-5 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full bg-accent px-5 py-2 font-bold text-white transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? 'Salvando...' : 'Enviar respostas'}
           </button>
         ) : (
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="text-lg font-semibold">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="text-lg font-semibold text-ink">
               Pontuação:{' '}
-              <span className={pct >= 70 ? 'text-green-600' : 'text-amber-600'}>
+              <span className={pct >= 70 ? 'text-accent-strong' : 'text-amber-600'}>
                 {pct}%
               </span>{' '}
-              <span className="text-gray-500 text-sm font-normal">
+              <span className="text-sm font-normal text-ink-muted">
                 ({totalCorrect}/{questions.length})
               </span>
             </div>
             <button
               onClick={reset}
-              className="px-3 py-1 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
+              className="rounded-full border border-line-strong px-3 py-1 text-sm text-ink-secondary transition-colors hover:bg-background-hover"
             >
               Tentar de novo
             </button>
@@ -131,13 +132,13 @@ export function Quiz({ lessonId, questions }: Props) {
       </div>
 
       {!allAnswered && !submitted && (
-        <p className="text-sm text-gray-500 mt-3">
+        <p className="mt-3 text-sm text-ink-muted">
           Responda todas as perguntas para enviar.
         </p>
       )}
 
       {saveError && (
-        <p className="text-sm text-amber-700 bg-amber-50 p-2 rounded mt-3">
+        <p className="mt-3 rounded-[12px] bg-amber-50 p-2 text-sm text-amber-800">
           Não salvou progresso: {saveError}
         </p>
       )}
