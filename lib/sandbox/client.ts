@@ -98,22 +98,41 @@ export async function destroySandbox(sandboxId: string): Promise<void> {
 }
 
 /**
- * A CLI mistura warnings (stdout/stderr) com JSON. Estratégia: encontrar o
- * último `{` e parsear até o `}` final balanceado.
+ * A CLI mistura warnings (stdout/stderr) com JSON. Estratégia: procurar o
+ * último bloco JSON balanceado — testa candidatos do fim ao início até achar
+ * um que parseie (resiste a JSON aninhado e warnings antes/depois).
  */
-function parseJsonFromMixedOutput(output: string): SandboxJson | null {
-  const start = output.lastIndexOf('{')
-  if (start === -1) return null
-  let depth = 0
-  for (let i = start; i < output.length; i++) {
-    if (output[i] === '{') depth++
-    else if (output[i] === '}') {
-      depth--
-      if (depth === 0) {
-        try {
-          return JSON.parse(output.slice(start, i + 1)) as SandboxJson
-        } catch {
-          return null
+export function parseJsonFromMixedOutput(output: string): SandboxJson | null {
+  // Todas as posições de abertura de objeto, da última para a primeira
+  const openPositions: number[] = []
+  for (let i = 0; i < output.length; i++) {
+    if (output[i] === '{') openPositions.push(i)
+  }
+
+  for (let k = openPositions.length - 1; k >= 0; k--) {
+    const start = openPositions[k]
+    let depth = 0
+    for (let i = start; i < output.length; i++) {
+      if (output[i] === '{') depth++
+      else if (output[i] === '}') {
+        depth--
+        if (depth === 0) {
+          try {
+            const parsed = JSON.parse(output.slice(start, i + 1))
+            // Só aceita objeto com `id` (a forma do sandbox JSON) — pula
+            // objetos aninhados menores (ex: meta) sem id
+            if (
+              parsed &&
+              typeof parsed === 'object' &&
+              !Array.isArray(parsed) &&
+              typeof parsed.id === 'string'
+            ) {
+              return parsed as SandboxJson
+            }
+          } catch {
+            // tenta o próximo candidato
+          }
+          break
         }
       }
     }
@@ -121,6 +140,6 @@ function parseJsonFromMixedOutput(output: string): SandboxJson | null {
   return null
 }
 
-function shellQuote(s: string): string {
+export function shellQuote(s: string): string {
   return `'${s.replace(/'/g, `'\\''`)}'`
 }

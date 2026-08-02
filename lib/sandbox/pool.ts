@@ -59,6 +59,13 @@ export function poolStats(): { users: number; sandboxes: string[] } {
 }
 
 /**
+ * Limpa o pool (usado em testes; em produção o pool vive pela sessão).
+ */
+export function resetPool(): void {
+  warmPool.clear()
+}
+
+/**
  * Tamanho máximo do pool — evita vazar sandboxes se usuários não saem.
  * Quando o limite é atingido, destrói o sandbox mais antigo (FIFO).
  */
