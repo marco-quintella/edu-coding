@@ -37,7 +37,6 @@ export function SandboxRunner({
   const [duration, setDuration] = useState<number | null>(null)
   const [apiKey, setApiKey] = useState('')
   const [showKey, setShowKey] = useState(false)
-  const [authError, setAuthError] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   function run() {
@@ -45,7 +44,6 @@ export function SandboxRunner({
     setError('')
     setExitCode(null)
     setDuration(null)
-    setAuthError(false)
 
     startTransition(async () => {
       try {
@@ -60,10 +58,6 @@ export function SandboxRunner({
           credentials: 'include',
         })
         const data: ExecResponse = await res.json()
-        if (res.status === 401) {
-          setAuthError(true)
-          return
-        }
         if (data.error) {
           setError(data.message ?? data.error)
           return
@@ -112,32 +106,11 @@ export function SandboxRunner({
         }}
       />
 
-      {(output || error || duration !== null || authError) && (
+      {(output || error || duration !== null) && (
         <div className="min-h-[80px] bg-[#0e1116] p-4 font-mono text-xs text-gray-100">
           {output && <pre className="whitespace-pre-wrap">{output}</pre>}
           {error && (
             <pre className="mt-2 whitespace-pre-wrap text-red-400">{error}</pre>
-          )}
-          {authError && (
-            <div className="mt-1">
-              <p className="text-amber-400">
-                Você precisa estar logado para executar o código.
-              </p>
-              <div className="mt-2 flex gap-2">
-                <a
-                  href="/login"
-                  className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-white hover:bg-accent-strong"
-                >
-                  Fazer login
-                </a>
-                <a
-                  href="/signup"
-                  className="rounded-full border border-line-strong px-3 py-1 text-xs font-bold text-gray-300 hover:bg-white/10"
-                >
-                  Criar conta
-                </a>
-              </div>
-            </div>
           )}
           <div className="mt-3 flex gap-4 text-xs text-gray-500">
             {exitCode !== null && (

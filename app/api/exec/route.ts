@@ -2,47 +2,27 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
 import { execWarm } from '@/lib/sandbox/pool'
+import { checkRateLimit, incrementRateLimit, WINDOW_LIMIT } from '@/lib/sandbox/rate-limit'
 import { db } from '@/lib/db'
 import { lessons } from '@/lib/db/schema'
-import { execUsage } from '@/drizzle/exec-usage.schema'
 import { getCurrentUser } from '@/lib/auth/server'
 import { ExecRequest } from './schema'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
-/** Limite de execuções por user/dia (sandbox é pago!) */
-const DAILY_LIMIT = 50
-
-function todayUTC(): string {
-  return new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+/**
+ * Extrai o IP do cliente (via headers de proxy — Railway/Cloudflare).
+ */
+function clientIp(req: NextRequest): string {
+  const fwd = req.headers.get('x-forwarded-for')
+  if (fwd) return fwd.split(',')[0].trim()
+  const real = req.headers.get('x-real-ip')
+  if (real) return real.trim()
+  return 'unknown'
 }
 
 export async function POST(req: NextRequest) {
-  const user = await getCurrentUser()
-  if (!user) {
-    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
-  }
-
-  // --- Rate limit (sandbox é recurso pago) ---
-  const date = todayUTC()
-  const [usageRow] = await db
-    .select()
-    .from(execUsage)
-    .where(eq(execUsage.userId, user.id))
-    .limit(1)
-
-  const count = usageRow?.date === date ? usageRow.count : 0
-  if (count >= DAILY_LIMIT) {
-    return NextResponse.json(
-      {
-        error: 'rate_limited',
-        message: `Limite diário de ${DAILY_LIMIT} execuções atingido. Volte amanhã.`,
-      },
-      { status: 429 }
-    )
-  }
-
   let body: unknown
   try {
     body = await req.json()
@@ -58,6 +38,23 @@ export async function POST(req: NextRequest) {
   }
   const { lessonId, code, apiKey } = parsed.data
 
+  // Autenticação é opcional — visitante pode rodar (fase de beta).
+  // Quando logado, usa o userId como chave do rate limit (mais justo que IP).
+  const user = await getCurrentUser()
+  const rateKey = user ? `u:${user.id}` : `ip:${clientIp(req)}`
+
+  // --- Rate limit anti-abuso (janela de 10min, generoso) ---
+  const rl = await checkRateLimit(rateKey)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      {
+        error: 'rate_limited',
+        message: `Muitas execuções em pouco tempo. Tente de novo em ${rl.retryAfterSec}s.`,
+      },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec) } }
+    )
+  }
+
   const [lesson] = await db
     .select()
     .from(lessons)
@@ -70,24 +67,15 @@ export async function POST(req: NextRequest) {
   if (apiKey) env.OPENAI_API_KEY = apiKey
 
   try {
-    // Usa o warm pool (sandbox quente por usuário) — elimina cold start
-    const result = await execWarm(user.id, code, {
+    // Warm pool: sandbox quente por chave (user ou IP do visitante)
+    const result = await execWarm(rateKey, code, {
       checkpointId: lesson.checkpointId,
       env,
       timeoutSec: 30,
     })
 
     // Incrementa contador após execução bem-sucedida
-    await db
-      .insert(execUsage)
-      .values({ userId: user.id, date, count: 1 })
-      .onConflictDoUpdate({
-        target: [execUsage.userId, execUsage.date],
-        set: {
-          count: count + 1,
-          updatedAt: new Date(),
-        },
-      })
+    await incrementRateLimit(rateKey)
 
     const cleanStderr = result.stderr
       .split('\n')
@@ -109,3 +97,6 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+
+// Exports para testes
+export { clientIp, WINDOW_LIMIT }
