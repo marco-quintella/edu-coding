@@ -19,6 +19,66 @@ model = LinearRegression().fit(X, y)
 print(f"slope={model.coef_[0]:.2f}")
 print(f"intercept={model.intercept_:.2f}")`,
 
+  // --- Exercícios da lição de Regressão Linear ---
+  'regressao-ex1': `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Exercício 1: descubra slope e intercept para y = 3x + 5
+X = np.array([[1], [2], [3], [4], [5]])
+y = np.array([8, 11, 14, 17, 20])
+
+model = LinearRegression().fit(X, y)
+print(f"slope={model.coef_[0]:.2f}")
+print(f"intercept={model.intercept_:.2f}")`,
+
+  'regressao-ex2': `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Exercício 2: dados com ruído — y ≈ 2x + 1
+rng = np.random.RandomState(42)
+X = np.linspace(0, 10, 50).reshape(-1, 1)
+y = 2 * X.ravel() + 1 + rng.normal(0, 1.5, 50)
+
+model = LinearRegression().fit(X, y)
+print(f"slope={model.coef_[0]:.2f}")
+print(f"intercept={model.intercept_:.2f}")
+print(f"r2={model.score(X, y):.3f}")`,
+
+  'regressao-ex3': `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Exercício 3: seu desafio — complete os dados abaixo
+# Complete o array y para que y = 4x - 3 (x = 1..6)
+X = np.array([[1], [2], [3], [4], [5], [6]])
+y = np.array([1, 5, 9, 13, 17, 21])  # <- complete
+
+model = LinearRegression().fit(X, y)
+print(f"slope={model.coef_[0]:.2f}")
+print(f"intercept={model.intercept_:.2f}")`,
+
+  'regressao-projeto': `from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+# Projeto: prever preço de imóvel (área m² -> preço R$)
+# Área em m²
+X = np.array([[50], [60], [75], [90], [110], [130], [150], [170]])
+# Preço em milhares de R$
+y = np.array([250, 300, 380, 460, 560, 660, 780, 880])
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42
+)
+
+model = LinearRegression().fit(X_train, y_train)
+print(f"slope={model.coef_[0]:.2f} (R$/m²)")
+print(f"intercept={model.intercept_:.2f}")
+print(f"r2_teste={model.score(X_test, y_test):.3f}")
+
+# Previsão: quanto custa um imóvel de 200 m²?
+preco = model.predict([[200]])[0]
+print(f"200m² custa R$ {preco:.0f} mil")`,
+
   'arvores-decisao': `from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split

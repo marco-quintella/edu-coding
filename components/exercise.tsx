@@ -1,0 +1,147 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Editor from '@monaco-editor/react'
+import { useSandboxExec } from './use-sandbox-exec'
+
+/**
+ * Verifica se o output bate com o esperado (regex case-insensitive).
+ * Exportado para testes unitários.
+ */
+export function outputMatches(output: string, expectedOutput: string): boolean {
+  const combined = (output || '').trim()
+  if (combined.length === 0) return false
+  try {
+    return new RegExp(expectedOutput, 'i').test(combined)
+  } catch {
+    // regex inválida — fallback para includes
+    return combined.includes(expectedOutput)
+  }
+}
+
+interface Props {
+  lessonId: string
+  /** Chave no registro de códigos iniciais (lib/lessons/initial-codes.ts) */
+  codeKey: string
+  /** Enunciado do exercício */
+  title?: string
+  /** O que procurar no stdout para considerar correto (regex ou string) */
+  expectedOutput: string
+  /** Dica exibida quando o output não bate */
+  hint?: string
+  /** Mostrar o output esperado ao aluno */
+  showExpected?: boolean
+}
+
+export function Exercise({
+  lessonId,
+  codeKey,
+  title = 'Exercício',
+  expectedOutput,
+  hint,
+  showExpected = true,
+}: Props) {
+  const { output, error, exitCode, duration, isPending, run } = useSandboxExec()
+  const [code, setCode] = useState('')
+
+  // Carrega o código inicial do registro (client-side, após mount)
+  const [initialCode, setInitialCode] = useState('')
+  useEffect(() => {
+    let cancelled = false
+    import('@/lib/lessons/initial-codes').then((m) => {
+      if (cancelled) return
+      const c = m.getInitialCode(codeKey)
+      setInitialCode(c)
+      setCode(c)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [codeKey])
+
+  function handleRun() {
+    run(lessonId, code)
+  }
+
+  // Verifica o resultado após execução (roda junto com o exec)
+  const outputToCheck = output + '\n' + error
+  const isCorrect = outputMatches(outputToCheck, expectedOutput)
+
+  // Mostra o veredito automaticamente quando o output chega
+  const showVerdict = (output || error) && !isPending
+  const verdict = showVerdict ? isCorrect : null
+
+  return (
+    <div className="my-8 overflow-hidden rounded-[16px] border border-line bg-surface shadow-card">
+      <div className="flex items-center justify-between gap-2 border-b border-line bg-surface-2 px-4 py-2.5">
+        <span className="text-[13px] font-bold text-ink">{title}</span>
+        <span className="font-mono text-[11px] text-ink-muted">exercício</span>
+      </div>
+
+      {initialCode && (
+        <div className="px-4 pt-3 text-sm text-ink-secondary">
+          <p>Edite o código e clique em <strong className="text-ink">Rodar</strong>. O sistema verifica se a saída está correta.</p>
+        </div>
+      )}
+
+      <Editor
+        height="200px"
+        defaultLanguage="python"
+        value={code}
+        onChange={(v) => setCode(v ?? '')}
+        theme="vs-dark"
+        options={{
+          minimap: { enabled: false },
+          fontSize: 13,
+          scrollBeyondLastLine: false,
+          automaticLayout: true,
+        }}
+      />
+
+      <div className="flex items-center gap-2 border-t border-line bg-surface-2 px-4 py-2">
+        <button
+          onClick={handleRun}
+          disabled={isPending}
+          className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-[13px] font-bold text-white transition-all hover:bg-accent-strong active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isPending ? '⏳ rodando...' : '▶ Rodar'}
+        </button>
+        {showExpected && (
+          <span className="ml-auto font-mono text-[11px] text-ink-muted">
+            esperado: <code className="text-accent-strong">{expectedOutput}</code>
+          </span>
+        )}
+      </div>
+
+      {(output || error || duration !== null) && (
+        <div className="min-h-[60px] bg-[#0e1116] p-4 font-mono text-xs text-gray-100">
+          {output && <pre className="whitespace-pre-wrap">{output}</pre>}
+          {error && <pre className="mt-2 whitespace-pre-wrap text-red-400">{error}</pre>}
+          <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+            {exitCode !== null && (
+              <span>
+                exit:{' '}
+                <span className={exitCode === 0 ? 'text-emerald-400' : 'text-red-400'}>
+                  {exitCode}
+                </span>
+              </span>
+            )}
+            {duration !== null && <span>⏱ {duration}ms</span>}
+          </div>
+        </div>
+      )}
+
+      {verdict === true && (
+        <div className="border-t border-accent/40 bg-accent-soft px-4 py-3 text-sm font-semibold text-accent-strong">
+          ✓ Correto! A saída bate com o esperado.
+        </div>
+      )}
+      {verdict === false && (
+        <div className="border-t border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
+          Ainda não. A saída não corresponde ao esperado.
+          {hint && <div className="mt-1 text-xs text-ink-secondary">💡 {hint}</div>}
+        </div>
+      )}
+    </div>
+  )
+}

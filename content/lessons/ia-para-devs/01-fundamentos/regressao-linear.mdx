@@ -1,13 +1,47 @@
-A regressão linear é o "Hello World" do machine learning supervisionado. Quando você tem um conjunto de pontos `(x, y)` e quer encontrar a reta que melhor representa a relação entre eles, está fazendo regressão linear.
+A regressão linear é o "Hello World" do machine learning supervisionado — e por um bom motivo: ela resolve o problema mais fundamental do ML, **prever um número contínuo a partir de outros números**. Preço de imóvel, temperatura amanhã, faturamento do mês. Todos são problemas de regressão.
+
+Antes de qualquer rede neural, entenda a régua mais simples: uma reta.
+
+## O problema
+
+Você tem um conjunto de pontos `(x, y)` e quer encontrar a **reta que melhor representa** a relação entre eles.
+
+A pergunta central é: **o que significa "melhor"?** E a resposta define todo o campo de regressão.
 
 ## A fórmula
 
-A equação da reta é `y = mx + b`, onde:
+A equação de uma reta é `y = mx + b`, onde:
 
 - `m` é o **coeficiente angular** (slope) — o quanto `y` muda quando `x` cresce 1
 - `b` é o **intercepto** (intercept) — o valor de `y` quando `x = 0`
 
-O trabalho do algoritmo é encontrar `m` e `b` que minimizam o erro quadrático entre a reta prevista e os dados reais (método dos mínimos quadrados).
+O trabalho do algoritmo é encontrar `m` e `b` que **minimizam o erro** entre a reta prevista e os dados reais.
+
+## Por que erro quadrático?
+
+Para cada ponto `(x_i, y_i)`, a reta prevê `ŷ_i = m·x_i + b`. O erro é `y_i - ŷ_i`. Duas escolhas naturais:
+
+- **Erro absoluto** `|y_i - ŷ_i|`: trata todos os erros igualmente
+- **Erro quadrático** `(y_i - ŷ_i)²`: **penaliza erros grandes muito mais** (o quadrado amplifica)
+
+Por que o quadrático venceu? Três razões práticas:
+
+1. **Erros grandes são piores que muitos pequenos** — um erro de 10 unidades é 4× pior que um de 5, não 2× (por causa do quadrado). Isso é desejável na maioria dos problemas reais.
+2. **A função é diferenciável e convexa** — existe um único mínimo global, e o gradiente aponta sempre para ele. O algoritmo nunca fica preso em "mínimo local".
+3. **Tem solução fechada** (fórmula direta, sem iteração) — os mínimos quadrados ordinários (OLS) têm fórmula analítica.
+
+> **Intuição:** o erro quadrático é a "distância" entre o que o modelo prevê e o que aconteceu, elevada ao quadrado para punir erros grosseiros. O modelo ajusta `m` e `b` até essa soma ser a menor possível.
+
+## Mínimos quadrados (OLS)
+
+O sklearn resolve `min Σ(y_i - (m·x_i + b))²` de forma exata. Para regressão simples, a solução tem fórmula fechada:
+
+```python
+m = Σ(x_i - x̄)(y_i - ȳ) / Σ(x_i - x̄)²
+b = ȳ - m·x̄
+```
+
+Não precisa decorar — mas entenda o que ela faz: `m` é a **covariância normalizada** (como `x` e `y` variam juntos, dividido pela variância de `x`), e `b` força a reta a passar pelo **centro de massa** dos dados `(x̄, ȳ)`.
 
 ## Hands-on
 
@@ -15,20 +49,91 @@ Clique em **▶ Run** pra executar sklearn num sandbox real:
 
 <SandboxRunner
   lessonSlug="regressao-linear"
-  lessonId="79408107-32da-4d11-b007-bf2c7be4a753"
+  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
 />
 
 **Saída esperada:** `slope=2.00`, `intercept=0.00`
 
-Tente mudar os valores de `X` e `y` e rode de novo. Por exemplo, se `y = 2x + 10`, qual deve ser `slope` e `intercept`?
+Tente mudar os valores de `X` e `y` e rode de novo. Se `y = 2x + 10`, qual deve ser `slope` e `intercept`?
+
+## Exercício 1: leitura de dados perfeitos
+
+Dados **sem ruído** são o caso mais simples: a reta existe exatamente, e o modelo deve achá-la com precisão.
+
+<Exercise
+  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  codeKey="regressao-ex1"
+  title="Exercício 1 — Descubra a reta exata"
+  expectedOutput="slope=3.00"
+  hint="Os dados seguem y = 3x + 5. Rode e observe: slope deve ser 3.00, intercept 5.00."
+/>
+
+Antes de rodar, tente **prever** o resultado na sua cabeça: os pontos são `(1,8), (2,11), (3,14)...` — de quanto em quanto `y` cresce quando `x` cresce 1? Esse é o `slope`.
+
+## R² — o quanto o modelo explica
+
+Nem todo modelo é perfeito. Com dados reais, a reta não passa por todos os pontos. O **R² score** mede quanto da variância dos dados o modelo explica:
+
+- `R² = 1` → previsão perfeita (sem ruído)
+- `R² = 0` → o modelo não é melhor que "chutar a média"
+- `R² < 0` → pior que chutar a média (modelo ruim ou relação não-linear)
+
+## Exercício 2: dados com ruído
+
+Aqui o modelo **não pode** acertar tudo — existe ruído. O valor de `R²` te diz quão bem a reta captura o padrão.
+
+<Exercise
+  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  codeKey="regressao-ex2"
+  title="Exercício 2 — Ajuste com ruído"
+  expectedOutput="slope=2.00"
+  hint="Os dados têm ruído mas a tendência é y ≈ 2x + 1. Observe que slope ≈ 2.00 mesmo com ruído — e o R² é menor que 1."
+/>
+
+Repare: o slope ainda chega perto de `2.00` **apesar do ruído**. Isso é a força da regressão: ela extrai o sinal do meio do ruído. Mas o `R²` (0.9?) mostra que nem toda a variação é explicada.
+
+## Exercício 3: seu desafio
+
+Agora você completa os dados. O objetivo: fazer o modelo **descobrir** a relação que você criar.
+
+<Exercise
+  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  codeKey="regressao-ex3"
+  title="Exercício 3 — Complete os dados"
+  expectedOutput="slope=4.00"
+  hint="Os pontos devem formar uma reta com inclinação 4 e intercept -3. Teste: quando x=2, y deve ser 5; quando x=3, y=9. O padrão cresce de 4 em 4."
+/>
+
+O exercício está pré-preenchido com `y = [1, 5, 9, 13, 17, 21]` — que é `4x - 3`. Tente **quebrar** o modelo: mude um valor para um número fora do padrão (ex: o terceiro `y` para `100`) e rode. O que acontece com o `slope`? Com o `intercept`? A reta se "dobra" para acomodar o ponto estranho — é o erro quadrático puxando tudo.
 
 ## Conceitos importantes
 
 - **Regressão simples**: uma variável independente (`X` 1D)
-- **Regressão múltipla**: várias variáveis independentes (`X` 2D)
+- **Regressão múltipla**: várias variáveis independentes (`X` 2D) — mesma ideia, mais dimensões
 - **Mínimos quadrados OLS**: método de otimização usado pelo sklearn
-- **R² score**: varia de 0 a 1, mede o quanto o modelo explica a variância dos dados
+- **R² score**: varia de 0 a 1 (ou menos), mede o quanto o modelo explica a variância
+- **Overfitting vs ruído**: com poucos dados, a reta pode "perseguir" o ruído em vez do padrão
+
+## Projeto: prevendo preço de imóvel
+
+Agora o caso real: área do imóvel em m² → preço em milhares de R$. Os dados são sintéticos, mas o fluxo é o de verdade: **dividir em treino/teste** (para saber se o modelo generaliza, não só decora), **treinar**, **avaliar** com R² no teste, e **prever** valores novos.
+
+<Exercise
+  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  codeKey="regressao-projeto"
+  title="Projeto — Preço de imóvel"
+  expectedOutput="r2_teste=0.9"
+  hint="Um R² de teste acima de 0.9 indica um modelo sólido. O slope é o preço por m² (R$ 5.000/m² ≈ 5.00 mil/m²)."
+/>
+
+Responda mentalmente antes de rodar:
+
+1. **Qual o preço por m²?** (o slope)
+2. **Qual o R² no teste?** (generaliza bem?)
+3. **Quanto custa 200 m²?**
+
+Depois de rodar, volte e compare com suas respostas. Se o R² no teste fosse 0.5, o que isso significaria para quem compra um imóvel de 200 m²?
 
 ## Próximos passos
 
-A regressão linear é a fundação. Tudo o que vem depois — árvores, SVMs, redes neurais — pode ser visto como extensões dessa ideia: encontrar uma função que mapeia entrada → saída minimizando algum erro.
+A regressão linear é a fundação. Tudo o que vem depois — árvores, SVMs, redes neurais — pode ser visto como extensões dessa ideia: encontrar uma função que mapeia entrada → saída minimizando algum erro. Mas agora você sabe **o que o erro significa** e **como medir se o modelo funciona** — duas coisas que separam quem decora sklearn de quem entende ML.

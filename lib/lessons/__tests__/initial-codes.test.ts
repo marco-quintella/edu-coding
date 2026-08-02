@@ -5,6 +5,10 @@ import { INITIAL_CODES, getInitialCode } from '../initial-codes'
 const EXPECTED_SLUGS = [
   // Fase 01
   'regressao-linear',
+  'regressao-ex1',
+  'regressao-ex2',
+  'regressao-ex3',
+  'regressao-projeto',
   'arvores-decisao',
   'knn-svm',
   'knn-svm-svm',
