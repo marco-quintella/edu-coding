@@ -12,6 +12,28 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 /**
+ * Resolve a lição por `lessonId` (legado) ou `lessonSlug`.
+ * Slug é preferível: estável entre seeds (UUIDs mudam a cada reseed).
+ */
+async function resolveLesson(body: { lessonId?: string; lessonSlug?: string }) {
+  if (body.lessonId) {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.id, body.lessonId))
+    return lesson
+  }
+  if (body.lessonSlug) {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.slug, body.lessonSlug))
+    return lesson
+  }
+  return undefined
+}
+
+/**
  * Extrai o IP do cliente (via headers de proxy — Railway/Cloudflare).
  */
 function clientIp(req: NextRequest): string {
@@ -36,7 +58,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     )
   }
-  const { lessonId, code, apiKey } = parsed.data
+  const { lessonId, lessonSlug, code, apiKey } = parsed.data
 
   // Autenticação é opcional — visitante pode rodar (fase de beta).
   // Quando logado, usa o userId como chave do rate limit (mais justo que IP).
@@ -55,10 +77,8 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const [lesson] = await db
-    .select()
-    .from(lessons)
-    .where(eq(lessons.id, lessonId))
+  // Resolve a lição por ID (legado) ou slug (estável entre seeds)
+  const lesson = await resolveLesson({ lessonId, lessonSlug })
   if (!lesson) {
     return NextResponse.json({ error: 'lesson_not_found' }, { status: 404 })
   }

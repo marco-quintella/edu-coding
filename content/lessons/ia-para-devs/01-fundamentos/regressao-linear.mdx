@@ -49,7 +49,7 @@ Clique em **▶ Run** pra executar sklearn num sandbox real:
 
 <SandboxRunner
   lessonSlug="regressao-linear"
-  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  lessonSlug="regressao-linear"
 />
 
 **Saída esperada:** `slope=2.00`, `intercept=0.00`
@@ -61,7 +61,7 @@ Tente mudar os valores de `X` e `y` e rode de novo. Se `y = 2x + 10`, qual deve 
 Dados **sem ruído** são o caso mais simples: a reta existe exatamente, e o modelo deve achá-la com precisão.
 
 <Exercise
-  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  lessonSlug="regressao-linear"
   codeKey="regressao-ex1"
   title="Exercício 1 — Descubra a reta exata"
   expectedOutput="slope=3.00"
@@ -83,7 +83,7 @@ Nem todo modelo é perfeito. Com dados reais, a reta não passa por todos os pon
 Aqui o modelo **não pode** acertar tudo — existe ruído. O valor de `R²` te diz quão bem a reta captura o padrão.
 
 <Exercise
-  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  lessonSlug="regressao-linear"
   codeKey="regressao-ex2"
   title="Exercício 2 — Ajuste com ruído"
   expectedOutput="slope=2.00"
@@ -97,7 +97,7 @@ Repare: o slope ainda chega perto de `2.00` **apesar do ruído**. Isso é a for�
 Agora você completa os dados. O objetivo: fazer o modelo **descobrir** a relação que você criar.
 
 <Exercise
-  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  lessonSlug="regressao-linear"
   codeKey="regressao-ex3"
   title="Exercício 3 — Complete os dados"
   expectedOutput="slope=4.00"
@@ -119,7 +119,7 @@ O exercício está pré-preenchido com `y = [1, 5, 9, 13, 17, 21]` — que é `4
 Agora o caso real: área do imóvel em m² → preço em milhares de R$. Os dados são sintéticos, mas o fluxo é o de verdade: **dividir em treino/teste** (para saber se o modelo generaliza, não só decora), **treinar**, **avaliar** com R² no teste, e **prever** valores novos.
 
 <Exercise
-  lessonId="6534612f-5b2b-4350-ab65-f39087f2c37a"
+  lessonSlug="regressao-linear"
   codeKey="regressao-projeto"
   title="Projeto — Preço de imóvel"
   expectedOutput="r2_teste=0.9"

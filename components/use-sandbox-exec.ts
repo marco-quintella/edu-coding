@@ -18,7 +18,7 @@ export function useSandboxExec() {
   const [duration, setDuration] = useState<number | null>(null)
   const [isPending, startTransition] = useTransition()
 
-  function run(lessonId: string, code: string, apiKey?: string) {
+  function run(lessonId: string | undefined, code: string, apiKey?: string, lessonSlug?: string) {
     setOutput('')
     setError('')
     setExitCode(null)
@@ -31,6 +31,7 @@ export function useSandboxExec() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             lessonId,
+            lessonSlug,
             code,
             apiKey: apiKey?.trim() || undefined,
           }),

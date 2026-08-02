@@ -1,20 +1,13 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { getInitialCode } from '@/lib/lessons/initial-codes'
-
-interface ExecResponse {
-  stdout?: string
-  stderr?: string
-  exitCode?: number
-  durationMs?: number
-  error?: string
-  message?: string
-}
+import { useSandboxExec } from './use-sandbox-exec'
 
 interface Props {
-  lessonId: string
+  /** Legado: ID da lição (UUID). Prefira lessonSlug. */
+  lessonId?: string
   /** Slug da lição — usado para buscar o código inicial no registro central. */
   lessonSlug?: string
   /** Fallback legado: código inline (se não houver lessonSlug). */
@@ -31,45 +24,12 @@ export function SandboxRunner({
   // Código inicial: registro central (por slug) > prop inline > vazio
   const codeFromRegistry = lessonSlug ? getInitialCode(lessonSlug) : ''
   const [code, setCode] = useState(codeFromRegistry || initialCode || '')
-  const [output, setOutput] = useState('')
-  const [error, setError] = useState('')
-  const [exitCode, setExitCode] = useState<number | null>(null)
-  const [duration, setDuration] = useState<number | null>(null)
   const [apiKey, setApiKey] = useState('')
   const [showKey, setShowKey] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const { output, error, exitCode, duration, isPending, run } = useSandboxExec()
 
-  function run() {
-    setOutput('')
-    setError('')
-    setExitCode(null)
-    setDuration(null)
-
-    startTransition(async () => {
-      try {
-        const res = await fetch('/api/exec', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            lessonId,
-            code,
-            apiKey: apiKey.trim() || undefined,
-          }),
-          credentials: 'include',
-        })
-        const data: ExecResponse = await res.json()
-        if (data.error) {
-          setError(data.message ?? data.error)
-          return
-        }
-        setOutput(data.stdout ?? '')
-        setError(data.stderr ?? '')
-        setExitCode(data.exitCode ?? null)
-        setDuration(data.durationMs ?? null)
-      } catch (e) {
-        setError(e instanceof Error ? e.message : String(e))
-      }
-    })
+  function handleRun() {
+    run(lessonId, code, apiKey, lessonSlug)
   }
 
   return (
@@ -84,7 +44,7 @@ export function SandboxRunner({
           main.py
         </span>
         <button
-          onClick={run}
+          onClick={handleRun}
           disabled={isPending}
           className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-[13px] font-bold text-white transition-all hover:bg-accent-strong active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
         >

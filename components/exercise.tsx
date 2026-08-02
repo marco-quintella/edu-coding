@@ -20,7 +20,10 @@ export function outputMatches(output: string, expectedOutput: string): boolean {
 }
 
 interface Props {
-  lessonId: string
+  /** Legado: ID da lição (UUID). Prefira lessonSlug. */
+  lessonId?: string
+  /** Slug da lição — estável entre seeds (preferível ao lessonId). */
+  lessonSlug?: string
   /** Chave no registro de códigos iniciais (lib/lessons/initial-codes.ts) */
   codeKey: string
   /** Enunciado do exercício */
@@ -35,6 +38,7 @@ interface Props {
 
 export function Exercise({
   lessonId,
+  lessonSlug,
   codeKey,
   title = 'Exercício',
   expectedOutput,
@@ -60,7 +64,7 @@ export function Exercise({
   }, [codeKey])
 
   function handleRun() {
-    run(lessonId, code)
+    run(lessonId, code, undefined, lessonSlug)
   }
 
   // Verifica o resultado após execução (roda junto com o exec)
