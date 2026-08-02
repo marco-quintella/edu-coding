@@ -14,6 +14,11 @@ if [ "$RUN_SEED" = "true" ]; then
   tsx scripts/seed-ia-para-devs.ts
 fi
 
+if [ "$RUN_RENAME" = "true" ]; then
+  echo "[start] RUN_RENAME=true — renomeando curso..."
+  tsx scripts/rename-course.ts
+fi
+
 echo "[start] garantindo railway CLI..."
 command -v railway >/dev/null 2>&1 || npm i -g @railway/cli --silent
 
