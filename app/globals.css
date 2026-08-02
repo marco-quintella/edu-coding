@@ -124,6 +124,11 @@ body {
   font-size: 0.85em;
   font-weight: 500;
   color: var(--accent-strong);
+  /* Remove os backticks decorativos que o typography plugin adiciona */
+  &::before,
+  &::after {
+    content: none;
+  }
 }
 /* Código dentro de pre mantém contraste alto (fundo escuro fixo) */
 .prose pre code {
