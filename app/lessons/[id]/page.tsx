@@ -2,10 +2,9 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getLessonById, getCompletedLessonIds } from '@/lib/db/queries'
 import { getCurrentUser } from '@/lib/auth/server'
-import { mdxComponents } from '@/components/mdx-components'
+import { renderMdx } from '@/lib/mdx/render'
 import { Quiz } from '@/components/quiz'
 import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
@@ -134,7 +133,7 @@ export default async function LessonPage({
             </header>
 
             <article className="prose prose-zinc mt-8 max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-p:text-ink-secondary prose-a:text-accent-strong dark:prose-invert">
-              <MDXRemote source={source} components={mdxComponents} />
+              {await renderMdx(source)}
             </article>
 
             {questions.length > 0 && (
