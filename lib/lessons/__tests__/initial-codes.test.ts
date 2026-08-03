@@ -44,7 +44,11 @@ const EXPECTED_SLUGS = [
   'langchain-ex2',
   // Fase 04
   'analise-video-audio',
+  'videoaudio-ex1',
+  'videoaudio-ex2',
   'aws-textract',
+  'textract-ex1',
+  'textract-ex2',
   // Fase 05
   'lgpd-privacidade',
   'deteccao-anomalias',

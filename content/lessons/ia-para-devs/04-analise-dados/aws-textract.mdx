@@ -1,4 +1,6 @@
-**Amazon Textract** é o serviço da AWS que extrai texto, tabelas e formulários de documentos digitalizados (PDF, imagem) usando ML — vai além do OCR tradicional, entendendo **estrutura**.
+**Amazon Textract** é o serviço da AWS que extrai texto, tabelas e formulários de documentos digitalizados (PDF, imagem) usando ML — vai além do OCR tradicional, entendendo **estrutura**. O OCR clássico devolve texto "achatado"; o Textract devolve **blocos organizados**: tabelas com células, formulários com pares chave-valor, hierarquia de páginas.
+
+> **Intuição:** um OCR comum é como copiar uma página para texto corrido — você perde a mesa, as colunas, o "nome:" ao lado do valor. O Textract é como ter um estagiário que reescreve o documento **preservando a estrutura** — e devolve tudo em JSON. É essa estrutura que permite automatizar processos (KYC, notas fiscais, contratos).
 
 ## O que extrai
 
@@ -9,10 +11,35 @@
 
 ## Hands-on (conceitual)
 
-<SandboxRunner
+<SandboxRunner lessonSlug="aws-textract" />
+
+## Exercício 1: extração chave-valor
+
+Sem credenciais AWS, você implementa a **mesma lógica** do Textract: recebe o texto bruto do documento e devolve os pares chave-valor estruturados.
+
+<Exercise
   lessonSlug="aws-textract"
-  lessonSlug="aws-textract"
+  codeKey="textract-ex1"
+  title="Exercício 1 — Chave-valor"
+  expectedOutput="nome: Maria Silva"
+  hint="Cada linha 'chave: valor' vira uma entrada no dicionário. No Textract real, os blocos TYPE=KEY_VALUE_SET fazem exatamente isso — mas o resultado é o mesmo JSON estruturado."
 />
+
+**Pergunta-chave:** por que estrutura importa mais que texto bruto? (Resposta: `{nome: "Maria Silva"}` é **consultável e validável** — seu código acessa `dados['nome']` direto. Texto corrido exigiria regex frágil para cada campo.)
+
+## Exercício 2: extração de tabela
+
+O caso mais valioso do Textract: notas fiscais. A tabela precisa virar dados **calculáveis** — e cada item vira uma linha com total.
+
+<Exercise
+  lessonSlug="aws-textract"
+  codeKey="textract-ex2"
+  title="Exercício 2 — Nota fiscal"
+  expectedOutput="TOTAL: R$1336.40"
+  hint="O parser separa cabeçalho das linhas, multiplica qtd x preco por item e soma tudo. No Textract real, as células viriam como blocos TABLE/CELL — seu código faria a mesma montagem."
+/>
+
+**O que observar:** o pipeline de automação de documentos é: **extrair → estruturar → calcular/validar**. Empresas rodam isso em escala com S3 + SQS processando milhares de notas por dia — o Textract é só o primeiro passo do pipeline.
 
 ## Quando usar
 
@@ -46,3 +73,7 @@ Documento → Textract (extrai texto + estrutura)
 - Documentos contêm dados sensíveis → criptografia em trânsito e em repouso
 - LGPD/GDPR: texto extraído pode ser dado pessoal → minimização e retenção definida
 - Nunca logue o conteúdo dos documentos
+
+## Próximos passos
+
+Você viu os serviços de análise multimodal (Fase 04). A Fase 05 fecha o curso com o que separa projetos de IA de produtos de IA: **privacidade, LGPD e detecção de anomalias** em produção.

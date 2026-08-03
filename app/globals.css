@@ -49,6 +49,7 @@
   --text-secondary: #52525b;
   --text-muted: #a1a1aa;
   --accent: #059669;
+  --accent-deep: #065f46; /* hover do botão primário (contraste > 4.5:1) */
   --accent-soft: #ecfdf5;
   --accent-strong: #047857;
   --danger: #dc2626;
@@ -68,6 +69,7 @@
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --accent: #10b981;
+  --accent-deep: #059669; /* hover do botão primário no dark */
   --accent-soft: #0e2b22;
   --accent-strong: #34d399;
   --danger: #f87171;
@@ -87,6 +89,7 @@
   --color-ink-secondary: var(--text-secondary);
   --color-ink-muted: var(--text-muted);
   --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
   --color-accent-soft: var(--accent-soft);
   --color-accent-strong: var(--accent-strong);
   --color-danger: var(--danger);

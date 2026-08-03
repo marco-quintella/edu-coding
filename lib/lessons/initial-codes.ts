@@ -685,6 +685,51 @@ model = MultinomialNB().fit(X, labels)
 novo = vectorizer.transform(["servico excelente, chegou rapido"])
 print("sentimento:", "positivo" if model.predict(novo)[0] == 1 else "negativo")`,
 
+  // --- Exercícios da lição de Análise de Vídeo/Áudio/Texto ---
+  'videoaudio-ex1': `from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+# Reviews de produtos: 1 = positivo, 0 = negativo
+docs = [
+    "otimo produto, recomendo muito",
+    "pessimo atendimento, nao comprem",
+    "entrega rapida e qualidade excelente",
+    "produto veio quebrado, decepcionado",
+]
+labels = [1, 0, 1, 0]
+
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(docs)
+model = MultinomialNB().fit(X, labels)
+
+# Classifica reviews novos (que o modelo nunca viu)
+novos = [
+    "servico excelente, chegou rapido",
+    "pessimo, nao funciona",
+]
+for texto in novos:
+    pred = model.predict(vectorizer.transform([texto]))[0]
+    print(f"{texto!r} -> {'positivo' if pred == 1 else 'negativo'}")`,
+
+  'videoaudio-ex2': `# Simula o pipeline de transcrição de reunião:
+# áudio -> texto (transcrição) -> análise de sentimento por fala
+
+transcricao = [
+    "estamos muito felizes com os resultados do trimestre",
+    "mas o servidor caiu de novo e os clientes reclamaram",
+]
+
+# Análise simples por palavras-chave (sem modelo)
+positivas = {"felizes", "otimo", "excelente", "bom", "cresceu", "sucesso"}
+negativas = {"caiu", "reclamaram", "ruim", "pessimo", "erro", "perdeu"}
+
+for fala in transcricao:
+    palavras = set(fala.lower().split())
+    pos = len(palavras & positivas)
+    neg = len(palavras & negativas)
+    sentimento = "positivo" if pos > neg else ("negativo" if neg > pos else "neutro")
+    print(f"{fala[:35]}... -> {sentimento} (pos={pos}, neg={neg})")`,
+
   'aws-textract': `# AWS Textract — fluxo (requer credenciais AWS, aqui simulamos a estrutura)
 # No sandbox real com credenciais, usaria boto3.
 
@@ -710,6 +755,51 @@ for item in resp["Blocks"]:
 """)
 else:
     print("Credenciais AWS presentes — use boto3 para chamar Textract.")`,
+
+  // --- Exercícios da lição de AWS Textract ---
+  'textract-ex1': `# Simula o Textract extraindo pares chave-valor de um formulário
+# (no Textract real, os blocos TYPE=KEY_VALUE_SET fazem isso)
+
+documento = """nome: Maria Silva
+cpf: 123.456.789-00
+email: maria@example.com
+valor_compra: R$ 450,00"""
+
+def extrai_chave_valor(texto):
+    resultado = {}
+    for linha in texto.strip().split("\\n"):
+        if ":" in linha:
+            chave, valor = linha.split(":", 1)
+            resultado[chave.strip()] = valor.strip()
+    return resultado
+
+dados = extrai_chave_valor(documento)
+print(f"campos extraidos: {list(dados.keys())}")
+print(f"nome: {dados['nome']}")
+print(f"email: {dados['email']}")`,
+
+  'textract-ex2': `# Simula o Textract extraindo uma tabela de uma nota fiscal
+# (no Textract real, cada célula vira um bloco TABLE/CELL)
+
+nota = """item        qtd  preco
+teclado     2    150.00
+mouse       3    45.50
+monitor     1    899.90"""
+
+def extrai_tabela(texto):
+    linhas = [l.split() for l in texto.strip().split("\\n")]
+    cabecalho = linhas[0]
+    itens = []
+    for l in linhas[1:]:
+        itens.append(dict(zip(cabecalho, l)))
+    return itens
+
+itens = extrai_tabela(nota)
+for item in itens:
+    item["total"] = float(item["qtd"]) * float(item["preco"])
+    print(f"{item['item']}: {item['qtd']}x R\${item['preco']} = R\${item['total']:.2f}")
+total_geral = sum(float(i["preco"]) * float(i["qtd"]) for i in itens)
+print(f"TOTAL: R\${total_geral:.2f}")`,
 
   // Fase 05 — Privacidade, segurança
   'lgpd-privacidade': `# Minimizacao de dados — exemplo pratico

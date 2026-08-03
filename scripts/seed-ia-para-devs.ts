@@ -625,6 +625,46 @@ const COURSE = {
               ],
               correctOptionId: 'a',
             },
+            {
+              question: 'Qual o fluxo típico de um pipeline multimodal (vídeo)?',
+              options: [
+                { id: 'a', text: 'Vídeo → extrair frames + áudio → visão + transcrição → resultado JSON combinado' },
+                { id: 'b', text: 'Vídeo → texto → imagem' },
+                { id: 'c', text: 'Áudio → vídeo → texto' },
+                { id: 'd', text: 'Frames → áudio → vídeo' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que o modelo de sentimentos acerta reviews sem nunca ter visto as palavras exatas?',
+              options: [
+                { id: 'a', text: 'Porque decorou todos os reviews' },
+                { id: 'b', text: 'Porque a combinação de tokens (via TF-IDF) define a classe, não a palavra exata' },
+                { id: 'c', text: 'Porque usa tradução automática' },
+                { id: 'd', text: 'Porque ignora o vocabulário' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual modelo é referência para transcrição de áudio?',
+              options: [
+                { id: 'a', text: 'Whisper (OpenAI)' },
+                { id: 'b', text: 'YOLO' },
+                { id: 'c', text: 'K-Means' },
+                { id: 'd', text: 'Random Forest' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que é diarização de áudio?',
+              options: [
+                { id: 'a', text: 'Identificar quem falou e quando' },
+                { id: 'b', text: 'Reduzir o tamanho do arquivo' },
+                { id: 'c', text: 'Aumentar o volume' },
+                { id: 'd', text: 'Converter para outro formato' },
+              ],
+              correctOptionId: 'a',
+            },
           ],
         },
         {
@@ -642,6 +682,46 @@ const COURSE = {
                 { id: 'd', text: 'Enviar emails' },
               ],
               correctOptionId: 'a',
+            },
+            {
+              question: 'O que diferencia o Textract do OCR tradicional?',
+              options: [
+                { id: 'a', text: 'É mais rápido' },
+                { id: 'b', text: 'Entende a ESTRUTURA — tabelas com células, formulários com chave-valor, hierarquia' },
+                { id: 'c', text: 'Funciona offline' },
+                { id: 'd', text: 'Não precisa de imagens' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que estrutura importa mais que texto bruto?',
+              options: [
+                { id: 'a', text: 'Porque ocupa menos espaço' },
+                { id: 'b', text: 'Porque JSON estruturado é consultável e validável — o código acessa dados["nome"] direto' },
+                { id: 'c', text: 'Porque é mais bonito' },
+                { id: 'd', text: 'Porque não precisa de parser' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que o Textract + Comprehend juntos fazem?',
+              options: [
+                { id: 'a', text: 'Textract extrai estrutura; Comprehend extrai significado (entidades, sentimentos)' },
+                { id: 'b', text: 'Textract entende; Comprehend extrai' },
+                { id: 'c', text: 'São a mesma coisa' },
+                { id: 'd', text: 'Comprehend gera imagens' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual o cuidado de segurança com documentos no Textract?',
+              options: [
+                { id: 'a', text: 'Nenhum — documentos não são sensíveis' },
+                { id: 'b', text: 'Documentos têm dados pessoais (LGPD/GDPR): criptografar, minimizar e nunca logar o conteúdo' },
+                { id: 'c', text: 'Só usar em texto em inglês' },
+                { id: 'd', text: 'Apagar o Textract após o uso' },
+              ],
+              correctOptionId: 'b',
             },
           ],
         },

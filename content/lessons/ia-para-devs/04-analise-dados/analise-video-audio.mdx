@@ -1,4 +1,4 @@
-Multimodalidade é a fronteira da IA: processar **vídeo, áudio e texto** juntos. Cada modalidade tem suas técnicas e modelos específicos.
+Multimodalidade é a fronteira da IA: processar **vídeo, áudio e texto** juntos. Cada modalidade tem suas técnicas e modelos específicos — mas o fluxo de trabalho é sempre o mesmo: **transformar dados brutos em informação estruturada que uma aplicação pode consumir**.
 
 ## Texto
 
@@ -8,10 +8,35 @@ Multimodalidade é a fronteira da IA: processar **vídeo, áudio e texto** junto
 
 ## Hands-on — classificação de texto
 
-<SandboxRunner
+<SandboxRunner lessonSlug="analise-video-audio" />
+
+## Exercício 1: classificando reviews
+
+O fluxo completo de análise de texto em produção: **vetorizar (TF-IDF) → treinar → classificar texto novo**. Rode e veja o modelo classificar reviews que ele nunca viu:
+
+<Exercise
   lessonSlug="analise-video-audio"
-  lessonSlug="analise-video-audio"
+  codeKey="videoaudio-ex1"
+  title="Exercício 1 — Classificação de reviews"
+  expectedOutput="'pessimo, nao funciona' -> negativo"
+  hint="O modelo aprendeu com 4 exemplos e generaliza para 2 novos. Repare: 'excelente' e 'quebrado' foram as pistas decisivas. Em produção você teria milhares de exemplos — o padrão é idêntico."
 />
+
+**Pergunta-chave:** por que o modelo acertou o segundo review sem nunca ter visto a palavra "pessimo" exata? (Resposta: o TF-IDF criou um vocabulário onde palavras de reviews negativos ficaram associadas ao label 0. A combinação de tokens — não a palavra exata — define a classe.)
+
+## Exercício 2: o pipeline áudio → texto → sentimento
+
+Transcrição (Whisper) gera texto; a análise de sentimento roda em cima. Simule o pipeline com palavras-chave — o mesmo padrão que um modelo faria, sem treino:
+
+<Exercise
+  lessonSlug="analise-video-audio"
+  codeKey="videoaudio-ex2"
+  title="Exercício 2 — Pipeline de transcrição"
+  expectedOutput="mas o servidor caiu de novo e os cl... -> negativo"
+  hint="A segunda fala tem 2 palavras negativas ('caiu', 'reclamaram') e 0 positivas → negativo. É uma heurística simples; um modelo de sentimento treinado faria o mesmo com mais nuance."
+/>
+
+**O que observar:** o pipeline multimodal real é **sequencial** — cada etapa consome a saída da anterior (áudio→texto→sentimento). É a mesma arquitetura da chain da Fase 03, aplicada a mídia.
 
 ## Áudio
 
@@ -50,3 +75,7 @@ Vídeo → extrair frames + áudio
 - Legendagem automática de vídeos
 - Moderar conteúdo (texto + imagem + vídeo)
 - Análise de reuniões (transcrição + sentimentos + tópicos)
+
+## Próximos passos
+
+Na próxima lição: **AWS Textract** — o serviço que extrai texto, tabelas e formulários de documentos digitalizados, indo além do OCR tradicional.
