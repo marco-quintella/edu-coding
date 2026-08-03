@@ -189,7 +189,7 @@ const COURSE = {
           slug: 'kmeans-clustering',
           title: 'K-Means Clustering',
           checkpoint: 'ml-base',
-          minutes: 20,
+          minutes: 35,
           quiz: [
             {
               question: 'O K-Means é um algoritmo de qual tipo?',
@@ -208,6 +208,36 @@ const COURSE = {
                 { id: 'b', text: 'O número de clusters' },
                 { id: 'c', text: 'O número de iterações' },
                 { id: 'd', text: 'O tamanho do dataset' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que é a inércia no K-Means?',
+              options: [
+                { id: 'a', text: 'A soma das distâncias ao quadrado de cada ponto até seu centroide' },
+                { id: 'b', text: 'O número de iterações até convergir' },
+                { id: 'c', text: 'A velocidade de treinamento' },
+                { id: 'd', text: 'O tamanho do maior cluster' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'No método do cotovelo, onde fica o K ideal?',
+              options: [
+                { id: 'a', text: 'No K com maior inércia' },
+                { id: 'b', text: 'No joelho da curva — onde a queda de inércia fica suave' },
+                { id: 'c', text: 'Sempre em K = N (um cluster por ponto)' },
+                { id: 'd', text: 'No K igual ao número de features' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que normalizar os dados antes do K-Means?',
+              options: [
+                { id: 'a', text: 'Para acelerar o treinamento' },
+                { id: 'b', text: 'Porque a distância euclidiana é dominada por features de escala maior' },
+                { id: 'c', text: 'Para criar mais clusters' },
+                { id: 'd', text: 'Porque o K-Means não aceita números negativos' },
               ],
               correctOptionId: 'b',
             },

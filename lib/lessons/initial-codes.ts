@@ -213,6 +213,52 @@ labels = model.fit_predict(X)
 print('centroides:', model.cluster_centers_)
 print('inercia (soma distancias^2):', model.inertia_)`,
 
+  // --- Exercícios da lição de K-Means ---
+  'kmeans-ex1': `from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+
+# Dataset com 3 clusters reais — onde está o cotovelo?
+X, _ = make_blobs(n_samples=300, centers=3, random_state=42)
+
+for k in range(1, 7):
+    km = KMeans(n_clusters=k, n_init=10, random_state=42).fit(X)
+    print(f"K={k} inercia={km.inertia_:.0f}")`,
+
+  'kmeans-ex2': `from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+from sklearn.preprocessing import StandardScaler
+
+# Uma coluna em escala 100x maior — o que acontece sem normalizar?
+X, _ = make_blobs(n_samples=300, centers=3, random_state=42, cluster_std=2.0)
+X[:, 1] *= 100
+
+km_bad = KMeans(n_clusters=3, n_init=10, random_state=42).fit(X)
+print(f"sem normalizar inertia={km_bad.inertia_:.0f}")
+
+X_norm = StandardScaler().fit_transform(X)
+km_good = KMeans(n_clusters=3, n_init=10, random_state=42).fit(X_norm)
+print(f"normalizado inertia={km_good.inertia_:.0f}")`,
+
+  'kmeans-projeto': `from sklearn.cluster import KMeans
+from collections import Counter
+import numpy as np
+
+# 200 clientes: idade e renda mensal (R$ mil)
+rng = np.random.RandomState(42)
+N = 200
+idade = rng.uniform(18, 70, N)
+renda = np.where(idade < 35, rng.uniform(1, 4, N), rng.uniform(3, 12, N))
+clientes = np.column_stack([idade, renda])
+
+# Descubra os perfis — quantos segmentos existem?
+model = KMeans(n_clusters=3, n_init=10, random_state=42).fit(clientes)
+
+print(f"tamanhos={sorted(Counter(model.labels_).values())}")
+print("perfis:")
+for c in sorted(set(model.labels_)):
+    idx = model.labels_ == c
+    print(f"  cluster {c}: idade media={clientes[idx, 0].mean():.0f} renda media={clientes[idx, 1].mean():.1f} (n={idx.sum()})")`,
+
   // Fase 02 — Evolução da IA
   'nlp-tokenizacao': `from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np

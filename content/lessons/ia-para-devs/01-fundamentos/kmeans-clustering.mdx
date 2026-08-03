@@ -1,28 +1,29 @@
-O K-Means é um algoritmo de **aprendizado não supervisionado** que agrupa dados em `K` clusters baseado em similaridade. Ele não usa rótulos — descobre a estrutura sozinho.
+Até aqui, todo modelo precisava de **rótulos**: preço do imóvel, classe da flor, cultivar do vinho. Mas e quando os dados **não têm resposta certa** — e o objetivo é justamente descobrir a estrutura escondida?
+
+Bem-vindo ao **aprendizado não supervisionado**. O K-Means é o algoritmo mais usado para isso: agrupa dados em `K` clusters baseado em similaridade, sem nunca ver um rótulo.
+
+> **Intuição:** imagine um arquiteto organizando uma festa. Ele não conhece ninguém — só olha os grupos que se formam naturalmente na sala e coloca uma mesa no meio de cada grupo. Se a sala tiver 3 bolsões naturais de pessoas, ele descobre isso **só observando as distâncias**.
 
 ## Como funciona
 
 1. Escolhe `K` centroides iniciais (aleatórios)
 2. Atribui cada ponto ao centroide mais próximo
-3. Recalcula cada centroide como a média dos pontos atribuídos
+3. Recalcula cada centroide como a **média** dos pontos atribuídos
 4. Repete 2-3 até os centroides pararem de mudar
+
+Cada iteração melhora a posição dos centroides — é um **gradiente descendente discreto**: a inércia (soma das distâncias ao quadrado dos pontos até seu centroide) só diminui a cada passo, até convergir.
+
+> **O que o K-Means otimiza:** a **inércia** = Σ (distância de cada ponto ao seu centroide)². Menor inércia = pontos mais próximos do seu centroide = clusters mais "apertados". O algoritmo para quando a inércia não melhora mais.
 
 ## Hands-on
 
-<SandboxRunner
-  lessonSlug="kmeans-clustering"
-  lessonSlug="kmeans-clustering"
-/>
+<SandboxRunner lessonSlug="kmeans-clustering" />
 
-## Escolhendo K
+## Escolhendo K — o método do cotovelo
 
-O **método do cotovelo (elbow)**: roda K-Means com K = 1..10, plota a inércia, e escolhe o K onde a curva "dobra".
+O K-Means precisa saber `K` antes de começar. O truque clássico: rodar com K = 1..10 e olhar a **inércia**. Ela sempre cai quando K aumenta (mais clusters = pontos mais próximos de algum centroide), mas a queda tem um **joelho**: depois do K certo, adicionar clusters não ajuda mais.
 
 ```python
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-
 inertias = []
 for k in range(1, 11):
     km = KMeans(n_clusters=k, n_init=10, random_state=42)
@@ -33,16 +34,81 @@ for k in range(1, 11):
 print(inertias)
 ```
 
+## Exercício 1: encontrando o cotovelo
+
+Rode o código e observe a inércia para K = 1..6. O dataset tem **3 clusters reais** — onde está o joelho?
+
+<Exercise
+  lessonSlug="kmeans-clustering"
+  codeKey="kmeans-ex1"
+  title="Exercício 1 — O método do cotovelo"
+  expectedOutput="K=3 inercia=567"
+  hint="Observe a queda: K=2 inercia=5763, mas K=3 inercia=567 — uma queda de 10x! Depois disso (K=4,5,6) a queda é pequena. O joelho está em K=3, que é o número real de clusters."
+/>
+
+**Pergunta-chave:** por que a inércia nunca é 0? (Resposta: a menos que cada ponto seja seu próprio cluster — K=N — sempre sobra distância entre pontos e centroides. O cotovelo é o ponto onde essa distância residual deixa de valer o preço de mais um cluster.)
+
+## A armadilha da escala
+
+O K-Means trabalha com **distância euclidiana**. Se uma feature está em metros (0-100) e outra em reais (0-100.000), a segunda domina o cálculo de distância — os clusters ficam vazios em uma dimensão.
+
+## Exercício 2: por que normalizar?
+
+O dataset tem uma coluna multiplicada por 100. Veja o que acontece com a inércia antes e depois da normalização:
+
+<Exercise
+  lessonSlug="kmeans-clustering"
+  codeKey="kmeans-ex2"
+  title="Exercício 2 — A armadilha da escala"
+  expectedOutput="normalizado inertia=65"
+  hint="Sem normalizar, a inércia fica na casa dos milhões — a coluna gigante domina tudo e os clusters são inúteis. Com StandardScaler (média 0, desvio 1), a inércia cai para ~65 e o clustering funciona de verdade. Sempre normalizar antes de K-Means!"
+/>
+
+**Regra de ouro:** K-Means (e qualquer modelo baseado em distância, como KNN e SVM) **exige features na mesma escala**. `StandardScaler` é o default.
+
 ## Pontos importantes
 
 - **K é hiperparâmetro** — precisa ser escolhido (elbow, silhouette)
-- Sensível à **escala** dos dados — normalizar antes
-- Sensível aos **centroides iniciais** — usar `n_init` alto
-- Assume clusters **esféricos** e de tamanho similar
+- Sensível à **escala** dos dados — normalizar antes (você acabou de ver)
+- Sensível aos **centroides iniciais** — usar `n_init` alto (roda várias vezes e fica com a melhor inércia)
+- Assume clusters **esféricos** e de tamanho similar — falha com formatos estranhos (moons, anéis)
+
+## Projeto: segmentação de clientes
+
+O caso de uso clássico do K-Means. Você tem 200 clientes com idade e renda mensal, e quer descobrir **quantos perfis distintos existem** — sem nenhum rótulo de segmento. O K-Means encontra os grupos sozinho.
+
+<Exercise
+  lessonSlug="kmeans-clustering"
+  codeKey="kmeans-projeto"
+  title="Projeto — Segmentação de clientes"
+  expectedOutput="cluster 1: idade media=27"
+  hint="Os 3 clusters revelam perfis: jovens com renda baixa (idade ~27), adultos (~44) e sêniores (~62). É assim que empresas segmentam base de clientes sem nunca perguntar o segmento ao cliente."
+/>
+
+Responda antes de rodar:
+
+1. **Quantos perfis o algoritmo encontra?** (deveriam ser 3 — o dataset foi gerado com 3 grupos)
+2. **Qual a idade média de cada perfil?**
+3. **O que uma empresa faria com esses 3 segmentos?** (marketing diferente para cada um)
 
 ## Aplicações
 
-- Segmentação de clientes
-- Compressão de imagens (reduzir cores)
-- Detecção de outliers (pontos distantes de todo centroide)
-- Pré-processamento para outros algoritmos
+- **Segmentação de clientes** (o projeto acima) — o caso mais comum
+- **Compressão de imagens**: reduzir 16M de cores para K cores (o "posterize" do K-Means)
+- **Detecção de outliers**: pontos distantes de todo centroide
+- **Pré-processamento**: agrupar dados antes de treinar outro modelo por grupo
+- **Busca semântica**: clusters de documentos/textos similares
+
+## Fim da Fase 01
+
+Você fechou os fundamentos do ML supervisionado e não supervisionado:
+
+| Algoritmo | Tipo | O que aprende |
+|---|---|---|
+| Regressão Linear | Supervisionado (contínuo) | Uma reta que minimiza o erro |
+| Árvore de Decisão | Supervisionado (classes) | Perguntas que separam as classes |
+| KNN | Supervisionado (classes) | Os vizinhos de cada ponto |
+| SVM | Supervisionado (classes) | O hiperplano de margem máxima |
+| K-Means | Não supervisionado | Grupos naturais nos dados |
+
+A Fase 02 muda o cenário: **NLP e LLMs** — transformar texto em números, embeddings, e a evolução para os modelos generativos que dominam o mundo hoje.

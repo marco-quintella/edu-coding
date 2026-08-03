@@ -19,6 +19,9 @@ const EXPECTED_SLUGS = [
   'knn-ex2',
   'knn-ex3',
   'kmeans-clustering',
+  'kmeans-ex1',
+  'kmeans-ex2',
+  'kmeans-projeto',
   // Fase 02
   'nlp-tokenizacao',
   'tfidf-embeddings',
