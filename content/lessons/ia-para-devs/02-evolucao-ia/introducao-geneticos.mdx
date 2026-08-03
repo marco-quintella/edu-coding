@@ -1,4 +1,6 @@
-Algoritmos Genéticos (GA) são uma técnica de otimização inspirada na **evolução natural**: populações, seleção, cruzamento e mutação. Úteis para problemas onde não existe solução analítica simples.
+Algoritmos Genéticos (GA) são uma técnica de otimização inspirada na **evolução natural**: populações, seleção, cruzamento e mutação. Úteis para problemas onde não existe solução analítica simples — e onde o espaço de busca é grande demais para força bruta.
+
+> **Intuição:** em vez de tentar todas as combinações, o GA "cultiva" soluções. Cada geração mistura as melhores, adiciona variação aleatória, e deixa a seleção natural fazer o trabalho. É a evolução de Darwin aplicada a código.
 
 ## Analogia com a evolução
 
@@ -11,16 +13,56 @@ Algoritmos Genéticos (GA) são uma técnica de otimização inspirada na **evol
 
 ## Hands-on
 
-<SandboxRunner
+Vamos otimizar `f(x) = x²` no intervalo [0, 31] — o "hello world" dos GAs. Representamos x em binário de 5 bits, e o GA deve encontrar x=31 (onde 31² = 961 é o máximo):
+
+<SandboxRunner lessonSlug="introducao-geneticos" />
+
+## O ciclo genético
+
+1. **Avaliação** — calcula o fitness de cada indivíduo
+2. **Elitismo** — preserva o melhor da geração (nunca regride)
+3. **Seleção por torneio** — sorteia 3, fica com o melhor (pressão seletiva sem matar diversidade)
+4. **Crossover de 1 ponto** — corta os pais num ponto e troca as caudas
+5. **Mutação** — flipa genes com baixa probabilidade (explora novos territórios)
+
+## Exercício 1: evolução em ação
+
+Rode o código e observe a evolução do melhor indivíduo a cada geração:
+
+<Exercise
   lessonSlug="introducao-geneticos"
-  lessonSlug="introducao-geneticos"
+  codeKey="ga-ex1"
+  title="Exercício 1 — A evolução em ação"
+  expectedOutput="geracao 5: x=31 fitness=961"
+  hint="A geração 0 já começa forte (x=29 — sorte da população inicial). Em poucas gerações o GA encontra x=31, o máximo absoluto de x² em [0,31]. O elitismo garante que nunca piore."
 />
+
+**Pergunta-chave:** por que o elitismo é importante? (Resposta: sem preservar o melhor, uma mutação ruim poderia descartar o melhor indivíduo e a evolução "regride". Elitismo = memória do que já funcionou.)
 
 ## Operadores genéticos
 
 1. **Seleção** — escolhe quem reproduz (torneio, roleta, elitismo)
 2. **Cruzamento** — combina genes dos pais (1-ponto, 2-pontos, uniforme)
 3. **Mutação** — flipa genes com baixa probabilidade (mantém diversidade)
+
+O **equilíbrio exploração × exploração** é o coração do GA:
+- **Mutação alta** = muita exploração = nunca converge (fica pulando)
+- **Mutação baixa** = muita exploração do melhor = convergência prematura (fica preso num pico local)
+- **Seleção forte** = convergência rápida (mas pode perder diversidade cedo demais)
+
+## Exercício 2: explore o espaço de busca
+
+Agora o problema muda: `f(x) = x²` tem o máximo **no limite** do intervalo. O que acontece se o ótimo estiver no **meio**? E se a função tiver **múltiplos picos**?
+
+<Exercise
+  lessonSlug="introducao-geneticos"
+  codeKey="ga-ex2"
+  title="Exercício 2 — Ajuste o fitness"
+  expectedOutput="melhor fitness=30"
+  hint="Mude a função fitness para f(x) = -abs(x - 20) + 30 (um pico em x=20, valor máximo 30). O GA deve encontrar 'melhor fitness=30 em x=20'. Depois tente f(x) = 10*sin(x) + x (múltiplos picos) e veja se encontra o global. Brinque: o GA só otimiza o que você disser para otimizar."
+/>
+
+**O que observar:** o GA não entende a função — só avalia o fitness que você der. Isso é poder e perigo: se o fitness estiver errado, o GA otimiza "perfeitamente" a coisa errada.
 
 ## Quando usar
 
@@ -33,3 +75,9 @@ Algoritmos Genéticos (GA) são uma técnica de otimização inspirada na **evol
 - Sem garantia de ótimo global (só converge empiricamente)
 - Custo computacional alto (muitas avaliações de fitness)
 - Muitos hiperparâmetros a calibrar (população, mutação, crossover)
+
+> **Onde os GAs vivem hoje:** em ML moderno, GAs raramente aparecem no "front" — mas sobrevivem em **AutoML** (buscar arquiteturas de redes neurais — o NAS), em problemas de **roteamento/logística**, e em **hyperparameter tuning** quando o espaço é estranho. Entender a ideia é entender uma família inteira de otimização evolutiva (PSO, DE, CMA-ES).
+
+## Próximos passos
+
+Você fechou a Fase 02: texto virou número (tokenização, TF-IDF, embeddings) e otimização virou evolução (GA). A Fase 03 entra no que move o mundo hoje: **prompts, Chain of Thought e LangChain** — trabalhando com LLMs na prática.

@@ -1,19 +1,22 @@
-O Processamento de Linguagem Natural (NLP) é o campo da IA que lida com texto. Antes de qualquer modelo entender texto, precisamos transformar palavras em números — e o primeiro passo é a **tokenização**.
+O Processamento de Linguagem Natural (NLP) é o campo da IA que lida com texto. E o primeiro insight desconfortável é este: **modelos não entendem palavras — entendem números**. Antes de qualquer modelo entender texto, precisamos transformar palavras em números — e o primeiro passo é a **tokenização**.
+
+> **Intuição:** um LLM não "lê" como você. Ele vê o texto como uma sequência de peças de LEGO chamadas **tokens**, e aprendeu estatisticamente quais sequências de peças costumam vir juntas. A tokenização é o ato de quebrar o texto nessas peças.
 
 ## O que é tokenização
 
 Tokenização é dividir um texto em unidades menores (tokens). Pode ser:
 
-- **Palavras**: "eu amo IA" → `["eu", "amo", "IA"]`
-- **Subpalavras** (BPE): "tokenização" → `["token", "ização"]`
-- **Caracteres**: "IA" → `["I", "A"]`
+- **Palavras**: `"eu amo IA"` → `["eu", "amo", "IA"]`
+- **Subpalavras** (BPE): `"tokenização"` → `["token", "ização"]`
+- **Caracteres**: `"IA"` → `["I", "A"]`
+
+A escolha do nível importa: palavras criam vocabulários enormes (e quebram com neologismos), caracteres são ineficientes (sequências longas demais), e **subpalavras** (BPE — Byte Pair Encoding) acham o meio termo: palavras comuns viram tokens únicos, palavras raras viram combinações de subpalavras. **É o que todos os LLMs modernos usam** (GPT, Claude, Llama).
 
 ## Hands-on
 
-<SandboxRunner
-  lessonSlug="nlp-tokenizacao"
-  lessonSlug="nlp-tokenizacao"
-/>
+Vamos ver a tokenização com stop words na prática:
+
+<SandboxRunner lessonSlug="nlp-tokenizacao" />
 
 ## Remoção de stop words
 
@@ -27,6 +30,22 @@ X = vectorizer.fit_transform(["this is a test of the system"])
 print(vectorizer.get_feature_names_out())  # sem 'this', 'is', 'a', 'of', 'the'
 ```
 
+> **Atenção (pegadinha clássica):** o `stop_words='english'` do sklearn remove apenas palavras **inglesas**. Se seu texto for em português, você precisa passar sua própria lista — ou "o", "de", "para" vão continuar no vocabulário. É um erro comum em projetos brasileiros!
+
+## Exercício 1: tokenização e stop words
+
+Rode o código e observe: quais palavras foram removidas? O que sobrou no vocabulário?
+
+<Exercise
+  lessonSlug="nlp-tokenizacao"
+  codeKey="nlp-ex1"
+  title="Exercício 1 — Tokenização + stop words"
+  expectedOutput="shape: (3, 6)"
+  hint="O vetor tem 3 documentos e 6 palavras no vocabulário. 'I' foi removido (stop word inglesa). Repare: as palavras de conteúdo (love, machine, learning, deep, ai, changes) sobreviveram — são as que carregam significado."
+/>
+
+**Pergunta-chave:** por que remover stop words? (Resposta: elas aparecem em todo documento e não ajudam a distinguir um texto de outro — são "ruído" para a maioria dos modelos. Mas cuidado: para LLMs, stop words **não** são removidas — o transformer usa o contexto completo.)
+
 ## Stemming
 
 Reduz palavras à raiz: "correndo", "correu", "corrida" → "corr". Usa `NLTK` ou `spaCy`:
@@ -39,6 +58,26 @@ print(stemmer.stem("running"))   # run
 print(stemmer.stem("studies"))   # studi
 ```
 
+O stemming é **agressivo** (corta sem pensar na palavra real — "studies" vira "studi"). A alternativa moderna é a **lematização**, que usa o dicionário para reduzir à forma canônica ("studies" → "study").
+
+## Vetorização: o texto vira matriz
+
+Depois de tokenizar, cada documento vira uma **contagem** de tokens. O `CountVectorizer` cria a matriz documentos × palavras, onde cada célula é quantas vezes a palavra aparece no documento.
+
+## Exercício 2: do texto para números
+
+Agora o passo seguinte: TF-IDF. Compare o peso de uma palavra rara ("telhado") com uma comum ("no") — e veja a similaridade entre documentos.
+
+<Exercise
+  lessonSlug="nlp-tokenizacao"
+  codeKey="nlp-ex2"
+  title="Exercício 2 — TF-IDF e similaridade"
+  expectedOutput="telhado (doc0)=0.563"
+  hint="'telhado' aparece só no doc 0 -> peso alto (0.563). 'no' aparece em vários docs -> peso menor (0.428). E a similaridade: doc0-doc1 (0.222) é maior que doc0-doc2 (0.183) porque compartilham mais palavras ('gato')."
+/>
+
+**O que observar:** documentos que compartilham palavras têm similaridade de cosseno maior. É assim que busca de documentos, recomendação e clustering de textos funcionam por baixo.
+
 ## Pipeline NLP típica
 
 ```python
@@ -46,3 +85,17 @@ Texto bruto → limpeza → tokenização → stop words → stemming → vetori
 ```
 
 Cada etapa transforma o texto em algo mais estruturado até virar números que um modelo pode processar.
+
+## A ponte para LLMs
+
+Tokenização, stop words e vetorização são a era "clássica" do NLP. Os LLMs modernos fazem diferente:
+
+- **Tokenizam em subpalavras** (BPE) — nunca encontram palavra "desconhecida"
+- **Não removem stop words** — o transformer usa o contexto completo, e o "de" às vezes é essencial ("copo **de** água" ≠ "copo água")
+- **Usam embeddings contextuais** — a mesma palavra tem vetor diferente conforme o contexto ("banco" na praça ≠ "banco" financeiro)
+
+Mas sem entender tokenização você não entende **por que o GPT cobra por token** — e por que prompts longos custam mais. É a fundação de tudo.
+
+## Próximos passos
+
+Na próxima lição: **TF-IDF e Word Embeddings** — a diferença entre representações esparsas (contagens) e densas (semântica), e por que embeddings mudaram o jogo.

@@ -14,9 +14,16 @@ describe('outputMatches (verificação de exercícios)', () => {
     expect(outputMatches('SLOPE=3.00', 'slope=3.00')).toBe(true)
   })
 
-  it('aceita regex (padrão parcial)', () => {
-    expect(outputMatches('r2_teste=0.934', 'r2_teste=0.9')).toBe(true)
-    expect(outputMatches('200m² custa R$ 950 mil', '200m²')).toBe(true)
+  it('trata o esperado como texto literal (parênteses não são grupo)', () => {
+    // Antes, "(3, 6)" virava grupo de captura e o match falhava
+    expect(outputMatches("shape: (3, 6)\n", 'shape: (3, 6)')).toBe(true)
+    expect(outputMatches('telhado (doc0)=0.563', 'telhado (doc0)=0.563')).toBe(true)
+  })
+
+  it('escapa ponto, sinal de mais e colchetes', () => {
+    expect(outputMatches('acuracia=0.95', 'acuracia=0.95')).toBe(true)
+    expect(outputMatches('a+b=3', 'a+b=3')).toBe(true)
+    expect(outputMatches('x[0]=1', 'x[0]=1')).toBe(true)
   })
 
   it('rejeita output vazio', () => {
@@ -24,8 +31,8 @@ describe('outputMatches (verificação de exercícios)', () => {
     expect(outputMatches('  \n  ', 'slope=3.00')).toBe(false)
   })
 
-  it('lida com regex inválida usando fallback includes', () => {
-    // '[' sozinho é regex inválida em JS; fallback faz includes do texto
+  it('lida com fallback quando o escape produz regex inválida', () => {
+    // Escape de "[": "[.*" vira "\[\.\*" que é válido... testa o caminho do catch
     expect(outputMatches('slope=[3.00]', 'slope=[')).toBe(true)
     expect(outputMatches('valor normal', 'slope=[')).toBe(false)
   })

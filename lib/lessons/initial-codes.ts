@@ -278,6 +278,51 @@ print()
 print("matriz (docs x palavras):")
 print(X.toarray())`,
 
+  // --- Exercícios da lição de NLP Tokenização ---
+  'nlp-ex1': `from sklearn.feature_extraction.text import CountVectorizer
+
+docs = [
+    "I love machine learning",
+    "I love deep learning",
+    "AI changes everything",
+]
+
+# Tokeniza removendo stop words inglesas
+vectorizer = CountVectorizer(stop_words="english")
+X = vectorizer.fit_transform(docs)
+
+print("vocab:", vectorizer.get_feature_names_out())
+print("shape:", X.shape)`,
+
+  'nlp-ex2': `from sklearn.feature_extraction.text import TfidfVectorizer
+from numpy.linalg import norm
+import numpy as np
+
+docs = [
+    "o gato dorme no telhado",
+    "o gato come o peixe",
+    "o peixe nada no rio",
+]
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(docs)
+feats = list(tfidf.get_feature_names_out())
+
+# Palavra rara (1 doc) vs comum (2 docs)
+telhado = X[0, feats.index("telhado")]
+no_w = X[:, feats.index("no")].toarray()
+print(f"telhado (doc0)={telhado:.3f}  (palavra rara, so no doc 0)")
+print(f"no (doc0)={no_w[0, 0]:.3f}  (palavra comum, em varios docs)")
+
+# Similaridade de cosseno entre documentos
+A = X[0].toarray().ravel()
+B = X[1].toarray().ravel()
+C = X[2].toarray().ravel()
+cos_ab = np.dot(A, B) / (norm(A) * norm(B))
+cos_ac = np.dot(A, C) / (norm(A) * norm(C))
+print(f"sim(doc0,doc1)={cos_ab:.3f}  (gato+o em comum)")
+print(f"sim(doc0,doc2)={cos_ac:.3f}  (so o em comum)")`,
+
   'tfidf-embeddings': `from sklearn.feature_extraction.text import TfidfVectorizer
 
 docs = [
@@ -293,6 +338,43 @@ print("vocabulário:", vectorizer.get_feature_names_out())
 print()
 print("TF-IDF (docs x palavras):")
 print(X.toarray().round(3))`,
+
+  // --- Exercícios da lição de TF-IDF e Embeddings ---
+  'tfidf-ex1': `from sklearn.feature_extraction.text import TfidfVectorizer
+
+docs = [
+    "o gato dorme no telhado",
+    "o gato come o peixe",
+    "o peixe nada no rio",
+]
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(docs)
+feats = list(tfidf.get_feature_names_out())
+
+# Compare: palavra rara (1 doc) vs comum (2 docs)
+telhado = X[0, feats.index("telhado")]
+no_w = X[:, feats.index("no")].toarray()
+print(f"telhado (doc0)={telhado:.3f}  (palavra rara, so no doc 0)")
+print(f"no (doc0)={no_w[0, 0]:.3f}  (palavra comum, em varios docs)")`,
+
+  'tfidf-ex2': `import numpy as np
+from numpy.linalg import norm
+
+# Embeddings manuais (4 dims) simulando vetores aprendidos
+rei = np.array([0.9, 0.8, 0.1, 0.0])
+homem = np.array([0.8, 0.7, 0.1, 0.0])
+mulher = np.array([0.8, 0.1, 0.9, 0.0])
+rainha = np.array([0.9, 0.2, 0.8, 0.0])
+carro = np.array([0.1, 0.0, 0.2, 0.9])
+
+def cos(a, b):
+    return float(np.dot(a, b) / (norm(a) * norm(b)))
+
+# A famosa analogia: rei - homem + mulher ~= rainha
+analogia = rei - homem + mulher
+print(f"analogia ~= rainha: {cos(analogia, rainha):.3f}")
+print(f"analogia ~= carro:  {cos(analogia, carro):.3f}")`,
 
   'introducao-geneticos': `import random
 
@@ -338,6 +420,74 @@ for gen in range(GENERATIONS):
 
 best = max(pop, key=lambda i: fitness(decode(i)))
 print(f"melhor solucao: x={decode(best)}, f(x)={fitness(decode(best))}")`,
+
+  // --- Exercícios da lição de Algoritmos Genéticos ---
+  'ga-ex1': `import random
+
+# GA: maximizar f(x) = x^2 em [0, 31] (binario de 5 bits)
+def fitness(x):
+    return x * x
+
+def decodifica(bits):
+    return sum(b << i for i, b in enumerate(bits))
+
+random.seed(42)
+pop = [[random.randint(0, 1) for _ in range(5)] for _ in range(10)]
+
+for geracao in range(30):
+    avaliados = [(bits, fitness(decodifica(bits))) for bits in pop]
+    melhor_bits, melhor_fit = max(avaliados, key=lambda ind: ind[1])
+    if geracao in [0, 5, 15, 29]:
+        print(f"geracao {geracao}: x={decodifica(melhor_bits)} fitness={melhor_fit}")
+
+    nova = [melhor_bits[:]]  # elitismo
+    while len(nova) < 10:
+        p1 = max(random.sample(avaliados, 3), key=lambda ind: ind[1])[0]
+        p2 = max(random.sample(avaliados, 3), key=lambda ind: ind[1])[0]
+        ponto = random.randint(1, 4)
+        f1 = p1[:ponto] + p2[ponto:]
+        f2 = p2[:ponto] + p1[ponto:]
+        for filho in (f1, f2):
+            for i in range(5):
+                if random.random() < 0.1:
+                    filho[i] = 1 - filho[i]
+            nova.append(filho)
+    pop = nova[:10]`,
+
+  'ga-ex2': `import random
+
+# Seu desafio: mude a funcao fitness e veja o GA se adaptar!
+# Exemplos para testar:
+#   f(x) = -abs(x - 20) + 30   -> pico em x=20, maximo 30
+#   f(x) = 10*sin(x) + x       -> multiplos picos (qual o global?)
+def fitness(x):
+    return x * x  # <- mude aqui
+
+def decodifica(bits):
+    return sum(b << i for i, b in enumerate(bits))
+
+random.seed(42)
+pop = [[random.randint(0, 1) for _ in range(5)] for _ in range(10)]
+
+for geracao in range(30):
+    avaliados = [(bits, fitness(decodifica(bits))) for bits in pop]
+    melhor_bits, melhor_fit = max(avaliados, key=lambda ind: ind[1])
+    nova = [melhor_bits[:]]
+    while len(nova) < 10:
+        p1 = max(random.sample(avaliados, 3), key=lambda ind: ind[1])[0]
+        p2 = max(random.sample(avaliados, 3), key=lambda ind: ind[1])[0]
+        ponto = random.randint(1, 4)
+        f1 = p1[:ponto] + p2[ponto:]
+        f2 = p2[:ponto] + p1[ponto:]
+        for filho in (f1, f2):
+            for i in range(5):
+                if random.random() < 0.1:
+                    filho[i] = 1 - filho[i]
+            nova.append(filho)
+    pop = nova[:10]
+
+melhor = max(avaliados, key=lambda ind: ind[1])
+print(f"melhor fitness={melhor[1]} em x={decodifica(melhor[0])}")`,
 
   // Fase 03 — OpenAI, LangChain
   'chain-of-thought': `# Simulando Chain of Thought com um LLM (BYOK)

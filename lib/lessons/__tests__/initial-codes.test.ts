@@ -24,8 +24,14 @@ const EXPECTED_SLUGS = [
   'kmeans-projeto',
   // Fase 02
   'nlp-tokenizacao',
+  'nlp-ex1',
+  'nlp-ex2',
   'tfidf-embeddings',
+  'tfidf-ex1',
+  'tfidf-ex2',
   'introducao-geneticos',
+  'ga-ex1',
+  'ga-ex2',
   // Fase 03
   'chain-of-thought',
   'guia-prompts',

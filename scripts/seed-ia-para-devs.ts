@@ -253,7 +253,7 @@ const COURSE = {
           slug: 'nlp-tokenizacao',
           title: 'NLP — Tokenização e Texto',
           checkpoint: 'ml-base',
-          minutes: 30,
+          minutes: 35,
           quiz: [
             {
               question: 'O que é tokenização em NLP?',
@@ -266,6 +266,16 @@ const COURSE = {
               correctOptionId: 'a',
             },
             {
+              question: 'Qual nível de tokenização os LLMs modernos (GPT, Claude) usam?',
+              options: [
+                { id: 'a', text: 'Palavras inteiras' },
+                { id: 'b', text: 'Subpalavras (BPE)' },
+                { id: 'c', text: 'Apenas caracteres' },
+                { id: 'd', text: 'Frases completas' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
               question: 'O que faz o stemming?',
               options: [
                 { id: 'a', text: 'Remove stop words' },
@@ -274,6 +284,26 @@ const COURSE = {
                 { id: 'd', text: 'Traduz palavras' },
               ],
               correctOptionId: 'b',
+            },
+            {
+              question: 'Qual é a pegadinha do stop_words="english" do sklearn?',
+              options: [
+                { id: 'a', text: 'Remove palavras demais do texto' },
+                { id: 'b', text: 'Só remove palavras INGLESAS — "o", "de" e "para" continuam no vocabulário' },
+                { id: 'c', text: 'Não funciona com CountVectorizer' },
+                { id: 'd', text: 'Remove todas as palavras do documento' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que LLMs modernos NÃO removem stop words?',
+              options: [
+                { id: 'a', text: 'Porque o transformer usa o contexto completo — e o "de" pode ser essencial ("copo DE água")' },
+                { id: 'b', text: 'Porque stop words não existem em inglês' },
+                { id: 'c', text: 'Porque remove-las deixaria o modelo mais lento' },
+                { id: 'd', text: 'Porque o vocabulário ficaria pequeno demais' },
+              ],
+              correctOptionId: 'a',
             },
           ],
         },
@@ -293,13 +323,53 @@ const COURSE = {
               ],
               correctOptionId: 'a',
             },
+            {
+              question: 'Se uma palavra aparece em TODOS os documentos, seu TF-IDF tende a:',
+              options: [
+                { id: 'a', text: 'Ser muito alto (é muito frequente)' },
+                { id: 'b', text: 'Ser ~0 (o IDF = log(N/N) = 0 — ela não distingue nada)' },
+                { id: 'c', text: 'Ser sempre 1' },
+                { id: 'd', text: 'Ser negativo' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que é um word embedding?',
+              options: [
+                { id: 'a', text: 'Uma lista de sinônimos da palavra' },
+                { id: 'b', text: 'Um vetor denso que captura a semântica — palavras similares ficam próximas no espaço' },
+                { id: 'c', text: 'Uma contagem de quantas vezes a palavra aparece' },
+                { id: 'd', text: 'Um algoritmo de compressão de texto' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que significa a analogia "rei - homem + mulher ≈ rainha"?',
+              options: [
+                { id: 'a', text: 'Embeddings são inúteis para semântica' },
+                { id: 'b', text: 'A diferença entre realeza masculina e feminina é a mesma entre homem e mulher — e isso vira geometria vetorial' },
+                { id: 'c', text: 'O modelo só entende palavras em inglês' },
+                { id: 'd', text: 'Palavras similares ficam longe no espaço vetorial' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual a diferença entre embeddings de LLMs e TF-IDF?',
+              options: [
+                { id: 'a', text: 'TF-IDF é contextual, embeddings são estáticos' },
+                { id: 'b', text: 'Embeddings de LLMs são contextuais (o vetor muda conforme a frase); TF-IDF é estático (mesmo vetor sempre)' },
+                { id: 'c', text: 'São a mesma coisa com nomes diferentes' },
+                { id: 'd', text: 'TF-IDF é denso, embeddings são esparsos' },
+              ],
+              correctOptionId: 'b',
+            },
           ],
         },
         {
           slug: 'introducao-geneticos',
           title: 'Introdução aos Algoritmos Genéticos',
           checkpoint: 'ml-base',
-          minutes: 30,
+          minutes: 35,
           quiz: [
             {
               question: 'Qual operador genético combina dois indivíduos?',
@@ -308,6 +378,46 @@ const COURSE = {
                 { id: 'b', text: 'Cruzamento (crossover)' },
                 { id: 'c', text: 'Mutação' },
                 { id: 'd', text: 'Avaliação' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que é o fitness de um indivíduo no GA?',
+              options: [
+                { id: 'a', text: 'O tamanho do cromossomo' },
+                { id: 'b', text: 'Quão boa é a solução, avaliada pela função objetivo' },
+                { id: 'c', text: 'A probabilidade de mutação' },
+                { id: 'd', text: 'O número de gerações' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Para que serve o elitismo?',
+              options: [
+                { id: 'a', text: 'Para preservar o melhor indivíduo — a evolução nunca regride' },
+                { id: 'b', text: 'Para eliminar os piores indivíduos' },
+                { id: 'c', text: 'Para aumentar a taxa de mutação' },
+                { id: 'd', text: 'Para reduzir o tamanho da população' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que acontece com mutação MUITO alta?',
+              options: [
+                { id: 'a', text: 'Converge mais rápido para o ótimo' },
+                { id: 'b', text: 'Nunca converge — fica pulando entre soluções (exploração demais)' },
+                { id: 'c', text: 'O fitness fica negativo' },
+                { id: 'd', text: 'A população desaparece' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual a principal limitação dos GAs?',
+              options: [
+                { id: 'a', text: 'Só funcionam com dados numéricos' },
+                { id: 'b', text: 'Sem garantia de ótimo global + custo computacional alto (muitas avaliações de fitness)' },
+                { id: 'c', text: 'Não aceitam restrições' },
+                { id: 'd', text: 'Precisam de labels' },
               ],
               correctOptionId: 'b',
             },

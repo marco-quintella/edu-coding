@@ -5,16 +5,21 @@ import Editor from '@monaco-editor/react'
 import { useSandboxExec } from './use-sandbox-exec'
 
 /**
- * Verifica se o output bate com o esperado (regex case-insensitive).
+ * Verifica se o output bate com o esperado.
+ *
+ * O expectedOutput é tratado como TEXTO LITERAL (não regex): caracteres
+ * especiais de regex são escapados, então o autor escreve "procurar esta
+ * string no output" — sem se preocupar com `(`, `.`, `+`, etc.
+ * (Antes, "shape: (3, 6)" falhava porque `(...)` era grupo de captura.)
  * Exportado para testes unitários.
  */
 export function outputMatches(output: string, expectedOutput: string): boolean {
   const combined = (output || '').trim()
   if (combined.length === 0) return false
+  const escaped = expectedOutput.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   try {
-    return new RegExp(expectedOutput, 'i').test(combined)
+    return new RegExp(escaped, 'i').test(combined)
   } catch {
-    // regex inválida — fallback para includes
     return combined.includes(expectedOutput)
   }
 }

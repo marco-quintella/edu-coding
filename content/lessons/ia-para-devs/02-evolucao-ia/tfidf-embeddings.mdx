@@ -1,20 +1,37 @@
-Depois da tokenização, precisamos representar o texto como números. Duas abordagens clássicas: **TF-IDF** (contagem ponderada) e **Word Embeddings** (vetores densos aprendidos).
+Na lição anterior você viu como transformar texto em números (tokenização + contagem). Mas há um problema com a contagem simples: **a palavra "o" aparece em todo documento** — e a palavra "telhado" aparece uma vez. A contagem trata as duas como se tivessem a mesma importância. Não deveriam.
 
-## TF-IDF
+Esta lição apresenta as duas grandes respostas a esse problema: **TF-IDF** (ponderação estatística, leve e interpretável) e **Word Embeddings** (vetores densos com semântica, o coração dos LLMs).
 
-TF-IDF = **Frequência do termo × Frequência inversa do documento**. Mede a importância de uma palavra em um documento, penalizando palavras comuns em todos os documentos.
+## TF-IDF: a importância relativa
+
+TF-IDF = **Frequência do termo × Frequência inversa do documento**. A ideia central:
 
 - **TF** (Term Frequency): quantas vezes a palavra aparece no documento
-- **IDF** (Inverse Document Frequency): log(N / nº documentos que contêm a palavra)
+- **IDF** (Inverse Document Frequency): `log(N / nº de documentos que contêm a palavra)` — **quanto mais rara a palavra no corpus, maior o IDF**
+
+Uma palavra que aparece em todo documento tem IDF ≈ 0 → peso ≈ 0. Uma palavra rara (mas presente no seu documento) tem IDF alto → peso alto.
+
+> **Intuição:** "telhado" diz muito sobre o documento (é rara e específica). "o" não diz nada (está em tudo). O TF-IDF dá voz à palavra que *distingue* — não à que *preenche*.
 
 ## Hands-on
 
-<SandboxRunner
-  lessonSlug="tfidf-embeddings"
-  lessonSlug="tfidf-embeddings"
-/>
+<SandboxRunner lessonSlug="tfidf-embeddings" />
 
 Observe como "telhado" (só no doc 1) tem peso alto no doc 1, enquanto "o" (em todos) tem peso próximo de zero.
+
+## Exercício 1: pesando as palavras
+
+Rode o código e compare os pesos:
+
+<Exercise
+  lessonSlug="tfidf-embeddings"
+  codeKey="tfidf-ex1"
+  title="Exercício 1 — O peso da raridade"
+  expectedOutput="telhado (doc0)=0.563"
+  hint="'telhado' é rara (1 doc) -> IDF alto -> peso 0.563. 'no' é comum (2 docs) -> IDF baixo -> 0.428. A palavra rara 'vence' porque carrega mais informação distintiva."
+/>
+
+**Pergunta-chave:** se uma palavra aparecesse em **todos** os documentos, qual seria seu TF-IDF? (Resposta: ~0 — o log de N/N é log(1) = 0. Ela não distingue nada.)
 
 ## Word Embeddings (Word2Vec)
 
@@ -24,7 +41,23 @@ Embeddings são **vetores densos** (ex: 300 dimensões) que capturam **semântic
 rei - homem + mulher ≈ rainha
 ```
 
-Isso funciona porque embeddings são treinados para prever o contexto (CBOW) ou a palavra-alvo dado o contexto (Skip-gram).
+Isso funciona porque embeddings são treinados para prever o contexto (CBOW) ou a palavra-alvo dado o contexto (Skip-gram). O modelo aprende que "rei" e "rainha" aparecem em contextos parecidos — e isso vira proximidade vetorial.
+
+> **Intuição:** cada palavra é um ponto num mapa de 300 dimensões. Palavras que aparecem nos mesmos contextos ficam perto nesse mapa. A direção "realeza masculina → feminina" é a mesma para (rei, rainha) e (homem, mulher) — por isso a aritmética funciona.
+
+## Exercício 2: a aritmética da semântica
+
+Vetores manuais (4 dimensões, simplificados) simulam o que um embedding aprendido faz. Rode e veja a analogia:
+
+<Exercise
+  lessonSlug="tfidf-embeddings"
+  codeKey="tfidf-ex2"
+  title="Exercício 2 — A analogia vetorial"
+  expectedOutput="analogia ~= rainha: 0.998"
+  hint="O vetor 'rei - homem + mulher' fica quase idêntico ao de 'rainha' (similaridade 0.998) — enquanto 'carro' fica longe (0.226). Essa é a famosa analogia dos embeddings: a semântica vira geometria."
+/>
+
+**O que observar:** similaridade de cosseno perto de 1 = mesma direção = mesmo significado aproximado. É assim que busca semântica e sistemas de recomendação funcionam.
 
 ## Vetorização vs Embeddings
 
@@ -36,8 +69,16 @@ Isso funciona porque embeddings são treinados para prever o contexto (CBOW) ou 
 | Treinamento | Instantâneo | Preciso de corpus grande |
 | Uso típico | Classificação simples | Modelos profundos, LLMs |
 
+## Por que os LLMs usam embeddings (e não TF-IDF)
+
+O TF-IDF é **estático**: "banco" tem o mesmo vetor em "banco de sangue" e "banco de investimentos". Os embeddings de LLMs são **contextuais**: o transformer gera um vetor diferente para cada ocorrência, usando as palavras ao redor. É isso que permite ao modelo entender que "janeiro" é um mês quando dizem "em janeiro" — e um nome quando dizem "a Jane irá".
+
 ## Document Embeddings
 
 Para representar um documento inteiro, somamos/mediamos os embeddings das palavras, ou usamos modelos tipo Sentence-BERT que geram um embedding por frase.
 
-Na prática moderna, **LLMs já têm embeddings embutidos** — mas entender TF-IDF e Word2Vec é essencial para quando você precisar de soluções leves e interpretáveis.
+Na prática moderna, **LLMs já têm embeddings embutidos** — mas entender TF-IDF e Word2Vec é essencial para quando você precisar de soluções leves e interpretáveis, e para entender o que está por baixo dos modelos que você usa.
+
+## Próximos passos
+
+Você sabe transformar texto em números com significado. A próxima lição muda completamente de abordagem: **Algoritmos Genéticos** — otimização inspirada na evolução, para problemas onde não existe fórmula.
