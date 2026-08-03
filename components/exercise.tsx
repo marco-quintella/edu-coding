@@ -52,6 +52,8 @@ export function Exercise({
 }: Props) {
   const { output, error, exitCode, duration, isPending, run } = useSandboxExec()
   const [code, setCode] = useState('')
+  const [aiFeedback, setAiFeedback] = useState('')
+  const [feedbackState, setFeedbackState] = useState<'idle' | 'loading' | 'done'>('idle')
 
   // Carrega o código inicial do registro (client-side, após mount)
   const [initialCode, setInitialCode] = useState('')
@@ -79,6 +81,41 @@ export function Exercise({
   // Mostra o veredito automaticamente quando o output chega
   const showVerdict = (output || error) && !isPending
   const verdict = showVerdict ? isCorrect : null
+
+  // Corretor pedagógico: quando falha, busca feedback contextualizado
+  useEffect(() => {
+    if (verdict === false && feedbackState === 'idle') {
+      setFeedbackState('loading')
+      fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          code,
+          output: outputToCheck,
+          expected: expectedOutput,
+          hint,
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setAiFeedback(data.feedback ?? '')
+          setFeedbackState('done')
+        })
+        .catch(() => {
+          setAiFeedback('')
+          setFeedbackState('done')
+        })
+    }
+  }, [verdict, feedbackState, title, code, outputToCheck, expectedOutput, hint])
+
+  // Limpa o feedback ao rodar de novo
+  useEffect(() => {
+    if (isPending) {
+      setAiFeedback('')
+      setFeedbackState('idle')
+    }
+  }, [isPending])
 
   return (
     <div className="my-8 overflow-hidden rounded-[16px] border border-line bg-surface shadow-card">
@@ -146,9 +183,21 @@ export function Exercise({
         </div>
       )}
       {verdict === false && (
-        <div className="border-t border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
-          Ainda não. A saída não corresponde ao esperado.
+        <div className="border-t border-danger/30 bg-danger/5 px-4 py-3 text-sm">
+          <div className="font-semibold text-danger">
+            Ainda não. A saída não corresponde ao esperado.
+          </div>
           {hint && <div className="mt-1 text-xs text-ink-secondary">💡 {hint}</div>}
+          {feedbackState === 'loading' && (
+            <div className="mt-2 text-xs text-ink-muted">
+              🔎 Corretor pensando...
+            </div>
+          )}
+          {feedbackState === 'done' && aiFeedback && (
+            <div className="mt-2 rounded-[8px] border border-line bg-surface px-3 py-2 text-xs leading-relaxed text-ink-secondary">
+              <span className="font-bold text-ink">Corretor:</span> {aiFeedback}
+            </div>
+          )}
         </div>
       )}
     </div>

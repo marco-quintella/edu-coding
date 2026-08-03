@@ -10,8 +10,12 @@ export const WINDOW_LIMIT = 30
 /**
  * Verifica e incrementa o contador de execuções para uma chave.
  * Retorna o count atual (0 = primeira execução na janela).
+ * `limit` permite sobrescrever o limite por janela (default: WINDOW_LIMIT).
  */
-export async function checkRateLimit(key: string): Promise<{
+export async function checkRateLimit(
+  key: string,
+  limit: number = WINDOW_LIMIT
+): Promise<{
   allowed: boolean
   count: number
   retryAfterSec?: number
@@ -30,7 +34,7 @@ export async function checkRateLimit(key: string): Promise<{
     return { allowed: true, count: 0 }
   }
 
-  if (row.count >= WINDOW_LIMIT) {
+  if (row.count >= limit) {
     const retryAfterSec = Math.max(
       1,
       Math.ceil((windowStart.getTime() + WINDOW_MS - now) / 1000),

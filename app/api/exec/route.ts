@@ -6,6 +6,7 @@ import { checkRateLimit, incrementRateLimit, WINDOW_LIMIT } from '@/lib/sandbox/
 import { db } from '@/lib/db'
 import { lessons } from '@/lib/db/schema'
 import { getCurrentUser } from '@/lib/auth/server'
+import { clientIp } from '@/lib/net/ip'
 import { ExecRequest } from './schema'
 
 export const runtime = 'nodejs'
@@ -31,17 +32,6 @@ async function resolveLesson(body: { lessonId?: string; lessonSlug?: string }) {
     return lesson
   }
   return undefined
-}
-
-/**
- * Extrai o IP do cliente (via headers de proxy — Railway/Cloudflare).
- */
-function clientIp(req: NextRequest): string {
-  const fwd = req.headers.get('x-forwarded-for')
-  if (fwd) return fwd.split(',')[0].trim()
-  const real = req.headers.get('x-real-ip')
-  if (real) return real.trim()
-  return 'unknown'
 }
 
 export async function POST(req: NextRequest) {
