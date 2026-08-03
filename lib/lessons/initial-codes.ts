@@ -90,6 +90,56 @@ model = DecisionTreeClassifier(max_depth=2).fit(X_train, y_train)
 print(f"acurácia treino: {model.score(X_train, y_train):.2%}")
 print(f"acurácia teste:  {model.score(X_test, y_test):.2%}")`,
 
+  // --- Exercícios da lição de Árvores de Decisão ---
+  'arvores-ex1': `from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Observe: o que acontece com treino e teste conforme a profundidade cresce?
+for depth in [1, 2, 5, 10]:
+    model = DecisionTreeClassifier(max_depth=depth, random_state=42).fit(X_train, y_train)
+    print(f"max_depth={depth} treino={model.score(X_train, y_train):.2f} teste={model.score(X_test, y_test):.2f}")`,
+
+  'arvores-ex2': `from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Seu desafio: ajuste os parâmetros para reduzir o gap treino-teste
+# mantendo a acurácia de teste acima de 90%.
+# Dica: comece com max_depth=3 e min_samples_leaf=5
+model = DecisionTreeClassifier(
+    max_depth=10,        # <- ajuste
+    min_samples_leaf=1,  # <- ajuste
+    random_state=42,
+).fit(X_train, y_train)
+
+print(f"treino={model.score(X_train, y_train):.2f} teste={model.score(X_test, y_test):.2f}")`,
+
+  'arvores-projeto': `from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+
+# Dataset de vinhos italianos: 3 cultivares, 13 atributos químicos
+wine = load_wine()
+X_train, X_test, y_train, y_test = train_test_split(
+    wine.data, wine.target, test_size=0.3, random_state=42
+)
+
+# Ajuste para generalizar bem (evite overfitting!)
+model = DecisionTreeClassifier(max_depth=3, random_state=42).fit(X_train, y_train)
+
+print(f"treino={model.score(X_train, y_train):.2f} teste={model.score(X_test, y_test):.2f}")
+
+# Qual atributo a raiz da árvore escolheu?
+raiz = model.tree_.feature[0]
+print(f"atributo raiz: {wine.feature_names[raiz]}")`,
+
   'knn-svm': `from sklearn.neighbors import KNeighborsClassifier
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split

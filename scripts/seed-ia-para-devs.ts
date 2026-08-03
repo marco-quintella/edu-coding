@@ -73,7 +73,7 @@ const COURSE = {
           slug: 'arvores-decisao',
           title: 'Árvores de Decisão',
           checkpoint: 'ml-base',
-          minutes: 20,
+          minutes: 35,
           quiz: [
             {
               question: 'Em uma árvore de decisão, o que cada nó interno representa?',
@@ -82,6 +82,46 @@ const COURSE = {
                 { id: 'b', text: 'Um teste sobre um atributo' },
                 { id: 'c', text: 'Um modelo estatístico' },
                 { id: 'd', text: 'Uma instância de dados' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que o algoritmo usa para decidir qual teste fazer em cada nó?',
+              options: [
+                { id: 'a', text: 'A ordem em que os atributos aparecem nos dados' },
+                { id: 'b', text: 'O teste que mais reduz a impureza (Gini/entropia) do grupo' },
+                { id: 'c', text: 'O atributo com maior valor numérico' },
+                { id: 'd', text: 'Um teste aleatório a cada nó' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que aumentar max_depth costuma piorar a acurácia de teste?',
+              options: [
+                { id: 'a', text: 'Porque a árvore fica mais lenta para prever' },
+                { id: 'b', text: 'Porque a árvore memoriza o ruído do treino (overfitting)' },
+                { id: 'c', text: 'Porque o Gini fica negativo' },
+                { id: 'd', text: 'Porque as folhas ficam grandes demais' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual parâmetro REDUZ o overfitting (faz a árvore menor)?',
+              options: [
+                { id: 'a', text: 'Aumentar max_depth' },
+                { id: 'b', text: 'Aumentar min_samples_leaf' },
+                { id: 'c', text: 'Remover min_samples_split' },
+                { id: 'd', text: 'Aumentar o número de classes' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que Random Forest costuma ser melhor que uma árvore única?',
+              options: [
+                { id: 'a', text: 'Porque treina mais rápido' },
+                { id: 'b', text: 'Porque combina várias árvores, reduzindo instabilidade e overfitting' },
+                { id: 'c', text: 'Porque usa apenas um atributo por árvore' },
+                { id: 'd', text: 'Porque não precisa de treino/teste' },
               ],
               correctOptionId: 'b',
             },
