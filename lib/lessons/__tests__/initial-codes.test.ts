@@ -15,6 +15,9 @@ const EXPECTED_SLUGS = [
   'arvores-projeto',
   'knn-svm',
   'knn-svm-svm',
+  'knn-ex1',
+  'knn-ex2',
+  'knn-ex3',
   'kmeans-clustering',
   // Fase 02
   'nlp-tokenizacao',

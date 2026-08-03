@@ -1,48 +1,84 @@
-Dois algoritmos clássicos de classificação que operam em princípios opostos: o KNN é **baseado em instâncias** (lazy learner), o SVM é **baseado em função** (eager learner).
+Dois algoritmos clássicos de classificação que operam em princípios opostos: o KNN é **baseado em instâncias** (lazy learner — não aprende nada no treino), o SVM é **baseado em função** (eager learner — constrói um modelo no treino). Entender os dois é entender os dois extremos do espectro: "memorizar tudo" vs "extrair o essencial".
 
 ## KNN — K-Nearest Neighbors
 
 O KNN classifica um novo ponto olhando os **K vizinhos mais próximos** no espaço de features. A classe é a **majoritária** entre esses K.
 
+> **Intuição:** o KNN é a "lei da vizinhança". Se 4 dos 5 apartamentos mais próximos do seu são de 2 quartos, o seu provavelmente é de 2 quartos. Não existe "modelo" — a decisão é tomada na hora, olhando ao redor.
+
+### Por que "lazy"?
+
+O KNN **não treina nada**: ele guarda todos os dados e só calcula distâncias na hora de prever. Isso tem consequências profundas:
+
+- **Treino instantâneo** (só copia os dados)
+- **Predição lenta** (precisa calcular a distância até todos os pontos — O(N) por previsão)
+- **Memória alta** (guarda o dataset inteiro em produção)
+
+A pergunta "qual distância?" importa: euclidiana (padrão), manhattan, minkowski. E o valor de `K` é o botão mais importante.
+
 ### Hands-on
 
 Vamos treinar KNN no Iris e ver como diferentes valores de K afetam a acurácia:
 
-<SandboxRunner
-  lessonSlug="knn-svm"
-  lessonSlug="knn-svm"
-/>
+<SandboxRunner lessonSlug="knn-svm" />
 
-Note como K=1 **overfitta** (100% treino, ~98% teste) e K>5 **underfitta** um pouco (treino cai pra ~96%).
+Note como K=1 **overfitta** (100% treino) e K=51 **underfitta** (treino cai pra ~89%).
 
 ### Parâmetros
 
-- `n_neighbors`: K. K=1 overfitta, K=N underfitta. Comece com `sqrt(N)`.
+- `n_neighbors`: K. K=1 overfitta, K=N underfitta. Comece com `sqrt(N)`
 - `metric`: distância (euclidiana default, manhattan, minkowski)
 - `weights`: `uniform` ou `distance` (vizinhos mais próximos pesam mais)
 
-### Quando usar
+## Exercício 1: o dilema do K
 
-- Datasets pequenos/médios
-- Quando a fronteira de decisão é **irregular**
-- Quando você precisa de **explicabilidade** (mostrar os vizinhos)
+Rode o código e observe o padrão completo: com K pequeno o treino é 100%, com K grande o treino cai. O **ponto ótimo** é onde o teste é máximo e o gap treino-teste é mínimo.
+
+<Exercise
+  lessonSlug="knn-svm"
+  codeKey="knn-ex1"
+  title="Exercício 1 — O dilema do K"
+  expectedOutput="K= 1 treino=1.00"
+  hint="Observe a transição: K=1 memoriza (treino 100%), K=51 generaliza demais (treino 89%). O melhor K aqui é 5 ou 11 — teste 100% com gap pequeno."
+/>
+
+**Pergunta-chave:** por que K=1 sempre tem treino 100%? (Resposta: cada ponto de treino é seu próprio vizinho mais próximo — a distância até ele mesmo é 0, então a classe é sempre a dele.)
+
+## O problema da fronteira irregular
+
+O KNN brilha quando a fronteira entre classes é **irregular** — curvas, bolsões, formas estranhas. Nesses casos, um modelo "geométrico" (como a reta do SVM linear) falha.
 
 ## SVM — Support Vector Machine
 
-O SVM encontra o **hiperplano** que separe as classes com a **maior margem** possível. Os pontos mais próximos do hiperplano são os **support vectors**.
+O SVM encontra o **hiperplano** que separe as classes com a **maior margem** possível. Os pontos mais próximos do hiperplano são os **support vectors** — e são os únicos que importam.
+
+> **Intuição:** imagine duas classes como dois grupos de torcedores num estádio, e você precisa desenhar a linha que os separa. A melhor linha é a que fica **o mais longe possível dos dois grupos** — não a que passa raspando. Os torcedores mais próximos da linha (os que definem onde ela pode ir) são os support vectors.
+
+### Por que "eager"?
+
+O SVM treina de verdade: resolve um problema de otimização para achar o hiperplano de margem máxima. O resultado é um modelo **compacto** — só os support vectors importam (24 de 105 no Iris!). O resto dos dados pode ser descartado.
 
 ### Hands-on
 
 SVM com kernel linear e RBF:
 
-<SandboxRunner
-  lessonSlug="knn-svm-svm"
+<SandboxRunner lessonSlug="knn-svm-svm" />
+
+## Exercício 2: a fronteira que a reta não resolve
+
+O dataset `make_moons` cria duas classes em forma de lua crescente — **não linearmente separáveis**. Uma reta (kernel linear) não consegue separá-las bem. Veja o que acontece com cada kernel:
+
+<Exercise
   lessonSlug="knn-svm"
+  codeKey="knn-ex2"
+  title="Exercício 2 — Moons: a fronteira curva"
+  expectedOutput="moons kernel=rbf treino=0.90"
+  hint="Observe: linear fica em ~81% (a reta não acompanha a curva), mas rbf sobe para ~90% (o kernel gaussiano 'dobra' o espaço). É o kernel trick em ação."
 />
 
-### Truque do kernel
+## Truque do kernel
 
-Quando os dados não são linearmente separáveis, o SVM usa o **kernel trick**: mapeia os dados para um espaço de maior dimensão onde uma separação linear é possível.
+Quando os dados não são linearmente separáveis, o SVM usa o **kernel trick**: mapeia os dados para um espaço de maior dimensão onde uma separação linear é possível — **sem calcular o mapeamento explicitamente** (isso é o "truque": a função de kernel calcula o produto interno direto).
 
 Kernels comuns:
 
@@ -50,11 +86,19 @@ Kernels comuns:
 - `rbf` (default): gaussiano, funciona bem na maioria dos casos
 - `poly`: polinomial
 
-### Quando usar
+## Exercício 3: a compactação do SVM
 
-- Datasets de tamanho médio com features em alta dimensão
-- Quando a fronteira de decisão é **suave**
-- Quando você precisa de **robustez** (SVM é menos propenso a overfitting que árvores)
+O SVM não guarda todos os dados — só os support vectors. Compare: quantos pontos o modelo precisa "lembrar" para classificar o Iris?
+
+<Exercise
+  lessonSlug="knn-svm"
+  codeKey="knn-ex3"
+  title="Exercício 3 — Quantos dados o SVM lembra?"
+  expectedOutput="support_vectors=24"
+  hint="O SVM guarda apenas os pontos na fronteira da margem. No Iris com 105 pontos de treino, só ~24 viram support vectors — o resto é descartável. Compare com o KNN, que guarda todos."
+/>
+
+**Contraste:** o KNN guardaria os 105 pontos (e calcularia distância até todos a cada previsão). O SVM guarda 24 e prevê instantaneamente. Essa é a diferença prática entre lazy e eager.
 
 ## Comparação direta
 
@@ -62,6 +106,16 @@ Kernels comuns:
 |---|---|---|
 | Treinamento | Instantâneo | Pode demorar |
 | Predição | Lenta (busca K vizinhos) | Rápida |
-| Memoria | Alto (guarda todos os dados) | Baixo (só support vectors) |
+| Memória | Alto (guarda todos os dados) | Baixo (só support vectors) |
 | Interpretabilidade | Média | Baixa |
 | Escalabilidade | Ruim com N grande | Boa |
+
+## Quando usar cada um
+
+- **KNN**: datasets pequenos/médios, fronteira irregular, quando você precisa de explicabilidade (mostrar os vizinhos)
+- **SVM**: dados de tamanho médio em alta dimensão, fronteira suave, robustez (menos overfitting que árvores)
+- **Na prática**: nenhum dos dois domina produção hoje — para tabelas usa-se Gradient Boosting/Random Forest; para não-estruturados, redes neurais. Mas entender KNN e SVM é entender **distância** e **margem** — os dois conceitos que sustentam os algoritmos modernos.
+
+## Próximos passos
+
+Você viu três respostas para "como separar classes?": perguntas (árvores), distância (KNN), margem (SVM). A próxima lição muda o jogo: **K-Means** — separar sem nenhum rótulo, descobrindo a estrutura sozinho.

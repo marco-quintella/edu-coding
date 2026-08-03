@@ -162,6 +162,44 @@ for kernel in ['linear', 'rbf', 'poly']:
     model = SVC(kernel=kernel).fit(X_train, y_train)
     print(f"kernel={kernel:6s} treino={model.score(X_train, y_train):.2%} teste={model.score(X_test, y_test):.2%}")`,
 
+  // --- Exercícios da lição de KNN/SVM ---
+  'knn-ex1': `from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Observe o dilema do K: memorização vs generalização
+for k in [1, 3, 5, 11, 51]:
+    model = KNeighborsClassifier(n_neighbors=k).fit(X_train, y_train)
+    print(f"K={k:2d} treino={model.score(X_train, y_train):.2f} teste={model.score(X_test, y_test):.2f}")`,
+
+  'knn-ex2': `from sklearn.svm import SVC
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+
+# Duas classes em formato de lua — fronteira curva, não linear!
+X, y = make_moons(n_samples=200, noise=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Qual kernel acompanha a curva?
+for kernel in ['linear', 'rbf', 'poly']:
+    model = SVC(kernel=kernel).fit(X_train, y_train)
+    print(f"moons kernel={kernel:6s} treino={model.score(X_train, y_train):.2f} teste={model.score(X_test, y_test):.2f}")`,
+
+  'knn-ex3': `from sklearn.svm import SVC
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# O SVM guarda só os support vectors — quantos?
+model = SVC(kernel='linear').fit(X_train, y_train)
+print(f"support_vectors={len(model.support_)}/{len(X_train)}")
+print(f"acuracia teste={model.score(X_test, y_test):.2f}")`,
+
   'kmeans-clustering': `from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 import numpy as np

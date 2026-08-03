@@ -131,7 +131,7 @@ const COURSE = {
           slug: 'knn-svm',
           title: 'KNN e SVM',
           checkpoint: 'ml-base',
-          minutes: 25,
+          minutes: 35,
           quiz: [
             {
               question: 'No KNN, como classificamos um novo ponto?',
@@ -140,6 +140,46 @@ const COURSE = {
                 { id: 'b', text: 'Pela classe majoritária dos K vizinhos mais próximos' },
                 { id: 'c', text: 'Por uma reta de regressão' },
                 { id: 'd', text: 'Pela distância máxima' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que o KNN é chamado de "lazy learner"?',
+              options: [
+                { id: 'a', text: 'Porque demora muito para treinar' },
+                { id: 'b', text: 'Porque não constrói um modelo no treino — guarda os dados e decide na hora de prever' },
+                { id: 'c', text: 'Porque só funciona com dados pequenos' },
+                { id: 'd', text: 'Porque ignora os rótulos' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que K=1 sempre tem 100% de acurácia no treino?',
+              options: [
+                { id: 'a', text: 'Porque o modelo é perfeito' },
+                { id: 'b', text: 'Porque cada ponto de treino é o vizinho mais próximo dele mesmo (distância 0)' },
+                { id: 'c', text: 'Porque K=1 usa todos os dados' },
+                { id: 'd', text: 'Porque o KNN não tem overfitting' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que o kernel trick faz no SVM?',
+              options: [
+                { id: 'a', text: 'Acrescenta ruído aos dados para evitar overfitting' },
+                { id: 'b', text: 'Mapeia os dados para um espaço de maior dimensão onde são linearmente separáveis, sem calcular o mapeamento' },
+                { id: 'c', text: 'Remove os support vectors para acelerar' },
+                { id: 'd', text: 'Converte classificação em regressão' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que são os support vectors?',
+              options: [
+                { id: 'a', text: 'Todos os pontos do dataset de treino' },
+                { id: 'b', text: 'Apenas os pontos mais próximos do hiperplano, que definem a margem' },
+                { id: 'c', text: 'Os pontos que o modelo classificou errado' },
+                { id: 'd', text: 'Os K vizinhos mais próximos do ponto novo' },
               ],
               correctOptionId: 'b',
             },
