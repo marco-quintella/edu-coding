@@ -823,6 +823,44 @@ print("autorizado (email):", extrair_minimo(texto_bruto, ["email"]))
 print("autorizado (nome):", extrair_minimo(texto_bruto, ["nome"]))
 print("sem autorizacao (cpf):", extrair_minimo(texto_bruto, []))`,
 
+  // --- Exercícios da lição de LGPD ---
+  'lgpd-ex1': `# LGPD: minimizacao de dados — extraia so o necessario para a tarefa
+import re
+
+texto_bruto = "Cliente: Maria Silva, CPF 123.456.789-00, email maria@email.com, comprou 2 itens."
+
+def extrair_minimo(texto, campos):
+    """Extrai apenas os campos pedidos (minimizacao LGPD)."""
+    resultado = {}
+    if "email" in campos:
+        m = re.search(r"[\\w.+-]+@[\\w.-]+", texto)
+        resultado["email"] = m.group(0) if m else None
+    if "cpf" in campos:
+        m = re.search(r"\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", texto)
+        resultado["cpf"] = m.group(0) if m else None
+    return resultado
+
+# A aplicacao so precisa do email para enviar a nota
+dados = extrair_minimo(texto_bruto, ["email"])
+print(f"extraido (minimo): {dados}")
+print(f"cpf nao foi extraido: {'cpf' not in dados}")`,
+
+  'lgpd-ex2': `# LGPD: logs sem dados pessoais — use IDs opacos (pseudonimizacao)
+import hashlib
+
+usuarios = [
+    ("maria@example.com", "comprou item 42"),
+    ("joao@example.com", "acessou painel"),
+]
+
+def id_opaco(email):
+    """Hash irreversivel do email para logs."""
+    return hashlib.sha256(email.encode()).hexdigest()[:12]
+
+for email, acao in usuarios:
+    print(f"log: usuario={id_opaco(email)} acao={acao}")
+print("logs nao contem emails")`,
+
   'deteccao-anomalias': `from sklearn.ensemble import IsolationForest
 import numpy as np
 
@@ -838,6 +876,38 @@ labels = model.fit_predict(X)  # 1 = normal, -1 = anomalia
 
 print("ultimas 3 (deveriam ser -1):", labels[-3:])
 print(f"anomalias detectadas: {(labels == -1).sum()}")`,
+
+  // --- Exercícios da lição de Detecção de Anomalias ---
+  'anomalias-ex1': `import numpy as np
+
+# 100 pontos normais (media ~10) + 1 anomalia clara (58)
+rng = np.random.RandomState(42)
+normais = rng.normal(10, 1.5, 100)
+dados = np.append(normais, 58)
+
+media = dados.mean()
+desvio = dados.std()
+z = np.abs((dados - media) / desvio)
+
+anomalias = dados[z > 3]
+print(f"media={media:.1f} desvio={desvio:.1f}")
+print(f"pontos com z > 3: {len(anomalias)}")
+print(f"anomalia detectada: {list(anomalias)}")`,
+
+  'anomalias-ex2': `from sklearn.ensemble import IsolationForest
+import numpy as np
+
+# Dados normais (cluster) + 3 outliers espalhados
+rng = np.random.RandomState(42)
+normais = rng.normal(0, 1, (200, 2))
+outliers = np.array([[8, 8], [-7, 6], [6, -8]])
+X = np.vstack([normais, outliers])
+
+model = IsolationForest(contamination=0.03, random_state=42)
+labels = model.fit_predict(X)  # 1 = normal, -1 = anomalia
+
+print(f"anomalias detectadas: {(labels == -1).sum()}")
+print(f"outliers reais encontrados: {sum(labels[-3:] == -1)} de 3")`,
 
   'azure-cognitive': `# Azure Cognitive Services — fluxo (requer chave Azure, aqui simulamos)
 # Com credenciais reais usaria o SDK azure-ai-textanalytics
@@ -862,6 +932,40 @@ for r in resp:
 """)
 else:
     print("Chave Azure presente — use o SDK real.")`,
+
+  // --- Exercícios da lição de Azure Cognitive Services ---
+  'azure-ex1': `# Azure Cognitive Services: qual servico para qual tarefa?
+# (decisao de arquitetura antes de codar)
+
+tarefas = {
+    "extrair texto de uma foto de placa de carro": "Computer Vision (OCR)",
+    "transcrever um podcast para texto": "Speech-to-Text",
+    "descobrir o sentimento de avaliacoes": "Text Analytics",
+    "detectar anomalias em metricas do servidor": "Anomaly Detector",
+}
+
+for tarefa, servico in tarefas.items():
+    print(f"{tarefa}")
+    print(f"  -> {servico}")`,
+
+  'azure-ex2': `# Decisao de arquitetura: API pronta vs modelo proprio
+# Regras: generico+rapido = API; dominio especifico/dados sensiveis = proprio
+
+def decide(tarefa, generica, dados_sensiveis):
+    if dados_sensiveis:
+        return "treinar modelo proprio (dados nao podem sair)"
+    if generica:
+        return "usar API pronta (Cognitive Services)"
+    return "treinar modelo proprio (dominio especifico)"
+
+casos = [
+    ("OCR de nota fiscal padrao", True, False),
+    ("Detectar jargao juridico de contratos", False, False),
+    ("Analisar prontuarios medicos", True, True),
+]
+for tarefa, generica, sensivel in casos:
+    print(f"{tarefa}: {decide(tarefa, generica, sensivel)}")`,
+
 }
 
 /**

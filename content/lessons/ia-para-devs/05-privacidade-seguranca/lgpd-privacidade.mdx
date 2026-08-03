@@ -1,4 +1,6 @@
-Sistemas de IA processam **dados pessoais** — e no Brasil isso é regulado pela **LGPD (Lei Geral de Proteção de Dados)**. Ignorar compliance não é só risco ético, é risco legal.
+Sistemas de IA processam **dados pessoais** — e no Brasil isso é regulado pela **LGPD (Lei Geral de Proteção de Dados)**. Ignorar compliance não é só risco ético, é risco legal: multas de até **2% do faturamento** e sanções da ANPD.
+
+> **Intuição:** a LGPD não é um obstáculo ao ML — é um **padrão de engenharia**. "Minimização de dados" não é só lei, é boa arquitetura: menos dados = menos superfície de ataque = menos custo de armazenamento = menos responsabilidade.
 
 ## O que a LGPD protege
 
@@ -17,10 +19,35 @@ Sistemas de IA processam **dados pessoais** — e no Brasil isso é regulado pel
 
 ## Hands-on — minimização de dados
 
-<SandboxRunner
+<SandboxRunner lessonSlug="lgpd-privacidade" />
+
+## Exercício 1: minimização na prática
+
+O princípio da **necessidade** em código: a aplicação só precisa do email para enviar a nota — então **não extrai** o CPF nem o nome. Rode e veja:
+
+<Exercise
   lessonSlug="lgpd-privacidade"
-  lessonSlug="lgpd-privacidade"
+  codeKey="lgpd-ex1"
+  title="Exercício 1 — Minimização de dados"
+  expectedOutput="cpf nao foi extraido: True"
+  hint="A função recebe 'campos' e extrai SÓ o que foi pedido. O CPF está no texto bruto, mas a aplicação não pediu — então não vira dado coletado. Menos dados coletados = menos obrigações LGPD."
 />
+
+**Pergunta-chave:** por que minimizar é vantagem técnica (não só legal)? (Resposta: cada campo a menos é um vetor de ataque a menos, menos espaço em banco, menos dados para vazar num incidente, e menos campos para pseudonimizar/gerenciar.)
+
+## Exercício 2: logs sem dados pessoais
+
+Logs são onde dados pessoais vazam com mais frequência — um `logger.info(f"user {email} ...")` e o CPF/email inteiro está no arquivo. A prática correta: **IDs opacos** (hash irreversível).
+
+<Exercise
+  lessonSlug="lgpd-privacidade"
+  codeKey="lgpd-ex2"
+  title="Exercício 2 — Pseudonimização em logs"
+  expectedOutput="logs nao contem emails"
+  hint="O email vira um hash SHA-256 truncado (10ef04a5a1ac). O log registra 'quem' de forma rastreável para debugging, mas sem o dado pessoal legível. Se o log vazar, o email não vaza junto."
+/>
+
+**O que observar:** pseudonimização ≠ anonimização (o hash pode ser reversível se o dicionário de emails for conhecido — ataques de dicionário existem). Para dados sensíveis, use **anonimização real** (ruído, k-anonimato) ou não colete.
 
 ## LGPD × IA na prática
 
@@ -31,7 +58,7 @@ Sistemas de IA processam **dados pessoais** — e no Brasil isso é regulado pel
 
 ### Inferência
 - Retenção mínima de inputs/outputs
-- Logs sem dados pessoais (IDs opacos)
+- Logs sem dados pessoais (IDs opacos — você acabou de implementar)
 - Direito de explicação das decisões automatizadas
 
 ### Deploy
@@ -55,3 +82,7 @@ Sistemas de IA processam **dados pessoais** — e no Brasil isso é regulado pel
 - Em ambientes regulados: modelos self-hosted ou regionais
 
 > **Regra de ouro**: se você não precisa do dado para a tarefa, não colete. A melhor proteção de dados é não ter o dado.
+
+## Próximos passos
+
+Privacidade é sobre o "normal". A próxima lição é sobre o **anormal**: Detecção de Anomalias — fraude, intrusão e falhas que fogem do padrão.

@@ -1,5 +1,7 @@
 **Detecção de anomalias** identifica pontos que **fogem do padrão** dos dados — fraude, defeito, intrusão, falha. É aprendizado não supervisionado por natureza: você não sabe de antemão o que é "anômalo".
 
+> **Intuição:** é o sistema de alarme da fábrica. O "normal" é aprendido dos dados históricos; qualquer coisa que destoe demais dispara o alarme. O desafio: alarmes demais = falso positivo (ninguém acredita no sistema); alarmes de menos = fraude passa.
+
 ## Tipos de abordagem
 
 1. **Estatística**: desvios do z-score, distribuições (Gaussian, Poisson)
@@ -9,10 +11,7 @@
 
 ## Hands-on — Isolation Forest
 
-<SandboxRunner
-  lessonSlug="deteccao-anomalias"
-  lessonSlug="deteccao-anomalias"
-/>
+<SandboxRunner lessonSlug="deteccao-anomalias" />
 
 ## Método estatístico — z-score
 
@@ -27,6 +26,34 @@ desvio = dados.std()
 z = np.abs((dados - media) / desvio)
 print("anomalias por z-score:", dados[z > 3])
 ```
+
+## Exercício 1: a pegadinha do z-score
+
+Rode o código e observe — o z-score com **poucos dados** falha em detectar o 58. Por quê?
+
+<Exercise
+  lessonSlug="deteccao-anomalias"
+  codeKey="anomalias-ex1"
+  title="Exercício 1 — Por que o z-score falha?"
+  expectedOutput="pontos com z > 3: 1"
+  hint="Com poucos pontos, a própria anomalia (58) infla a média e o desvio — o z-score do 58 fica abaixo do limiar. Esse é o problema clássico dos métodos estatísticos com amostras pequenas. Por isso modelos como Isolation Forest existem."
+/>
+
+**Pergunta-chave:** o que aconteceu no dataset com 9 pontos? (Resposta: média 16.6, desvio 14.7 — o 58 "puxou" as estatísticas. Com 100 pontos normais, o mesmo 58 é detectado facilmente: média 10.3, desvio 5.0, z > 3. O método estatístico é tão bom quanto a qualidade do "normal".)
+
+## Exercício 2: Isolation Forest
+
+Para dados **multidimensionais**, o Isolation Forest é o default moderno: isola pontos atípicos com cortes aleatórios — pontos fáceis de isolar são anomalias.
+
+<Exercise
+  lessonSlug="deteccao-anomalias"
+  codeKey="anomalias-ex2"
+  title="Exercício 2 — Isolation Forest"
+  expectedOutput="outliers reais encontrados: 3 de 3"
+  hint="O modelo detecta os 3 outliers espalhados (8,8), (-7,6), (6,-8) mesmo sem saber que existem. Repare no parâmetro 'contamination' — ele diz ao modelo qual fração dos dados espera que seja anômala."
+/>
+
+**O que observar:** o Isolation Forest **não precisa de labels** — ele acha a estrutura sozinho. O `contamination` é o trade-off: subestimar = anomalias passam; superestimar = falsos positivos.
 
 ## LOF — Local Outlier Factor
 
@@ -63,3 +90,7 @@ labels = model.fit_predict(X)
 - Anomalias raras → métricas além de acurácia (precision@k, AUC)
 - **Concept drift**: o "normal" muda com o tempo → re-treinar
 - Valide com dados rotulados sempre que possível
+
+## Próximos passos
+
+Última lição do curso: **Azure Cognitive Services** — as APIs prontas de IA da Microsoft, e a decisão de arquitetura mais importante: quando usar API pronta vs treinar seu modelo.

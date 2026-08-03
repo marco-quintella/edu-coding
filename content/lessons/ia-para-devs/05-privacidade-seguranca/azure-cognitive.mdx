@@ -1,5 +1,7 @@
 **Azure Cognitive Services** é o conjunto de APIs prontas de IA da Microsoft: visão, fala, linguagem e decisão. Você não treina modelos — chama endpoints com resultados de produção.
 
+> **Intuição:** é a versão "plumbing" da IA. Assim como você não escreve seu próprio servidor HTTP para cada app, não precisa treinar um modelo de OCR para cada projeto. A API pronta resolve tarefas **genéricas** com SLA de produção — e você paga por transação, não por infra.
+
 ## Famílias de serviços
 
 | Família | Serviços | O que faz |
@@ -12,10 +14,21 @@
 
 ## Hands-on — estrutura (conceitual)
 
-<SandboxRunner
+<SandboxRunner lessonSlug="azure-cognitive" />
+
+## Exercício 1: qual serviço para qual tarefa?
+
+A primeira habilidade de um engenheiro de IA em cloud é **mapear tarefa → serviço**. Rode e veja o mapa:
+
+<Exercise
   lessonSlug="azure-cognitive"
-  lessonSlug="azure-cognitive"
+  codeKey="azure-ex1"
+  title="Exercício 1 — Mapa de serviços"
+  expectedOutput="-> Anomaly Detector"
+  hint="Cada tarefa mapeia para uma família: texto em imagem → Vision OCR, áudio → Speech, sentimento → Language, métricas de servidor → Decision/Anomaly Detector. Saber esse mapa é 80% da arquitetura."
 />
+
+**Pergunta-chave:** por que NÃO usar um modelo único para tudo? (Resposta: cada serviço é especializado e otimizado para a tarefa dele — OCR entende layout, Speech entende fala, Text Analytics entende linguagem. Um modelo genérico faria tudo mal.)
 
 ## Computer Vision
 
@@ -27,6 +40,24 @@ client = ComputerVisionClient(ENDPOINT, AzureKeyCredential(KEY))
 result = client.read_in_stream(imagem_bytes, raw=True)
 # resultado: texto + bounding boxes + confiança
 ```
+
+## Exercício 2: API pronta vs modelo próprio
+
+A decisão de arquitetura mais cara em projetos de IA. Regras práticas:
+
+- **Tarefa genérica** (OCR, sentimento, face) → API pronta (re-inventar não compensa)
+- **Domínio específico** (jargão, formatos proprietários) → treinar modelo próprio
+- **Dados sensíveis** que não podem sair do ambiente → modelo próprio, obrigatório
+
+<Exercise
+  lessonSlug="azure-cognitive"
+  codeKey="azure-ex2"
+  title="Exercício 2 — API vs modelo próprio"
+  expectedOutput="Analisar prontuarios medicos: treinar modelo proprio"
+  hint="Prontuários médicos são dados SENSÍVEIS (LGPD) — não podem sair para uma API cloud. Mesmo sendo tarefa 'genérica' (análise de texto), a sensibilidade dos dados manda treinar/modelar internamente. A regra de dados sensíveis sobrepõe a regra de genericidade."
+/>
+
+**O que observar:** a ordem das regras importa — **dados sensíveis primeiro**, genericidade depois. Um prontuário médico é texto "genérico" tecnicamente, mas a LGPD e a ética médica proíbem mandá-lo para fora.
 
 ## Cognitive Search
 
@@ -71,3 +102,14 @@ Ferramenta **low-code** (Power Platform) para treinar modelos custom sem código
 - Domínio específico (jargão, formatos proprietários)
 - Dados sensíveis que não podem sair do seu ambiente
 - Controle fino de qualidade/erros
+
+## Fim do curso 🎓
+
+Você percorreu o caminho completo — dos fundamentos (regressão, árvores, KNN, SVM, K-Means) à evolução (NLP, embeddings, GA), passando por LLMs (CoT, prompts, LangChain), multimídia (vídeo/áudio/Texto, Textract) e fechando com o que separa projetos de produtos: **privacidade (LGPD), anomalias e decisões de arquitetura cloud**.
+
+O que fazer agora:
+
+1. **Refaça a Fase 01** — com os conceitos de hoje, os exercícios ficam óbvios (isso é progresso)
+2. **Monte seu portfólio** — cada projeto das lições (preço de imóvel, vinhos, segmentação) é um case de portfólio
+3. **Vá para o código real** — os padrões que você treinou aqui (train/test split, normalização, overfitting, avaliação) são os mesmos em produção
+4. **Esteja pronto para o que vem** — o corretor pedagógico e o chat de dúvidas estão chegando na plataforma

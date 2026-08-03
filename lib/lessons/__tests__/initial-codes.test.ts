@@ -51,8 +51,14 @@ const EXPECTED_SLUGS = [
   'textract-ex2',
   // Fase 05
   'lgpd-privacidade',
+  'lgpd-ex1',
+  'lgpd-ex2',
   'deteccao-anomalias',
+  'anomalias-ex1',
+  'anomalias-ex2',
   'azure-cognitive',
+  'azure-ex1',
+  'azure-ex2',
 ]
 
 describe('INITIAL_CODES', () => {

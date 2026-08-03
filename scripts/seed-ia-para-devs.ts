@@ -735,7 +735,7 @@ const COURSE = {
           slug: 'lgpd-privacidade',
           title: 'Privacidade e LGPD em IA',
           checkpoint: 'ml-base',
-          minutes: 25,
+          minutes: 30,
           quiz: [
             {
               question: 'O que a LGPD protege?',
@@ -744,6 +744,46 @@ const COURSE = {
                 { id: 'b', text: 'Apenas dados empresariais' },
                 { id: 'c', text: 'Código fonte' },
                 { id: 'd', text: 'Dados públicos governamentais' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que é o princípio da NECESSIDADE (minimização)?',
+              options: [
+                { id: 'a', text: 'Coletar o mínimo de dados necessário para a tarefa' },
+                { id: 'b', text: 'Coletar o máximo de dados possível' },
+                { id: 'c', text: 'Comprimir os dados para economizar espaço' },
+                { id: 'd', text: 'Apagar o banco de dados' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que usar IDs opacos (hash) em logs em vez do email?',
+              options: [
+                { id: 'a', text: 'Para ocupar menos espaço' },
+                { id: 'b', text: 'Para o log não conter dados pessoais legíveis — se vazar, o email não vaza' },
+                { id: 'c', text: 'Para acelerar as queries' },
+                { id: 'd', text: 'Porque emails não podem ser armazenados' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Pseudonimização (hash) é o mesmo que anonimização?',
+              options: [
+                { id: 'a', text: 'Sim, são idênticas' },
+                { id: 'b', text: 'Não — hash pode ser reversível por ataque de dicionário; anonimização real é irreversível' },
+                { id: 'c', text: 'Não — anonimização é mais rápida' },
+                { id: 'd', text: 'Sim, ambas usam criptografia' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Em quanto tempo um incidente de dados deve ser notificado à ANPD?',
+              options: [
+                { id: 'a', text: '72 horas' },
+                { id: 'b', text: '7 dias' },
+                { id: 'c', text: '30 dias' },
+                { id: 'd', text: 'Não precisa notificar' },
               ],
               correctOptionId: 'a',
             },
@@ -765,6 +805,46 @@ const COURSE = {
               ],
               correctOptionId: 'a',
             },
+            {
+              question: 'Por que o z-score falha com poucos dados?',
+              options: [
+                { id: 'a', text: 'Porque é muito lento' },
+                { id: 'b', text: 'Porque a própria anomalia infla a média e o desvio, mascarando o z-score dela' },
+                { id: 'c', text: 'Porque só funciona com texto' },
+                { id: 'd', text: 'Porque precisa de labels' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que o Isolation Forest faz?',
+              options: [
+                { id: 'a', text: 'Cria clusters esféricos' },
+                { id: 'b', text: 'Isola pontos com cortes aleatórios — pontos fáceis de isolar são anomalias' },
+                { id: 'c', text: 'Treina uma rede neural' },
+                { id: 'd', text: 'Classifica com K vizinhos' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que o parâmetro "contamination" controla?',
+              options: [
+                { id: 'a', text: 'A fração de dados esperada como anômala (trade-off de falsos positivos)' },
+                { id: 'b', text: 'A velocidade do treino' },
+                { id: 'c', text: 'O número de features' },
+                { id: 'd', text: 'O tamanho do dataset' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que é concept drift?',
+              options: [
+                { id: 'a', text: 'O modelo esquece o que aprendeu' },
+                { id: 'b', text: 'O "normal" muda com o tempo — o padrão de hoje pode ser anomalia amanhã' },
+                { id: 'c', text: 'Uma técnica de vizinhos' },
+                { id: 'd', text: 'Um tipo de kernel' },
+              ],
+              correctOptionId: 'b',
+            },
           ],
         },
         {
@@ -780,6 +860,46 @@ const COURSE = {
                 { id: 'b', text: 'Máquinas virtuais' },
                 { id: 'c', text: 'Bancos de dados' },
                 { id: 'd', text: 'Servidores web' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual serviço para transcrever áudio em texto?',
+              options: [
+                { id: 'a', text: 'Computer Vision' },
+                { id: 'b', text: 'Speech-to-Text' },
+                { id: 'c', text: 'Text Analytics' },
+                { id: 'd', text: 'Anomaly Detector' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Quando usar API pronta vs treinar modelo próprio?',
+              options: [
+                { id: 'a', text: 'Sempre API pronta — é mais barato' },
+                { id: 'b', text: 'Tarefa genérica → API; domínio específico ou dados sensíveis → modelo próprio' },
+                { id: 'c', text: 'Sempre treinar modelo próprio — é mais preciso' },
+                { id: 'd', text: 'Depende do clima' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que prontuários médicos NÃO devem ir para uma API cloud genérica?',
+              options: [
+                { id: 'a', text: 'Porque são dados sensíveis (LGPD) — a regra de sensibilidade sobrepõe a de genericidade' },
+                { id: 'b', text: 'Porque a API não entende português' },
+                { id: 'c', text: 'Porque são grandes demais' },
+                { id: 'd', text: 'Porque a API é cara' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que é Cognitive Search?',
+              options: [
+                { id: 'a', text: 'Busca semântica/híbrida sobre dados próprios — ideal para RAG corporativo' },
+                { id: 'b', text: 'Um mecanismo de cache' },
+                { id: 'c', text: 'Um antivírus' },
+                { id: 'd', text: 'Um firewall' },
               ],
               correctOptionId: 'a',
             },
