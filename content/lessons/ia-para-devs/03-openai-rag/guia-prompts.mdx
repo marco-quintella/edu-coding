@@ -1,18 +1,45 @@
-Um **prompt** é a instrução que você dá ao modelo. A qualidade da resposta depende quase inteiramente da qualidade do prompt. Este guia cobre as técnicas essenciais.
+Um **prompt** é a instrução que você dá ao modelo. A qualidade da resposta depende quase inteiramente da qualidade do prompt — e em produção, cada prompt ruim custa **tokens, latência e retrabalho**. Este guia cobre as técnicas essenciais, com exercícios que você roda no sandbox.
 
 ## Os 4 pilares de um bom prompt
 
-1. **Instrução clara** — o que exatamente o modelo deve fazer
+1. **Instrução clara** — o que exatamente o modelo deve fazer (comece com verbo)
 2. **Contexto** — informações que o modelo precisa saber
 3. **Exemplos** — formato e tom esperados (few-shot)
 4. **Formato de saída** — estrutura esperada (JSON, lista, markdown)
 
+> **Intuição:** o prompt é a "interface" do seu sistema com o modelo. Um bom prompt é como uma boa API: contrato claro, entradas bem definidas, saída previsível. Um prompt vago é uma API sem documentação — o retorno é sorte.
+
 ## Hands-on
 
-<SandboxRunner
+<SandboxRunner lessonSlug="guia-prompts" />
+
+## Exercício 1: templates de prompt
+
+Prompts reutilizáveis usam **templates** com placeholders — o mesmo padrão do seu código muda só o contexto. Rode e veja como um template vira um prompt completo:
+
+<Exercise
   lessonSlug="guia-prompts"
-  lessonSlug="guia-prompts"
+  codeKey="prompts-ex1"
+  title="Exercício 1 — Template de prompt"
+  expectedOutput="chaves: ['resposta']"
+  hint="O template injeta 'linguagem' e 'tarefa' no texto do prompt, e define o formato de saída (JSON). As 'chaves' confirmam que o formato estruturado foi respeitado — é o pilar 4 (formato de saída) em ação."
 />
+
+**Pergunta-chave:** por que definir o formato de saída explicitamente? (Resposta: sem ele, o modelo inventa estrutura — às vezes texto, às vezes lista, às vezes JSON com chaves diferentes. Em produção, isso quebra o parser e custa dinheiro. Formato explícito = pipeline previsível.)
+
+## Exercício 2: parsing de saída estruturada
+
+O formato de saída só vale se você **consegue parsear** o que o modelo retorna. O padrão de produção: prompt pede JSON → seu código faz `json.loads` → pipeline continua.
+
+<Exercise
+  lessonSlug="guia-prompts"
+  codeKey="prompts-ex2"
+  title="Exercício 2 — Parse da saída"
+  expectedOutput="resposta: risco 1: injection"
+  hint="O modelo retornou JSON, e o parser extraiu a chave 'resposta'. Em produção você adicionaria validação (e tratamento de erro se o JSON vier quebrado) — sempre assuma que o modelo pode falhar o formato."
+/>
+
+**O que observar:** a saída estruturada transforma o LLM de "caixa de texto" em **componente de pipeline** — algo que seu código pode consumir. É assim que sistemas reais integram LLMs (classificação de ticket, extração de dados, moderação).
 
 ## Técnicas essenciais
 
@@ -62,3 +89,7 @@ Resuma o texto entre <texto>...</texto>:
 ## Iteração é a regra
 
 O primeiro prompt raramente é o melhor. Escreva, teste, meça, ajuste — prompt engineering é um loop de iteração, não um one-shot.
+
+## Próximos passos
+
+Você sabe **o que pedir**. A próxima lição é sobre **como orquestrar**: LangChain — encadear prompts, modelos e parsers em pipelines, e deixar o modelo decidir quais ferramentas usar.

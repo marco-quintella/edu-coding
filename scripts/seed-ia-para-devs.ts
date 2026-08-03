@@ -433,7 +433,7 @@ const COURSE = {
           slug: 'chain-of-thought',
           title: 'Chain of Thought com LLMs',
           checkpoint: 'ml-base',
-          minutes: 25,
+          minutes: 30,
           quiz: [
             {
               question: 'O que é Chain of Thought (CoT)?',
@@ -445,13 +445,53 @@ const COURSE = {
               ],
               correctOptionId: 'a',
             },
+            {
+              question: 'Por que o CoT melhora a precisão em problemas de lógica/matemática?',
+              options: [
+                { id: 'a', text: 'Porque aumenta o tamanho do modelo' },
+                { id: 'b', text: 'Porque o raciocínio intermediário ancora a resposta final em passos verificáveis' },
+                { id: 'c', text: 'Porque remove tokens desnecessários' },
+                { id: 'd', text: 'Porque usa mais dados de treino' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que é zero-shot CoT?',
+              options: [
+                { id: 'a', text: 'Basta adicionar "Vamos pensar passo a passo" ao prompt' },
+                { id: 'b', text: 'Treinar o modelo do zero' },
+                { id: 'c', text: 'Remover todos os exemplos do prompt' },
+                { id: 'd', text: 'Usar um modelo sem parâmetros' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual o CUSTO do CoT?',
+              options: [
+                { id: 'a', text: 'Nenhum — é grátis' },
+                { id: 'b', text: 'Mais tokens (custo) e mais latência' },
+                { id: 'c', text: 'Menos tokens que resposta direta' },
+                { id: 'd', text: 'Requer GPU dedicada' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Em qual tarefa CoT NÃO ajuda?',
+              options: [
+                { id: 'a', text: 'Aritmética multi-etapa' },
+                { id: 'b', text: 'Análise de código' },
+                { id: 'c', text: 'Tarefas de memória (fatos simples) — a resposta direta é melhor' },
+                { id: 'd', text: 'Raciocínio lógico' },
+              ],
+              correctOptionId: 'c',
+            },
           ],
         },
         {
           slug: 'guia-prompts',
           title: 'Guia de Prompts',
           checkpoint: 'ml-base',
-          minutes: 20,
+          minutes: 30,
           quiz: [
             {
               question: 'O que é um "prompt" bem estruturado?',
@@ -462,6 +502,46 @@ const COURSE = {
                 { id: 'd', text: 'Uma consulta SQL' },
               ],
               correctOptionId: 'a',
+            },
+            {
+              question: 'Quais são os 4 pilares de um bom prompt?',
+              options: [
+                { id: 'a', text: 'Instrução, contexto, exemplos, formato de saída' },
+                { id: 'b', text: 'Título, autor, data, resumo' },
+                { id: 'c', text: 'Palavras-chave, tags, links, imagens' },
+                { id: 'd', text: 'Modelo, tokens, temperatura, top_p' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que definir o formato de saída (ex: JSON) é importante?',
+              options: [
+                { id: 'a', text: 'Para o modelo responder mais rápido' },
+                { id: 'b', text: 'Para o pipeline ser previsível — o código consegue parsear a resposta' },
+                { id: 'c', text: 'Para reduzir o custo de tokens' },
+                { id: 'd', text: 'Não é importante' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que é few-shot prompting?',
+              options: [
+                { id: 'a', text: 'Mostrar 2-3 exemplos do formato desejado antes da pergunta real' },
+                { id: 'b', text: 'Usar poucos tokens no prompt' },
+                { id: 'c', text: 'Treinar o modelo com poucos dados' },
+                { id: 'd', text: 'Pedir respostas curtas' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual a regra de ouro contra prompt injection?',
+              options: [
+                { id: 'a', text: 'Nunca usar input do usuário' },
+                { id: 'b', text: 'Nunca concatenar input do usuário sem sanitizar/delimitar' },
+                { id: 'c', text: 'Sempre usar letras maiúsculas no prompt' },
+                { id: 'd', text: 'Usar modelo maior' },
+              ],
+              correctOptionId: 'b',
             },
           ],
         },
@@ -480,6 +560,46 @@ const COURSE = {
                 { id: 'd', text: 'Uma função de ativação' },
               ],
               correctOptionId: 'a',
+            },
+            {
+              question: 'O que o operador pipe (|) faz numa chain?',
+              options: [
+                { id: 'a', text: 'Cada etapa recebe a saída da anterior (prompt | model | parser)' },
+                { id: 'b', text: 'Executa as etapas em paralelo' },
+                { id: 'c', text: 'Concatena strings' },
+                { id: 'd', text: 'Alterna entre dois modelos' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual a diferença entre chain e agent?',
+              options: [
+                { id: 'a', text: 'São a mesma coisa' },
+                { id: 'b', text: 'Chain tem fluxo fixo (você escreve os passos); agent decide o fluxo em tempo real' },
+                { id: 'c', text: 'Chain usa 2 modelos; agent usa 1' },
+                { id: 'd', text: 'Chain é mais lenta' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que é RAG?',
+              options: [
+                { id: 'a', text: 'Um tipo de rede neural' },
+                { id: 'b', text: 'Recuperação + geração — buscar dados relevantes e passar ao modelo' },
+                { id: 'c', text: 'Um framework de testes' },
+                { id: 'd', text: 'Um formato de prompt' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual o principal pitfall de chains longas?',
+              options: [
+                { id: 'a', text: 'Elas são mais precisas' },
+                { id: 'b', text: 'Multiplicam custo/latência — cada etapa é uma chamada' },
+                { id: 'c', text: 'Elas não funcionam com JSON' },
+                { id: 'd', text: 'Elas exigem GPU' },
+              ],
+              correctOptionId: 'b',
             },
           ],
         },

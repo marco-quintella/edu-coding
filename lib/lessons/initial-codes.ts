@@ -503,6 +503,38 @@ else:
     print("CoT prompt: 'Vamos pensar passo a passo...'")
     print("R: modelo raciocina intermediario antes da resposta final")`,
 
+  // --- Exercícios da lição de Chain of Thought ---
+  'cot-ex1': `def raciocina_mesas(mesas_iniciais, novas):
+    """Simula o raciocinio passo a passo de um LLM com CoT."""
+    passos = []
+    passos.append(f"O restaurante comecou com {mesas_iniciais} mesas.")
+    passos.append(f"Depois recebeu {novas} novas mesas.")
+    total = mesas_iniciais + novas
+    passos.append(f"{mesas_iniciais} + {novas} = {total}.")
+    passos.append(f"O restaurante agora tem {total} mesas.")
+    return passos
+
+passos = raciocina_mesas(23, 5)
+for i, passo in enumerate(passos, 1):
+    print(f"{i}. {passo}")
+print(f"RESPOSTA: {passos[-1]}")`,
+
+  'cot-ex2': `def raciocina_mesas(mesas_iniciais, recebe, doa):
+    """Problema multi-etapa: mesas + recebe - doa, passo a passo."""
+    passos = []
+    passos.append(f"O restaurante comecou com {mesas_iniciais} mesas.")
+    passos.append(f"Recebeu {recebe} novas mesas: {mesas_iniciais} + {recebe} = {mesas_iniciais + recebe}.")
+    parcial = mesas_iniciais + recebe
+    passos.append(f"Depois doou {doa} mesas: {parcial} - {doa} = {parcial - doa}.")
+    total = parcial - doa
+    passos.append(f"O restaurante agora tem {total} mesas.")
+    return passos
+
+passos = raciocina_mesas(23, 5, 10)
+for i, passo in enumerate(passos, 1):
+    print(f"{i}. {passo}")
+print(f"RESPOSTA: {passos[-1]}")`,
+
   'guia-prompts': `# Analise de prompts — exemplos bom vs ruim (conceitual)
 # Configure sua API key no painel e rode.
 
@@ -523,6 +555,42 @@ if not api_key:
     print(PROMPT_BOM)
 else:
     print("Prompt estruturado pronto para envio.")`,
+
+  // --- Exercícios da lição de Guia de Prompts ---
+  'prompts-ex1': `def prompt_role(linguagem, tarefa):
+    """Template de prompt reutilizavel com formato de saida definido."""
+    return f\"\"\"Voce e um engenheiro senior de {linguagem}.
+{tarefa}
+Responda em JSON com a chave 'resposta'.\"\"\"
+
+p = prompt_role("Python", "Revise este codigo e aponte 2 riscos.")
+print("PROMPT:")
+print(p)
+print()
+
+# O formato de saida definido permite parsear a resposta
+import json
+saida_modelo = '{"resposta": "risco 1: injection; risco 2: sem validacao"}'
+dados = json.loads(saida_modelo)
+print(f"chaves: {list(dados.keys())}")
+print(f"resposta: {dados['resposta']}")`,
+
+  'prompts-ex2': `import json
+
+# O modelo retornou a saida estruturada — seu trabalho e parsear
+saida_modelo = '{"resposta": "risco 1: injection; risco 2: sem validacao"}'
+
+dados = json.loads(saida_modelo)
+print(f"chaves: {list(dados.keys())}")
+print(f"resposta: {dados['resposta']}")
+
+# Em producao: sempre trate JSON invalido (o modelo pode falhar o formato)
+try:
+    quebrado = '{"resposta": "sem fechar'
+    json.loads(quebrado)
+    print("parse ok")
+except json.JSONDecodeError as e:
+    print(f"JSON invalido detectado: {e}")`,
 
   'langchain-agents': `# LangChain com LLM (BYOK) — exemplo conceitual
 # Configure sua OPENAI_API_KEY no painel.
@@ -550,6 +618,52 @@ print(resposta.content)
 """)
 else:
     print("API key presente — instale langchain e rode o exemplo real.")`,
+
+  // --- Exercícios da lição de LangChain ---
+  'langchain-ex1': `import json
+
+# Sua primeira chain: prompt -> modelo (simulado) -> parser
+# (No LangChain real: chain = prompt | model | parser)
+
+def prompt(texto):
+    return f"Classifique o sentimento de: {texto}"
+
+def modelo(prompt_texto):
+    # Simula um LLM que retorna JSON
+    return '{"sentimento": "positivo", "confianca": 0.95}'
+
+def parser(saida):
+    dados = json.loads(saida)
+    return dados["sentimento"].upper()
+
+# A chain encadeia as funcoes: a saida de uma entra na proxima
+chain = lambda x: parser(modelo(prompt(x)))
+
+resultado = chain("Adorei o curso de IA!")
+print(f"resultado: {resultado}")`,
+
+  'langchain-ex2': `import json
+
+# Chain com formatacao: prompt -> modelo -> parser -> formatador
+# (No LangChain real: prompt | model | parser | formatador)
+
+def prompt(texto):
+    return f"Classifique o sentimento de: {texto}"
+
+def modelo(prompt_texto):
+    return '{"sentimento": "positivo", "confianca": 0.95}'
+
+def parser(saida):
+    dados = json.loads(saida)
+    return dados["sentimento"].upper()
+
+def formatar(sentimento):
+    return f"SENTIMENTO DETECTADO: {sentimento}"
+
+# 4 etapas encadeadas — cada uma recebe a saida da anterior
+chain = lambda x: formatar(parser(modelo(prompt(x))))
+
+print(chain("Adorei o curso de IA!"))`,
 
   // Fase 04 — Análise de dados
   'analise-video-audio': `from sklearn.feature_extraction.text import TfidfVectorizer

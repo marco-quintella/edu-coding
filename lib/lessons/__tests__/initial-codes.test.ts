@@ -34,8 +34,14 @@ const EXPECTED_SLUGS = [
   'ga-ex2',
   // Fase 03
   'chain-of-thought',
+  'cot-ex1',
+  'cot-ex2',
   'guia-prompts',
+  'prompts-ex1',
+  'prompts-ex2',
   'langchain-agents',
+  'langchain-ex1',
+  'langchain-ex2',
   // Fase 04
   'analise-video-audio',
   'aws-textract',
@@ -54,13 +60,13 @@ describe('INITIAL_CODES', () => {
   })
 
   it('todo código é Python válido (imports resolvem em ordem)', () => {
-    // Checagem leve: todo código começa com import/from ou comentário
+    // Checagem leve: todo código começa com import/from/comentário/def
     for (const [slug, code] of Object.entries(INITIAL_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,
         `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
-      ).toMatch(/^(import |from |#)/)
+      ).toMatch(/^(import |from |#|def )/)
     }
   })
 

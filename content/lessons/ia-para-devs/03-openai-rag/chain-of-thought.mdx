@@ -4,10 +4,12 @@
 
 LLMs são ótimos em continuar padrões. Quando você escreve "Vamos pensar passo a passo", o modelo gera uma cadeia de raciocínio coerente — e a resposta final sai **ancorada** nesse raciocínio, em vez de um chute.
 
+> **Intuição:** um LLM sem CoT é como responder uma prova de matemática de cabeça, direto no chute. Com CoT, ele "escreve os cálculos na margem" antes — e ao fazer isso, comete menos erros. O raciocínio intermediário **estrutura** o caminho até a resposta.
+
 ## Exemplo sem CoT
 
 > **P**: Um restaurante tinha 23 mesas. Na terça, recebeu 5 novas. Quantas mesas tem agora?
-> **R**: 28. *(resposta direta, sem raciocínio)*
+> **R**: 28. *(resposta direta, sem raciocínio — fácil errar em problemas maiores)*
 
 ## Exemplo com CoT
 
@@ -16,10 +18,35 @@ LLMs são ótimos em continuar padrões. Quando você escreve "Vamos pensar pass
 
 ## Hands-on
 
-<SandboxRunner
+<SandboxRunner lessonSlug="chain-of-thought" />
+
+## Exercício 1: implementando o raciocínio
+
+Sem API key, você pode **implementar o padrão CoT manualmente**: uma função que gera os passos do raciocínio explicitamente, como um LLM com CoT faria. Rode e veja a estrutura:
+
+<Exercise
   lessonSlug="chain-of-thought"
-  lessonSlug="chain-of-thought"
+  codeKey="cot-ex1"
+  title="Exercício 1 — O padrão do raciocínio"
+  expectedOutput="RESPOSTA: O restaurante agora tem 28 mesas"
+  hint="A função monta os passos em ordem: estado inicial → mudança → cálculo → conclusão. É exatamente isso que o CoT faz com o LLM — mas aqui você controla cada passo."
 />
+
+**Pergunta-chave:** o que diferencia um raciocínio "bom" de um "ruim"? (Resposta: a **rastreabilidade** — cada passo deriva do anterior. Se o passo 3 estiver errado, você vê onde. Sem CoT, o modelo entrega 28 e você não sabe se foi cálculo ou chute.)
+
+## Exercício 2: CoT para problemas multi-etapa
+
+O CoT brilha quando o problema exige **várias operações em sequência**. Implemente o raciocínio para um problema com 2 etapas:
+
+<Exercise
+  lessonSlug="chain-of-thought"
+  codeKey="cot-ex2"
+  title="Exercício 2 — Problema multi-etapa"
+  expectedOutput="RESPOSTA: O restaurante agora tem 18 mesas"
+  hint="Pense nas etapas: 1) 23 + 5 = 28 mesas após receber as novas; 2) depois doa 10: 28 - 10 = 18. Cada passo constrói sobre o anterior — é a decomposição do CoT."
+/>
+
+**O que observar:** o CoT é uma **decomposição** — quebra o problema grande em passos pequenos e verificáveis. É a mesma razão pela qual programadores dividem código em funções.
 
 ## Variações
 
@@ -47,3 +74,7 @@ LLMs são ótimos em continuar padrões. Quando você escreve "Vamos pensar pass
 - CoT **não é garantia** de correção — o modelo pode raciocinar errado com confiança
 - Aumenta tokens (custo) e latência
 - Em tarefas de memória (fatos), CoT não ajuda — a resposta direta é melhor
+
+## Próximos passos
+
+CoT é uma técnica de **como** pedir. A próxima lição sistematiza o **que** pedir: o Guia de Prompts — os 4 pilares, few-shot, saída estruturada e os erros que custam dinheiro em produção.

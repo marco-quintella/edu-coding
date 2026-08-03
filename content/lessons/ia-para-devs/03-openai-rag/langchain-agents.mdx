@@ -1,5 +1,7 @@
 **LangChain** é um framework para construir aplicações com LLMs: encadear chamadas, conectar a ferramentas, gerenciar memória e criar agents. É o "React" do mundo LLM — compõe blocos.
 
+> **Intuição:** você já sabe escrever bons prompts (Fase 03, lição anterior). LangChain é a **cola** — transforma "um prompt + um modelo" em um pipeline reutilizável com várias etapas, memória e ferramentas. E o conceito central é simples: **cada etapa recebe a saída da anterior**.
+
 ## Componentes principais
 
 - **Models**: wrapper para LLMs (OpenAI, Anthropic, local)
@@ -11,10 +13,7 @@
 
 ## Hands-on
 
-<SandboxRunner
-  lessonSlug="langchain-agents"
-  lessonSlug="langchain-agents"
-/>
+<SandboxRunner lessonSlug="langchain-agents" />
 
 ## O operador pipe (`|`)
 
@@ -23,6 +22,34 @@ No LangChain moderno, chains são construídas com `|` — cada etapa recebe a s
 ```python
 chain = prompt | model | parser
 ```
+
+## Exercício 1: a chain na prática
+
+O sandbox não tem o pacote langchain — mas o **conceito** da chain é 100% Python puro: uma sequência de funções, cada uma transformando a saída da anterior. Implemente sua própria chain:
+
+<Exercise
+  lessonSlug="langchain-agents"
+  codeKey="langchain-ex1"
+  title="Exercício 1 — Sua primeira chain"
+  expectedOutput="resultado: POSITIVO"
+  hint="A chain é prompt -> modelo (simulado) -> parser. O lambda 'encadeia' as funções: parser(modelo(prompt(x))). Em LangChain real seria 'prompt | model | parser' — exatamente a mesma ordem."
+/>
+
+**Pergunta-chave:** por que o pipe `|` é melhor que chamadas aninhadas? (Resposta: legibilidade e **composição** — você pode inserir/remover etapas no meio da chain sem reescrever tudo. `a | b | c` é mais fácil de modificar que `c(b(a()))`.)
+
+## Exercício 2: adicionando etapas
+
+Chains crescem: agora adicione uma etapa de **formatação** no final da chain. O fluxo completo: prompt → modelo → parser → formatador.
+
+<Exercise
+  lessonSlug="langchain-agents"
+  codeKey="langchain-ex2"
+  title="Exercício 2 — Chain com formatação"
+  expectedOutput="SENTIMENTO DETECTADO: POSITIVO"
+  hint="O formatador recebe o sentimento já parseado e o embala em texto. Repare: cada etapa só conhece a saída da anterior — é isso que torna chains testáveis etapa por etapa."
+/>
+
+**O que observar:** com 4 etapas a chain continua legível. Em LangChain real, cada etapa seria um componente (PromptTemplate, ChatOpenAI, StrOutputParser) — mas o fluxo de dados é idêntico ao seu código.
 
 ## Agents
 
@@ -38,6 +65,8 @@ executor = AgentExecutor(agent=agent, tools=tools)
 
 resp = executor.invoke({"input": "Qual a capital do Brasil?"})
 ```
+
+> **A diferença crucial:** numa **chain**, o fluxo é fixo (você escreve os passos). Num **agent**, o fluxo é **decidido pelo modelo** — ele escolhe a ferramenta, vê o resultado, decide o próximo passo. Chain = programa. Agent = modelo dirigindo.
 
 ## Quando usar LangChain
 
@@ -59,3 +88,7 @@ resp = executor.invoke({"input": "Qual a capital do Brasil?"})
 - Chains longas multiplicam custo/latência — meça cada etapa
 - Agents podem "alucinar ferramentas" — valide as chamadas
 - Versionamento do framework muda rápido — pinne versões
+
+## Próximos passos
+
+Você orquestrou LLMs. A Fase 04 muda o tipo de dado: **análise de vídeo, áudio e texto** — multimídia com serviços de IA (transcrição, extração, visão computacional).
