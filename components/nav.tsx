@@ -53,6 +53,14 @@ export async function Nav({ user, dashboard }: Props) {
               Meu Perfil
             </Link>
           )}
+          {user && (
+            <Link
+              href="/revisao"
+              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-secondary transition-colors hover:bg-background-hover hover:text-ink"
+            >
+              Revisão
+            </Link>
+          )}
           <Link
             href="/courses"
             className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-secondary transition-colors hover:bg-background-hover hover:text-ink"

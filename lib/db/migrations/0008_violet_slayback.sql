@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "reviews_user_card_unique" ON "reviews" USING btree ("user_id","card_id");

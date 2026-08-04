@@ -8,6 +8,7 @@ export default {
     './drizzle/exec-rate-limit.schema.ts',
     './drizzle/gamification.schema.ts',
     './drizzle/profile.schema.ts',
+    './drizzle/review.schema.ts',
   ],
   out: './lib/db/migrations',
   dialect: 'postgresql',

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { useSandboxExec } from './use-sandbox-exec'
 import { PlotGallery } from './plot-gallery'
-import { getSolution, type Solution } from '@/lib/lessons/solutions'
+import type { Solution } from '@/lib/lessons/solutions'
 
 /**
  * Verifica se o output bate com o esperado.
