@@ -22,6 +22,11 @@ const EXPECTED_SLUGS = [
   'kmeans-ex1',
   'kmeans-ex2',
   'kmeans-projeto',
+  // Capstone Fase 01
+  'capstone-ex1',
+  'capstone-ex2',
+  'capstone-ex3',
+  'capstone-ex4',
   // Fase 02
   'nlp-tokenizacao',
   'nlp-ex1',

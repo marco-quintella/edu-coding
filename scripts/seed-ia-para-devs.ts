@@ -1,5 +1,8 @@
 import { db } from '../lib/db'
 import { courses, phases, lessons, quizQuestions, userProgress } from '../lib/db/schema'
+import { reviews } from '../drizzle/review.schema'
+import { userXp, userStreaks } from '../drizzle/gamification.schema'
+import { certificates, profiles } from '../drizzle/profile.schema'
 
 const COURSE = {
   slug: 'ia-para-devs',
@@ -238,6 +241,64 @@ const COURSE = {
                 { id: 'b', text: 'Porque a distância euclidiana é dominada por features de escala maior' },
                 { id: 'c', text: 'Para criar mais clusters' },
                 { id: 'd', text: 'Porque o K-Means não aceita números negativos' },
+              ],
+              correctOptionId: 'b',
+            },
+          ],
+        },
+        {
+          slug: 'capstone-fase01',
+          title: 'Capstone: pipeline completo de ML',
+          checkpoint: 'ml-base',
+          minutes: 45,
+          quiz: [
+            {
+              question: 'Por que fazer EDA antes de treinar o modelo?',
+              options: [
+                { id: 'a', text: 'Para saber se os dados têm relação antes de perder tempo modelando' },
+                { id: 'b', text: 'Porque é obrigatório no sklearn' },
+                { id: 'c', text: 'Para aumentar o dataset' },
+                { id: 'd', text: 'Para escolher a cor do gráfico' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual é a métrica honesta de generalização?',
+              options: [
+                { id: 'a', text: 'R² no treino' },
+                { id: 'b', text: 'R² no conjunto de TESTE (que o modelo nunca viu)' },
+                { id: 'c', text: 'O número de features' },
+                { id: 'd', text: 'A velocidade do treino' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Por que a regressão linear venceu a árvore no capstone?',
+              options: [
+                { id: 'a', text: 'Porque árvores são sempre ruins' },
+                { id: 'b', text: 'Porque a relação é linear — a árvore aproxima a reta por degraus e perde precisão' },
+                { id: 'c', text: 'Porque a árvore era pequena demais' },
+                { id: 'd', text: 'Porque o dataset era pequeno' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que significa uma correlação de 0.995 entre área e preço?',
+              options: [
+                { id: 'a', text: 'Não há relação' },
+                { id: 'b', text: 'Relação quase perfeita — área explica quase toda a variação do preço' },
+                { id: 'c', text: 'O modelo vai errar 99.5%' },
+                { id: 'd', text: 'Os dados estão vazios' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O pipeline completo de ML em produção é:',
+              options: [
+                { id: 'a', text: 'Treinar → prever → pronto' },
+                { id: 'b', text: 'EDA → treinar → avaliar → comparar → prever' },
+                { id: 'c', text: 'Coletar → apagar → repetir' },
+                { id: 'd', text: 'Só usar o modelo mais famoso' },
               ],
               correctOptionId: 'b',
             },
@@ -915,6 +976,11 @@ async function seed() {
   // Ordem importa por causa das FKs
   await db.delete(userProgress)
   await db.delete(quizQuestions)
+  await db.delete(reviews)
+  await db.delete(userXp)
+  await db.delete(userStreaks)
+  await db.delete(certificates)
+  await db.delete(profiles)
   await db.delete(lessons)
   await db.delete(phases)
   await db.delete(courses)

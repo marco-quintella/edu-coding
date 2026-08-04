@@ -1,0 +1,92 @@
+Este é o **capstone da Fase 01** — o projeto que integra TUDO que você aprendeu: Regressão Linear, Árvores de Decisão, KNN/SVM e K-Means. Em vez de exercícios isolados, você conduz um **pipeline completo de ML** de ponta a ponta.
+
+> **O cenário:** você é o primeiro ML engineer de uma imobiliária. O diretor quer um modelo que preveja o preço de imóveis pela área (m²). Você tem 100 imóveis com área e preço — e precisa entregar: entendimento dos dados, modelo treinado, comparação honesta com alternativas, e previsões para os imóveis da próxima semana.
+
+## O que um pipeline real tem
+
+```
+EDA (entender os dados) → treinar → avaliar → comparar → prever
+```
+
+Cada etapa é um exercício. **Não pule**: a etapa seguinte constrói sobre a anterior.
+
+## Etapa 1: EDA — conheça seus dados
+
+Antes de qualquer modelo, **entenda os dados**. As perguntas básicas: quantas amostras? Qual a faixa da área? Do preço? E o mais importante — **área e preço são correlacionados?**
+
+<Exercise
+  lessonSlug="capstone-fase01"
+  codeKey="capstone-ex1"
+  title="Etapa 1 — EDA (análise exploratória)"
+  expectedOutput="correlacao area-preco=0.995"
+  hint="Use np.corrcoef(area, preco) para medir a correlação. Um valor ~0.995 significa relação quase perfeita — ótimo sinal para regressão."
+/>
+
+**Pergunta-chave:** por que a correlação importa ANTES de treinar? (Resposta: se a correlação fosse ~0, nenhum modelo linear funcionaria — você saberia disso antes de perder tempo. O EDA evita modelar dados que não têm relação.)
+
+## Etapa 2: o modelo base — Regressão Linear
+
+Agora o pipeline que você treinou na lição: split treino/teste (para medir generalização de verdade) + treinar + avaliar com R².
+
+<Exercise
+  lessonSlug="capstone-fase01"
+  codeKey="capstone-ex2"
+  title="Etapa 2 — Regressão com treino/teste"
+  expectedOutput="r2_teste=0.994"
+  hint="train_test_split com test_size=0.25 e random_state=42. O R² no TESTE (não no treino) é a métrica honesta."
+/>
+
+**O que observar:** o R² do teste (0.994) é **maior** que o do treino (0.989) — acontece porque o teste é pequeno (25 amostras) e a relação é forte. O importante: ambos altos = sem overfitting.
+
+## Etapa 3: comparação honesta — Regressão vs Árvore
+
+Um bom ML engineer **não para no primeiro modelo**. Compare com uma Árvore de Decisão (regressor). Qual generaliza melhor? E **por quê**?
+
+<Exercise
+  lessonSlug="capstone-fase01"
+  codeKey="capstone-ex3"
+  title="Etapa 3 — Regressão vs Árvore"
+  expectedOutput="linear venceu"
+  hint="Treine LinearRegression e DecisionTreeRegressor(max_depth=4) nos mesmos dados e compare o R² no teste. A relação é linear — a árvore não deveria ganhar."
+/>
+
+**Pergunta-chave:** por que a regressão vence uma relação linear? (Resposta: a árvore aproxima a reta por degraus — perde precisão em cada corte. Quando a relação é linear, o modelo linear é o formato certo; a árvore é melhor para relações não lineares.)
+
+## Etapa 4: a entrega — previsões
+
+O diretor quer números para a próxima semana: imóveis de **120 m²** e **180 m²**. Quanto cada um deve custar? E qual a diferença de preço por m² extra?
+
+<Exercise
+  lessonSlug="capstone-fase01"
+  codeKey="capstone-ex4"
+  title="Etapa 4 — Previsões finais"
+  expectedOutput="diferenca = R$177 mil"
+  hint="model.predict([[120]]) e [[180]]. A diferença entre os dois é o valor que 60 m² extras agregam — ~R$3 mil/m²."
+/>
+
+**O que observar:** 120 m² → R$378 mil, 180 m² → R$555 mil. A diferença (R$177 mil ÷ 60 m² ≈ R$2.950/m²) é exatamente o slope do modelo. **A reta que você aprendeu na lição 1 é o que gera essas previsões.**
+
+## Entrega final — o que você demonstrou
+
+Você acabou de fazer um pipeline completo de ML:
+
+1. **EDA** — entendeu os dados antes de modelar (correlação 0.995)
+2. **Modelo base** — regressão com validação honesta (R² teste 0.994)
+3. **Comparação** — provou que o modelo linear é o certo (venceu a árvore)
+4. **Previsão** — entregou números acionáveis para o negócio
+
+Esse é o fluxo de produção: **entender → modelar → comparar → entregar**. Não é sobre decorar sklearn — é sobre saber QUAL modelo usar e POR QUÊ.
+
+## Revisão da fase
+
+Responda o quiz abaixo para fechar a Fase 01 e liberar seu certificado. Você dominou:
+
+| Algoritmo | Tipo | Quando usar |
+|---|---|---|
+| Regressão Linear | Supervisionado (contínuo) | Relação linear, prever número |
+| Árvore de Decisão | Supervisionado (classes) | Regras interpretáveis, não linear |
+| KNN | Supervisionado (classes) | Fronteira irregular, poucos dados |
+| SVM | Supervisionado (classes) | Margem máxima, alta dimensão |
+| K-Means | Não supervisionado | Descobrir grupos naturais |
+
+> 🎓 Ao concluir este capstone + quiz, a **Fase 01 está completa** e seu certificado é emitido automaticamente — compartilhável no LinkedIn.

@@ -225,6 +225,85 @@ for c in range(3):
     idx = labels == c
     print(f"cluster {c}: idade media={idade[idx].mean():.0f} renda media={renda[idx].mean():.0f}")`,
   },
+
+  // ── Capstone Fase 01 ──────────────────────────────────────
+  'capstone-ex1': {
+    explanation:
+      'EDA antes de modelar: np.corrcoef revela a relação quase perfeita (0.995) entre área e preço — sinal de que regressão linear vai funcionar.',
+    code: `import numpy as np
+
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+print(f"amostras={len(area)}")
+print(f"area media={area.mean():.1f} m2")
+print(f"preco medio={preco.mean():.1f} mil")
+print(f"correlacao area-preco={np.corrcoef(area, preco)[0,1]:.3f}")`,
+  },
+  'capstone-ex2': {
+    explanation:
+      'O padrão da Fase 01: split (treino/teste) + treinar + medir R² no TESTE. O teste alto (0.994) = generaliza, não decora.',
+    code: `from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+X = area.reshape(-1, 1)
+X_train, X_test, y_train, y_test = train_test_split(X, preco, test_size=0.25, random_state=42)
+
+model = LinearRegression().fit(X_train, y_train)
+print(f"slope={model.coef_[0]:.2f}")
+print(f"intercept={model.intercept_:.2f}")
+print(f"r2_treino={model.score(X_train, y_train):.3f}")
+print(f"r2_teste={model.score(X_test, y_test):.3f}")`,
+  },
+  'capstone-ex3': {
+    explanation:
+      'Comparar é parte do trabalho: a relação é linear, então a regressão vence a árvore (que aproxima a reta por degraus). Saber POR QUE um modelo ganha é o diferencial.',
+    code: `from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+X = area.reshape(-1, 1)
+X_train, X_test, y_train, y_test = train_test_split(X, preco, test_size=0.25, random_state=42)
+
+lin = LinearRegression().fit(X_train, y_train)
+arv = DecisionTreeRegressor(max_depth=4, random_state=42).fit(X_train, y_train)
+
+print(f"regressao r2_teste={lin.score(X_test, y_test):.3f}")
+print(f"arvore   r2_teste={arv.score(X_test, y_test):.3f}")
+print("linear venceu" if lin.score(X_test, y_test) > arv.score(X_test, y_test) else "arvore venceu")`,
+  },
+  'capstone-ex4': {
+    explanation:
+      'A entrega: model.predict([[120]]) e [[180]]. A diferença entre os dois (~R$177 mil ÷ 60 m² ≈ R$2.950/m²) é o slope — a reta da lição 1 gerando valor de negócio.',
+    code: `from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+X = area.reshape(-1, 1)
+X_train, X_test, y_train, y_test = train_test_split(X, preco, test_size=0.25, random_state=42)
+
+model = LinearRegression().fit(X_train, y_train)
+pred_120 = model.predict([[120]])[0]
+pred_180 = model.predict([[180]])[0]
+print(f"previsao 120m2 = R\${pred_120:.0f} mil")
+print(f"previsao 180m2 = R\${pred_180:.0f} mil")
+print(f"diferenca = R\${pred_180 - pred_120:.0f} mil")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

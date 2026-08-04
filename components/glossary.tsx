@@ -110,7 +110,7 @@ export function Glossary({ lessonLinks }: GlossaryProps) {
       {/* Resultados */}
       {byPhase.length === 0 && (
         <p className="rounded-[12px] border border-line bg-surface p-6 text-center text-sm text-ink-muted">
-          Nenhum termo encontrado para "{query}".
+          Nenhum termo encontrado para &ldquo;{query}&rdquo;.
         </p>
       )}
 

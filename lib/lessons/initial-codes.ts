@@ -259,6 +259,73 @@ for c in sorted(set(model.labels_)):
     idx = model.labels_ == c
     print(f"  cluster {c}: idade media={clientes[idx, 0].mean():.0f} renda media={clientes[idx, 1].mean():.1f} (n={idx.sum()})")`,
 
+  // ── Capstone da Fase 01 — pipeline completo ────────────────
+  'capstone-ex1': `import numpy as np
+
+# Dataset: area (m2) -> preco (R$ mil), com ruido
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+print(f"amostras={len(area)}")
+print(f"area media={area.mean():.1f} m2")
+print(f"preco medio={preco.mean():.1f} mil")
+print(f"correlacao area-preco={np.corrcoef(area, preco)[0,1]:.3f}")`,
+
+  'capstone-ex2': `from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+X = area.reshape(-1, 1)
+X_train, X_test, y_train, y_test = train_test_split(X, preco, test_size=0.25, random_state=42)
+
+model = LinearRegression().fit(X_train, y_train)
+print(f"slope={model.coef_[0]:.2f}")
+print(f"intercept={model.intercept_:.2f}")
+print(f"r2_treino={model.score(X_train, y_train):.3f}")
+print(f"r2_teste={model.score(X_test, y_test):.3f}")`,
+
+  'capstone-ex3': `from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+X = area.reshape(-1, 1)
+X_train, X_test, y_train, y_test = train_test_split(X, preco, test_size=0.25, random_state=42)
+
+lin = LinearRegression().fit(X_train, y_train)
+arv = DecisionTreeRegressor(max_depth=4, random_state=42).fit(X_train, y_train)
+
+print(f"regressao r2_teste={lin.score(X_test, y_test):.3f}")
+print(f"arvore   r2_teste={arv.score(X_test, y_test):.3f}")
+print("linear venceu" if lin.score(X_test, y_test) > arv.score(X_test, y_test) else "arvore venceu")`,
+
+  'capstone-ex4': `from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+rng = np.random.RandomState(42)
+area = rng.uniform(40, 200, 100)
+preco = 3 * area + 20 + rng.normal(0, 15, 100)
+
+X = area.reshape(-1, 1)
+X_train, X_test, y_train, y_test = train_test_split(X, preco, test_size=0.25, random_state=42)
+
+model = LinearRegression().fit(X_train, y_train)
+pred_120 = model.predict([[120]])[0]
+pred_180 = model.predict([[180]])[0]
+print(f"previsao 120m2 = R\${pred_120:.0f} mil")
+print(f"previsao 180m2 = R\${pred_180:.0f} mil")
+print(f"diferenca = R\${pred_180 - pred_120:.0f} mil")`,
+
   // Fase 02 — Evolução da IA
   'nlp-tokenizacao': `from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
