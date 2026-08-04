@@ -72,6 +72,8 @@ export function Exercise({
   }, [codeKey])
 
   function handleRun() {
+    setAiFeedback('')
+    setFeedbackState('idle')
     run(lessonId, code, undefined, lessonSlug)
   }
 
@@ -83,40 +85,40 @@ export function Exercise({
   const showVerdict = (output || error) && !isPending
   const verdict = showVerdict ? isCorrect : null
 
-  // Corretor pedagógico: quando falha, busca feedback contextualizado
-  useEffect(() => {
-    if (verdict === false && feedbackState === 'idle') {
-      setFeedbackState('loading')
-      fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          code,
-          output: outputToCheck,
-          expected: expectedOutput,
-          hint,
-        }),
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          setAiFeedback(data.feedback ?? '')
-          setFeedbackState('done')
-        })
-        .catch(() => {
-          setAiFeedback('')
-          setFeedbackState('done')
-        })
-    }
-  }, [verdict, feedbackState, title, code, outputToCheck, expectedOutput, hint])
+  // Corretor pedagógico: quando falha, busca feedback contextualizado.
+  // 'loading' é derivado (verdict false + ainda não buscou) — sem setState
+  // síncrono no efeito (lint react-hooks/set-state-in-effect).
+  const feedbackBusy = verdict === false && feedbackState === 'idle'
 
-  // Limpa o feedback ao rodar de novo
   useEffect(() => {
-    if (isPending) {
-      setAiFeedback('')
-      setFeedbackState('idle')
+    if (!feedbackBusy) return
+    let cancelled = false
+    fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        code,
+        output: outputToCheck,
+        expected: expectedOutput,
+        hint,
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return
+        setAiFeedback(data.feedback ?? '')
+        setFeedbackState('done')
+      })
+      .catch(() => {
+        if (cancelled) return
+        setAiFeedback('')
+        setFeedbackState('done')
+      })
+    return () => {
+      cancelled = true
     }
-  }, [isPending])
+  }, [feedbackBusy, title, code, outputToCheck, expectedOutput, hint])
 
   return (
     <div className="my-8 overflow-hidden rounded-[16px] border border-line bg-surface shadow-card">
@@ -190,7 +192,7 @@ export function Exercise({
             Ainda não. A saída não corresponde ao esperado.
           </div>
           {hint && <div className="mt-1 text-xs text-ink-secondary">💡 {hint}</div>}
-          {feedbackState === 'loading' && (
+          {feedbackBusy && (
             <div className="mt-2 text-xs text-ink-muted">
               🔎 Corretor pensando...
             </div>

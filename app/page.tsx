@@ -12,7 +12,7 @@ export default async function Home() {
   const courses = await getCourses()
 
   // Para o hero: pega curso "ia-para-devs" e progresso do usuário
-  let course = await getCourseWithPhases('ia-para-devs')
+  const course = await getCourseWithPhases('ia-para-devs')
   let completedIds: Set<string> = new Set()
   let dashboard: Awaited<ReturnType<typeof getUserDashboard>> | null = null
   let gamification: Awaited<ReturnType<typeof getUserGamification>> | null = null
