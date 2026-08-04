@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { useSandboxExec } from './use-sandbox-exec'
 import { PlotGallery } from './plot-gallery'
+import { getSolution, type Solution } from '@/lib/lessons/solutions'
 
 /**
  * Verifica se o output bate com o esperado.
@@ -55,6 +56,20 @@ export function Exercise({
   const [code, setCode] = useState('')
   const [aiFeedback, setAiFeedback] = useState('')
   const [feedbackState, setFeedbackState] = useState<'idle' | 'loading' | 'done'>('idle')
+  const [showSolution, setShowSolution] = useState(false)
+  const [solution, setSolution] = useState<Solution | null>(null)
+
+  // Carrega a solução do instrutor (se existir) — depois do mount
+  useEffect(() => {
+    let cancelled = false
+    import('@/lib/lessons/solutions').then((m) => {
+      if (cancelled) return
+      setSolution(m.getSolution(codeKey))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [codeKey])
 
   // Carrega o código inicial do registro (client-side, após mount)
   const [initialCode, setInitialCode] = useState('')
@@ -184,6 +199,39 @@ export function Exercise({
       {verdict === true && (
         <div className="border-t border-accent/40 bg-accent-soft px-4 py-3 text-sm font-semibold text-accent-strong">
           ✓ Correto! A saída bate com o esperado.
+        </div>
+      )}
+      {verdict === true && solution && (
+        <div className="border-t border-line bg-surface-2 px-4 py-3">
+          <button
+            onClick={() => setShowSolution(!showSolution)}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-accent-strong hover:underline"
+          >
+            <span className={`transition-transform ${showSolution ? 'rotate-90' : ''}`}>▸</span>
+            {showSolution ? 'Ocultar solução do instrutor' : 'Ver solução do instrutor'}
+          </button>
+
+          {showSolution && (
+            <div className="mt-3 space-y-3">
+              <p className="rounded-[8px] border border-accent/30 bg-accent-soft px-3 py-2 text-xs leading-relaxed text-ink-secondary">
+                <span className="font-bold text-ink">Por que assim:</span>{' '}
+                {solution.explanation}
+              </p>
+              <Editor
+                height="220px"
+                defaultLanguage="python"
+                value={solution.code}
+                options={{
+                  readOnly: true,
+                  minimap: { enabled: false },
+                  fontSize: 13,
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                }}
+                theme="vs-dark"
+              />
+            </div>
+          )}
         </div>
       )}
       {verdict === false && (
