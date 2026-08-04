@@ -6,6 +6,7 @@ export default {
     './drizzle/auth.schema.ts',
     './drizzle/exec-usage.schema.ts',
     './drizzle/exec-rate-limit.schema.ts',
+    './drizzle/gamification.schema.ts',
   ],
   out: './lib/db/migrations',
   dialect: 'postgresql',

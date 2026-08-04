@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { lessons, userProgress, users } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { getCurrentUser } from '@/lib/auth/server'
+import { registerActivity, XP } from '@/lib/gamification/xp'
 import { CompleteRequest } from './schema'
 
 export const runtime = 'nodejs'
@@ -44,6 +45,14 @@ export async function POST(
     .values({ id: user.id, email: user.email })
     .onConflictDoNothing()
 
+  // XP é dado APENAS na primeira conclusão da lição (não duplica em re-submit)
+  const [existing] = await db
+    .select()
+    .from(userProgress)
+    .where(and(eq(userProgress.userId, user.id), eq(userProgress.lessonId, lessonId)))
+    .limit(1)
+  const isFirstCompletion = !existing
+
   await db
     .insert(userProgress)
     .values({
@@ -59,5 +68,31 @@ export async function POST(
       },
     })
 
-  return NextResponse.json({ ok: true, score: parsed.data.quizScore })
+  // Gamificação: streak (sempre) + XP (só na primeira conclusão)
+  let gamification: { streak: number; xp: number } | null = null
+  if (isFirstCompletion) {
+    const quizPassed = parsed.data.quizScore >= 80
+    const xpKind = quizPassed ? 'QUIZ_PASS' : 'LESSON'
+    const result = await registerActivity({
+      userId: user.id,
+      kind: xpKind,
+      phaseId: lesson.phaseId,
+    })
+    gamification = { streak: result.streak.currentStreak, xp: XP[xpKind] }
+  } else {
+    // Re-submit: só atualiza o streak (dia ativo), sem XP
+    const result = await registerActivity({
+      userId: user.id,
+      kind: 'LESSON',
+      phaseId: undefined,
+    })
+    gamification = { streak: result.streak.currentStreak, xp: 0 }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    score: parsed.data.quizScore,
+    xp: gamification?.xp ?? 0,
+    streak: gamification?.streak ?? 0,
+  })
 }
