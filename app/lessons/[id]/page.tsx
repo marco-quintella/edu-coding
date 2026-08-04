@@ -8,6 +8,7 @@ import { renderMdx } from '@/lib/mdx/render'
 import { Quiz } from '@/components/quiz'
 import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
+import { ChatDoubt } from '@/components/chat-doubt'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'lessons')
 
@@ -145,6 +146,7 @@ export default async function LessonPage({
         </div>
       </main>
       <Footer />
+      <ChatDoubt lessonTitle={lesson.title} lessonContent={source} />
     </>
   )
 }

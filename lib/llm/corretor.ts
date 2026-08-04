@@ -4,14 +4,10 @@
  * Quando o exercício falha, o aluno recebe um feedback contextualizado
  * em pt-BR — não só "tente de novo". O corretor analisa o código, o
  * output real e o esperado, e explica ONDE está o erro e COMO pensar.
- *
- * Chave: OPENROUTER_API_KEY (server-side, nunca exposta ao cliente).
  */
 
-const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
-// Modelo free com bom custo/qualidade para feedback
-// gemma-4-26b: rápido (3s), conteúdo direto, sem reasoning noise
-const MODEL = 'google/gemma-4-26b-a4b-it:free'
+import { callOpenRouter, DEFAULT_MODEL } from './openrouter'
+
 const MAX_OUTPUT_CHARS = 800
 
 export interface FeedbackInput {
@@ -40,60 +36,21 @@ export interface FeedbackResult {
 export async function gerarFeedback(
   input: FeedbackInput
 ): Promise<FeedbackResult> {
-  const apiKey = process.env.OPENROUTER_API_KEY
-  if (!apiKey) {
+  const prompt = buildPrompt(input)
+  const result = await callOpenRouter(
+    [{ role: 'user', content: prompt }],
+    { temperature: 0.3, maxTokens: 400 }
+  )
+
+  if (!result.usedModel) {
     return {
-      feedback:
-        '💡 Sem corretor configurado ainda. Compare sua saída com a esperada linha a linha — ' +
-        'onde ela difere é onde está o erro. Use a dica: ' +
-        (input.hint ?? 'revise os valores que você passou.'),
-      model: MODEL,
+      feedback: fallbackFeedback(input),
+      model: DEFAULT_MODEL,
       usedModel: false,
     }
   }
 
-  const prompt = buildPrompt(input)
-
-  try {
-    const res = await fetch(OPENROUTER_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://edu-coding.app', // uso legítimo OpenRouter
-        'X-Title': 'Edu Coding - Corretor Pedagógico',
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 400,
-      }),
-      // Timeout generoso — modelos free do OpenRouter têm fila (upstream lento)
-      signal: AbortSignal.timeout(30000),
-    })
-
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '')
-      console.error('[corretor] OpenRouter error:', res.status, errText.slice(0, 200))
-      return {
-        feedback: fallbackFeedback(input),
-        model: MODEL,
-        usedModel: false,
-      }
-    }
-
-    const data = await res.json()
-    const feedback = data?.choices?.[0]?.message?.content?.trim()
-    if (!feedback) {
-      return { feedback: fallbackFeedback(input), model: MODEL, usedModel: false }
-    }
-
-    return { feedback, model: MODEL, usedModel: true }
-  } catch (err) {
-    console.error('[corretor] erro ao chamar OpenRouter:', err)
-    return { feedback: fallbackFeedback(input), model: MODEL, usedModel: false }
-  }
+  return { feedback: result.content, model: result.model, usedModel: true }
 }
 
 function buildPrompt(input: FeedbackInput): string {
