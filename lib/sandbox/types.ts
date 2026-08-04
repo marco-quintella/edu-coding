@@ -3,6 +3,8 @@ export interface ExecResult {
   stderr: string
   exitCode: number
   durationMs: number
+  /** Plots matplotlib capturados (PNG em base64, sem prefixo data:) */
+  plots?: string[]
 }
 
 export interface SandboxOptions {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { useSandboxExec } from './use-sandbox-exec'
+import { PlotGallery } from './plot-gallery'
 
 /**
  * Verifica se o output bate com o esperado.
@@ -50,7 +51,7 @@ export function Exercise({
   hint,
   showExpected = true,
 }: Props) {
-  const { output, error, exitCode, duration, isPending, run } = useSandboxExec()
+  const { output, error, exitCode, duration, plots, isPending, run } = useSandboxExec()
   const [code, setCode] = useState('')
   const [aiFeedback, setAiFeedback] = useState('')
   const [feedbackState, setFeedbackState] = useState<'idle' | 'loading' | 'done'>('idle')
@@ -163,6 +164,7 @@ export function Exercise({
         <div className="min-h-[60px] bg-[#0e1116] p-4 font-mono text-xs text-gray-100">
           {output && <pre className="whitespace-pre-wrap">{output}</pre>}
           {error && <pre className="mt-2 whitespace-pre-wrap text-red-400">{error}</pre>}
+          <PlotGallery plots={plots} />
           <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
             {exitCode !== null && (
               <span>

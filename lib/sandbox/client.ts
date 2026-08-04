@@ -1,6 +1,7 @@
 import { exec as execCb } from 'node:child_process'
 import { promisify } from 'node:util'
 import type { ExecResult, SandboxOptions } from './types'
+import { wrapWithPlotCapture, extractPlots } from './plots'
 
 const execAsync = promisify(execCb)
 
@@ -49,23 +50,30 @@ export async function execOnSandbox(
   const start = Date.now()
 
   try {
+    // Embrulha com captura de plots matplotlib (AgG → PNG base64 no stdout)
+    const wrapped = wrapWithPlotCapture(code)
     const { stdout, stderr } = await execAsync(
-      `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- ${pythonPath} -c ${shellQuote(code)}`,
+      `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- ${pythonPath} -c ${shellQuote(wrapped)}`,
       { maxBuffer: 1024 * 1024 }
     )
+    const { plots, cleanStdout } = extractPlots(stdout)
     return {
-      stdout,
+      stdout: cleanStdout,
       stderr,
       exitCode: 0,
       durationMs: Date.now() - start,
+      plots,
     }
   } catch (err: unknown) {
     const e = err as { stdout?: string; stderr?: string; code?: number; message?: string }
+    const rawStdout = e.stdout ?? ''
+    const { plots, cleanStdout } = extractPlots(rawStdout)
     return {
-      stdout: e.stdout ?? '',
+      stdout: cleanStdout,
       stderr: e.stderr ?? e.message ?? String(err),
       exitCode: e.code ?? 1,
       durationMs: Date.now() - start,
+      plots,
     }
   }
 }

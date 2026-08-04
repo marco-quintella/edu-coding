@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { getInitialCode } from '@/lib/lessons/initial-codes'
 import { useSandboxExec } from './use-sandbox-exec'
+import { PlotGallery } from './plot-gallery'
 
 interface Props {
   /** Legado: ID da lição (UUID). Prefira lessonSlug. */
@@ -26,7 +27,7 @@ export function SandboxRunner({
   const [code, setCode] = useState(codeFromRegistry || initialCode || '')
   const [apiKey, setApiKey] = useState('')
   const [showKey, setShowKey] = useState(false)
-  const { output, error, exitCode, duration, isPending, run } = useSandboxExec()
+  const { output, error, exitCode, duration, plots, isPending, run } = useSandboxExec()
 
   function handleRun() {
     run(lessonId, code, apiKey, lessonSlug)
@@ -72,6 +73,7 @@ export function SandboxRunner({
           {error && (
             <pre className="mt-2 whitespace-pre-wrap text-red-400">{error}</pre>
           )}
+          <PlotGallery plots={plots} />
           <div className="mt-3 flex gap-4 text-xs text-gray-500">
             {exitCode !== null && (
               <span>

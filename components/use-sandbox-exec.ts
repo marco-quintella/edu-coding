@@ -7,6 +7,7 @@ export interface ExecResponse {
   stderr?: string
   exitCode?: number
   durationMs?: number
+  plots?: string[]
   error?: string
   message?: string
 }
@@ -16,6 +17,7 @@ export function useSandboxExec() {
   const [error, setError] = useState('')
   const [exitCode, setExitCode] = useState<number | null>(null)
   const [duration, setDuration] = useState<number | null>(null)
+  const [plots, setPlots] = useState<string[]>([])
   const [isPending, startTransition] = useTransition()
 
   function run(lessonId: string | undefined, code: string, apiKey?: string, lessonSlug?: string) {
@@ -23,6 +25,7 @@ export function useSandboxExec() {
     setError('')
     setExitCode(null)
     setDuration(null)
+    setPlots([])
 
     startTransition(async () => {
       try {
@@ -33,7 +36,7 @@ export function useSandboxExec() {
             lessonId,
             lessonSlug,
             code,
-            apiKey: apiKey?.trim() || undefined,
+            apiKey: apiKey ? apiKey.trim() : undefined,
           }),
           credentials: 'include',
         })
@@ -46,11 +49,12 @@ export function useSandboxExec() {
         setError(data.stderr ?? '')
         setExitCode(data.exitCode ?? null)
         setDuration(data.durationMs ?? null)
+        setPlots(data.plots ?? [])
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e))
       }
     })
   }
 
-  return { output, error, exitCode, duration, isPending, run }
+  return { output, error, exitCode, duration, plots, isPending, run }
 }
