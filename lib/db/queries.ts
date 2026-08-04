@@ -1,7 +1,7 @@
 import { db } from './index'
 import { courses, phases, lessons, quizQuestions, userProgress } from './schema'
 import { userStreaks, userXp } from '@/drizzle/gamification.schema'
-import { eq, asc } from 'drizzle-orm'
+import { eq, asc, inArray } from 'drizzle-orm'
 
 type Course = typeof courses.$inferSelect
 type Phase = typeof phases.$inferSelect
@@ -180,4 +180,18 @@ export async function getUserGamification(userId: string) {
       byPhase: xpRows.map((r) => ({ phaseId: r.phaseId, totalXp: r.totalXp })),
     },
   }
+}
+
+/**
+ * Resolve slugs de lições para IDs (para links estáveis entre seeds).
+ * Retorna um map slug → id (só os que existem no banco).
+ */
+export async function getLessonIdsBySlugs(slugs: string[]): Promise<Map<string, string>> {
+  if (slugs.length === 0) return new Map()
+  const unique = [...new Set(slugs)]
+  const rows = await db
+    .select({ id: lessons.id, slug: lessons.slug })
+    .from(lessons)
+    .where(inArray(lessons.slug, unique))
+  return new Map(rows.map((r) => [r.slug, r.id]))
 }
