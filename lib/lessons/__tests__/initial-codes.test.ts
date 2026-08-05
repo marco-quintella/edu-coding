@@ -4,6 +4,7 @@ import { PYTHON_CODES } from '../python-codes'
 import { SQL_CODES } from '../sql-codes'
 import { GIT_CODES } from '../git-codes'
 import { EDA_CODES } from '../eda-codes'
+import { PANDAS_CODES } from '../pandas-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -124,6 +125,19 @@ const EXPECTED_SLUGS = [
   'eda-o-ex1',
   'eda-o-ex2',
   'eda-o-projeto',
+  // Curso Análise de Dados com pandas
+  'pandas-dataframes',
+  'pandas-ex1',
+  'pandas-ex2',
+  'pandas-projeto',
+  'pandas-filtros',
+  'pandas-f-ex1',
+  'pandas-f-ex2',
+  'pandas-f-projeto',
+  'pandas-limpeza',
+  'pandas-l-ex1',
+  'pandas-l-ex2',
+  'pandas-l-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -180,6 +194,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é comentário/def em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|def |[a-zA-Z_])/)
+    }
+    // Códigos do curso pandas começam com import
+    for (const [slug, code] of Object.entries(PANDAS_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
     }
   })
 

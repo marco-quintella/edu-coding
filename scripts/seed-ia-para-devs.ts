@@ -1732,7 +1732,198 @@ const EDA_COURSE = {
   ],
 }
 
-const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE, GIT_COURSE, EDA_COURSE]
+
+/** Catálogo completo — adicione novos cursos aqui. */
+const PANDAS_COURSE = {
+  slug: 'analise-dados-pandas',
+  title: 'Análise de Dados com pandas',
+  description:
+    'DataFrames, filtros, groupby e limpeza — a ferramenta #1 de quem trabalha com dados. pandas roda no sandbox de verdade.',
+  phases: [
+    {
+      slug: '01-dataframes',
+      title: 'Fase 01 — DataFrames e Agrupamentos',
+      lessons: [
+        {
+          slug: 'pandas-dataframes',
+          title: 'DataFrames: sua primeira tabela',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que é um DataFrame do pandas?',
+              options: [
+                { id: 'a', text: 'Uma tabela 2D com linhas e colunas nomeadas' },
+                { id: 'b', text: 'Um dicionário Python' },
+                { id: 'c', text: 'Uma lista de listas' },
+                { id: 'd', text: 'Um arquivo CSV' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como acessar a coluna "preco" de um DataFrame df?',
+              options: [
+                { id: 'a', text: 'df["preco"]' },
+                { id: 'b', text: 'df.get(0)' },
+                { id: 'c', text: 'df.rows[0]' },
+                { id: 'd', text: 'df[0]' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que df["total"].sum() faz?',
+              options: [
+                { id: 'a', text: 'Soma todos os valores da coluna total' },
+                { id: 'b', text: 'Conta as linhas' },
+                { id: 'c', text: 'Acha a média' },
+                { id: 'd', text: 'Ordena a coluna' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como criar uma coluna nova a partir de outras?',
+              options: [
+                { id: 'a', text: 'df["total"] = df["qtd"] * df["preco"]' },
+                { id: 'b', text: 'df.add("total")' },
+                { id: 'c', text: 'df["total"].create()' },
+                { id: 'd', text: 'insert(df, "total")' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que df["nota"].mean() retorna?',
+              options: [
+                { id: 'a', text: 'A média das notas' },
+                { id: 'b', text: 'A soma das notas' },
+                { id: 'c', text: 'A maior nota' },
+                { id: 'd', text: 'A contagem' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'pandas-filtros',
+          title: 'Filtros e groupby',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Como filtrar linhas com nota >= 7?',
+              options: [
+                { id: 'a', text: 'df[df["nota"] >= 7]' },
+                { id: 'b', text: 'df.filter("nota")' },
+                { id: 'c', text: 'df.where >= 7' },
+                { id: 'd', text: 'df["nota"].filter(7)' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que df.groupby("cidade") faz?',
+              options: [
+                { id: 'a', text: 'Agrupa as linhas por cidade para agregar' },
+                { id: 'b', text: 'Ordena por cidade' },
+                { id: 'c', text: 'Remove cidades duplicadas' },
+                { id: 'd', text: 'Filtra cidades' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual a sintaxe para somar por grupo?',
+              options: [
+                { id: 'a', text: 'df.groupby("x")["valor"].sum()' },
+                { id: 'b', text: 'df.sum("x")' },
+                { id: 'c', text: 'df.groupby.sum()' },
+                { id: 'd', text: 'sum(df, "x")' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que sort_values(ascending=False) faz?',
+              options: [
+                { id: 'a', text: 'Ordena do maior para o menor' },
+                { id: 'b', text: 'Ordena do menor para o maior' },
+                { id: 'c', text: 'Remove duplicados' },
+                { id: 'd', text: 'Agrupa os valores' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que df["x"].agg(["sum", "mean"]) faz?',
+              options: [
+                { id: 'a', text: 'Aplica várias agregações de uma vez' },
+                { id: 'b', text: 'Soma e depois multiplica' },
+                { id: 'c', text: 'Cria duas colunas novas' },
+                { id: 'd', text: 'Ordena duas vezes' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'pandas-limpeza',
+          title: 'Transformações e dados faltantes',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Como detectar valores nulos numa coluna?',
+              options: [
+                { id: 'a', text: 'df["col"].isna()' },
+                { id: 'b', text: 'df["col"].empty()' },
+                { id: 'c', text: 'df["col"].zero()' },
+                { id: 'd', text: 'df["col"].none()' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que df.fillna({"idade": 30}) faz?',
+              options: [
+                { id: 'a', text: 'Substitui os nulos de idade por 30' },
+                { id: 'b', text: 'Deleta as linhas nulas' },
+                { id: 'c', text: 'Cria uma coluna nova' },
+                { id: 'd', text: 'Soma 30 à coluna' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como criar uma coluna com 10% de desconto?',
+              options: [
+                { id: 'a', text: 'df["promo"] = (df["preco"] * 0.9).round(0)' },
+                { id: 'b', text: 'df["promo"] = df["preco"] - 10' },
+                { id: 'c', text: 'df.add(0.9)' },
+                { id: 'd', text: 'df["preco"].discount(10)' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que idxmax() retorna?',
+              options: [
+                { id: 'a', text: 'O índice da linha com o maior valor' },
+                { id: 'b', text: 'O maior valor' },
+                { id: 'c', text: 'A média dos valores' },
+                { id: 'd', text: 'O índice da primeira linha' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que pct_change() calcula?',
+              options: [
+                { id: 'a', text: 'Variação percentual entre linhas consecutivas' },
+                { id: 'b', text: 'A mudança de tipo da coluna' },
+                { id: 'c', text: 'O percentual de nulos' },
+                { id: 'd', text: 'A contagem de mudanças' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE, GIT_COURSE, EDA_COURSE, PANDAS_COURSE]
 
 async function seed() {
   console.log('Limpando tabelas...')

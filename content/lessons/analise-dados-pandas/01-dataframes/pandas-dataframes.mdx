@@ -1,0 +1,81 @@
+O **DataFrame** é a tabela mágica do pandas — e a ferramenta #1 de quem trabalha com dados. Nesta lição você cria DataFrames, acessa colunas, calcula e entende por que pandas domina análise de dados no mundo inteiro.
+
+> **Por que importa?** Todo dado real chega como tabela (CSV, banco, API). pandas transforma "manipular tabelas" de 30 linhas de loop em 1 linha de pandas. É pré-requisito para qualquer vaga de dados.
+
+## Criando um DataFrame
+
+```python
+import pandas as pd
+
+vendas = pd.DataFrame({
+    "produto": ["notebook", "mouse", "teclado", "monitor", "webcam"],
+    "quantidade": [10, 50, 30, 8, 20],
+    "preco": [3500, 60, 120, 800, 250],
+})
+```
+
+Um DataFrame = **tabela 2D com colunas nomeadas**. Cada dict vira uma coluna.
+
+## Acessando e calculando
+
+```python
+vendas["preco"]                    # a coluna (Series)
+vendas["total"] = vendas["quantidade"] * vendas["preco"]   # coluna nova!
+vendas["total"].sum()              # soma da coluna
+vendas["preco"].mean()             # média
+vendas["preco"].max()              # maior valor
+len(vendas)                        # nº de linhas
+```
+
+## O padrão de análise
+
+```python
+# 1. Leia/crie a tabela
+# 2. Crie colunas derivadas (total = qtd * preco)
+# 3. Agregue: sum(), mean(), max(), min(), count()
+# 4. Responda perguntas de negócio
+```
+
+## Exercício 1: faturamento
+
+Crie o DataFrame de vendas, calcule o total por linha e responda perguntas.
+
+<Exercise
+  lessonSlug="pandas-dataframes"
+  codeKey="pandas-ex1"
+  title="Faturamento"
+  expectedOutput="faturamento total: R$53000"
+  hint="df['total'] = df['quantidade'] * df['preco']; df['total'].sum(). 10*3500 + 50*60 + 30*120 + 8*800 + 20*250 = 53000."
+/>
+
+## Exercício 2: notas
+
+Analise as notas: quantos aprovados (>= 7), média geral e melhor nota.
+
+<Exercise
+  lessonSlug="pandas-dataframes"
+  codeKey="pandas-ex2"
+  title="Aprovados e média"
+  expectedOutput="melhor nota: 9.0"
+  hint="df[df['nota'] >= 7] filtra; .mean() e .max() agregam."
+/>
+
+## Mini-projeto: análise mensal
+
+Analise as vendas do semestre: total, média mensal e melhor mês.
+
+<Exercise
+  lessonSlug="pandas-dataframes"
+  codeKey="pandas-projeto"
+  title="Mini-projeto — semestre"
+  expectedOutput="melhor mes: jun"
+  hint="df['receita'].sum(), .mean() e df.loc[df['receita'].idxmax(), 'mes'] para o melhor mês."
+/>
+
+## Resumo
+
+- **DataFrame** = tabela 2D com colunas nomeadas (dict → colunas)
+- **df["col"]** acessa a coluna; **df["nova"] = cálculo** cria coluna
+- **sum() / mean() / max() / min()** agregam colunas
+- **df[df["col"] >= x]** filtra linhas
+- **idxmax()** devolve o índice do maior — o "qual linha é o top?"

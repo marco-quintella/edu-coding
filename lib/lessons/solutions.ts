@@ -1019,6 +1019,144 @@ a = [1, 3, 5, 7]
 b = [2, 4, 6, 8]
 print(f"merge: {merge(a, b)}")`,
   },
+
+  // ── Curso Análise de Dados com pandas ─────────────────────
+  'pandas-ex1': {
+    explanation:
+      'Coluna nova derivada: df["total"] = qtd * preco. A soma: 35000 + 3000 + 3600 + 6400 + 5000 = 53000.',
+    code: `import pandas as pd
+
+vendas = pd.DataFrame({
+    "produto": ["notebook", "mouse", "teclado", "monitor", "webcam"],
+    "quantidade": [10, 50, 30, 8, 20],
+    "preco": [3500, 60, 120, 800, 250],
+})
+vendas["total"] = vendas["quantidade"] * vendas["preco"]
+
+print(f"linhas: {len(vendas)}")
+print(f"produtos: {len(vendas['produto'].unique())}")
+print(f"faturamento total: R\${vendas['total'].sum():.0f}")`,
+  },
+  'pandas-ex2': {
+    explanation:
+      'Filtro booleano df[df["nota"] >= 7] devolve os aprovados; mean() e max() agregam a coluna inteira.',
+    code: `import pandas as pd
+
+notas = pd.DataFrame({
+    "aluno": ["ana", "bob", "carol", "dan", "eva"],
+    "nota": [7.5, 5.0, 8.0, 6.5, 9.0],
+})
+aprovados = notas[notas["nota"] >= 7]
+
+print(f"aprovados: {len(aprovados)}")
+print(f"media geral: {notas['nota'].mean():.1f}")
+print(f"melhor nota: {notas['nota'].max():.1f}")`,
+  },
+  'pandas-projeto': {
+    explanation:
+      'idxmax() devolve o índice da maior receita — usado com loc para pegar o mês: jun (18000).',
+    code: `import pandas as pd
+
+vendas = pd.DataFrame({
+    "mes": ["jan", "fev", "mar", "abr", "mai", "jun"],
+    "receita": [10000, 12000, 11000, 15000, 14000, 18000],
+})
+vendas["crescimento"] = vendas["receita"].pct_change() * 100
+
+print(f"total semestre: R\${vendas['receita'].sum():.0f}")
+print(f"media mensal: R\${vendas['receita'].mean():.0f}")
+print(f"melhor mes: {vendas.loc[vendas['receita'].idxmax(), 'mes']}")`,
+  },
+  'pandas-f-ex1': {
+    explanation:
+      'groupby("vendedor") junta as linhas; ["valor"].sum() soma cada grupo; sort_values(descending) faz o ranking. Ana: 9000.',
+    code: `import pandas as pd
+
+vendas = pd.DataFrame({
+    "vendedor": ["ana", "bob", "ana", "carol", "bob", "ana"],
+    "mes": ["jan", "jan", "fev", "jan", "fev", "mar"],
+    "valor": [3000, 1500, 2500, 2000, 1000, 3500],
+})
+por_vendedor = vendas.groupby("vendedor")["valor"].sum().sort_values(ascending=False)
+
+print("ranking:")
+for vendedor, total in por_vendedor.items():
+    print(f"  {vendedor}: R\${total:.0f}")`,
+  },
+  'pandas-f-ex2': {
+    explanation:
+      'agg(["sum","mean","count"]) aplica 3 agregações por cidade. SP: 3 clientes, R$3300, média 1100.',
+    code: `import pandas as pd
+
+clientes = pd.DataFrame({
+    "cidade": ["SP", "RJ", "SP", "BH", "RJ", "SP"],
+    "gasto": [500, 1200, 800, 300, 600, 2000],
+})
+por_cidade = clientes.groupby("cidade")["gasto"].agg(["sum", "mean", "count"]).round(0)
+
+print("por cidade:")
+for cidade, row in por_cidade.iterrows():
+    print(f"  {cidade}: total R\${row['sum']:.0f}, media R\${row['mean']:.0f}, {int(row['count'])} clientes")`,
+  },
+  'pandas-f-projeto': {
+    explanation:
+      'groupby + sum por categoria; idxmax() devolve a categoria top (escritorio, 500 vendas) e max() o valor.',
+    code: `import pandas as pd
+
+produtos = pd.DataFrame({
+    "categoria": ["eletronico", "escritorio", "eletronico", "escritorio", "eletronico"],
+    "produto": ["notebook", "caneta", "monitor", "papel", "mouse"],
+    "vendas": [50, 200, 30, 300, 80],
+})
+por_cat = produtos.groupby("categoria")["vendas"].sum()
+
+print(f"categorias: {len(por_cat)}")
+print(f"top categoria: {por_cat.idxmax()} ({por_cat.max()} vendas)")`,
+  },
+  'pandas-l-ex1': {
+    explanation:
+      'Coluna calculada com round(0) evita float sujo. idxmax() + loc pega o produto mais caro: monitor.',
+    code: `import pandas as pd
+
+precos = pd.DataFrame({
+    "produto": ["teclado", "mouse", "monitor"],
+    "preco": [120, 60, 800],
+})
+precos["promocao"] = (precos["preco"] * 0.9).round(0)
+
+print(f"mais caro: {precos.loc[precos['preco'].idxmax(), 'produto']}")
+print(f"promocao do teclado: R\${precos.loc[precos['produto']=='teclado', 'promocao'].iloc[0]:.0f}")`,
+  },
+  'pandas-l-ex2': {
+    explanation:
+      'isna().sum() conta nulos; mean() ignora NaN (25+30)/2 = 27.5; fillna com a média zera os nulos.',
+    code: `import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    "nome": ["ana", "bob", "carol", "dan"],
+    "idade": [25, np.nan, 30, np.nan],
+})
+print(f"valores nulos: {df['idade'].isna().sum()}")
+print(f"media: {df['idade'].mean():.1f}")
+
+df_preenchido = df.fillna({"idade": df["idade"].mean()})
+print(f"preenchidos: {df_preenchido['idade'].isna().sum()}")`,
+  },
+  'pandas-l-projeto': {
+    explanation:
+      'A média dos preços presentes é (100+150)/2 = 125. fillna com a média preenche os dois nulos.',
+    code: `import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    "produto": ["a", "b", "c", "d"],
+    "preco": [100, np.nan, 150, np.nan],
+})
+df["preco"] = df["preco"].fillna(df["preco"].mean())
+
+print(f"precos: {list(df['preco'])}")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

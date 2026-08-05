@@ -1,0 +1,88 @@
+Dados brutos são linhas soltas — **groupby transforma linhas em grupos** e responde "por vendedor", "por cidade", "por mês". É a operação que mais aparece em análise real de dados.
+
+> **Por que importa?** "Qual vendedor vende mais?" "Qual cidade gasta mais?" — toda pergunta de negócio é um groupby. E em entrevistas, groupby é o teste clássico de pandas.
+
+## Filtrando linhas
+
+```python
+import pandas as pd
+
+notas = pd.DataFrame({
+    "aluno": ["ana", "bob", "carol", "dan", "eva"],
+    "nota": [7.5, 5.0, 8.0, 6.5, 9.0],
+})
+
+aprovados = notas[notas["nota"] >= 7]   # filtro booleano
+```
+
+`notas["nota"] >= 7` cria uma máscara (True/False por linha) — o DataFrame filtra as True.
+
+## Agrupando com groupby
+
+```python
+vendas = pd.DataFrame({
+    "vendedor": ["ana", "bob", "ana", "carol", "bob", "ana"],
+    "mes": ["jan", "jan", "fev", "jan", "fev", "mar"],
+    "valor": [3000, 1500, 2500, 2000, 1000, 3500],
+})
+
+# Soma por vendedor, do maior para o menor
+ranking = vendas.groupby("vendedor")["valor"].sum().sort_values(ascending=False)
+# ana: 9000 | bob: 2500 | carol: 2000
+```
+
+A leitura: *"agrupe por vendedor, pegue a coluna valor, some"*.
+
+## Múltiplas agregações
+
+```python
+por_cidade = clientes.groupby("cidade")["gasto"].agg(["sum", "mean", "count"])
+#            sum    mean  count
+# SP        3300   1100      3
+```
+
+`agg` aplica várias funções de uma vez — total, média e contagem.
+
+## Exercício 1: ranking de vendedores
+
+Agrupe as vendas por vendedor e mostre o ranking por total.
+
+<Exercise
+  lessonSlug="pandas-filtros"
+  codeKey="pandas-ex1"
+  title="Ranking por vendedor"
+  expectedOutput="ana: R$9000"
+  hint="df.groupby('vendedor')['valor'].sum().sort_values(ascending=False). Ana soma 3000+2500+3500 = 9000."
+/>
+
+## Exercício 2: análise por cidade
+
+Agrupe os gastos por cidade com múltiplas agregações.
+
+<Exercise
+  lessonSlug="pandas-filtros"
+  codeKey="pandas-ex2"
+  title="Gastos por cidade"
+  expectedOutput="SP: total R$3300"
+  hint="df.groupby('cidade')['gasto'].agg(['sum','mean','count']). SP tem 3 clientes e R$3300."
+/>
+
+## Mini-projeto: categorias
+
+Agrupe produtos por categoria e descubra a que mais vende.
+
+<Exercise
+  lessonSlug="pandas-filtros"
+  codeKey="pandas-projeto"
+  title="Mini-projeto — categorias"
+  expectedOutput="top categoria: escritorio (500 vendas)"
+  hint="df.groupby('categoria')['vendas'].sum(); idxmax() para a categoria top."
+/>
+
+## Resumo
+
+- **Filtro**: `df[df["col"] >= x]` — máscara booleana
+- **groupby**: `df.groupby("col")["outra"].sum()` — agrupa e agrega
+- **sort_values(ascending=False)**: ranking do maior para o menor
+- **agg(["sum","mean","count"])**: múltiplas agregações de uma vez
+- Toda pergunta "por X?" é um groupby

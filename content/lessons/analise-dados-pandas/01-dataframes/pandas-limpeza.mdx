@@ -1,0 +1,86 @@
+Dados reais são **sujos**: valores faltantes, escalas erradas, formatos inconsistentes. A limpeza é ~80% do trabalho de quem analisa dados. Esta lição domina transformações e tratamento de nulos — o que te torna produtivo (e empregável).
+
+> **Por que importa?** "Dados reais não vêm limpos" é o mantra da indústria. Saber achar e preencher nulos, criar colunas calculadas e padronizar é o que diferencia um analista de alguém que só usa Excel.
+
+## Criando colunas calculadas
+
+```python
+import pandas as pd
+
+precos = pd.DataFrame({
+    "produto": ["teclado", "mouse", "monitor"],
+    "preco": [120, 60, 800],
+})
+
+precos["promocao"] = (precos["preco"] * 0.9).round(0)   # -10%
+```
+
+O `.round(0)` arredonda — evita floats feios (108.0000000001).
+
+## Valores faltantes (NaN)
+
+```python
+import numpy as np
+df = pd.DataFrame({
+    "nome": ["ana", "bob", "carol", "dan"],
+    "idade": [25, np.nan, 30, np.nan],   # np.nan = faltante
+})
+
+df["idade"].isna().sum()     # 2 (quantos nulos)
+df["idade"].mean()           # 27.5 (pandas ignora nulos na média)
+df = df.fillna({"idade": df["idade"].mean()})   # preenche com a média
+```
+
+**Decisão de limpeza:** preencher com média é comum para numéricos; deletar a linha quando o dado é essencial.
+
+## O "top" com idxmax
+
+```python
+mais_caro = precos.loc[precos["preco"].idxmax(), "produto"]
+# idxmax() devolve o índice da linha com maior preço
+```
+
+## Exercício 1: promoção
+
+Crie a coluna de promoção (-10%) e descubra o produto mais caro.
+
+<Exercise
+  lessonSlug="pandas-limpeza"
+  codeKey="pandas-ex1"
+  title="Promoção"
+  expectedOutput="promocao do teclado: R$108"
+  hint="df['promocao'] = (df['preco'] * 0.9).round(0). 120 * 0.9 = 108. idxmax() para o mais caro."
+/>
+
+## Exercício 2: valores nulos
+
+Conte os nulos, calcule a média (ignorando-os) e preencha.
+
+<Exercise
+  lessonSlug="pandas-limpeza"
+  codeKey="pandas-ex2"
+  title="Limpando nulos"
+  expectedOutput="preenchidos: 0"
+  hint="isna().sum() conta; mean() ignora nulos; fillna({'idade': media}) preenche. Depois isna().sum() = 0."
+/>
+
+## Mini-projeto: limpeza de preços
+
+Preencha os preços faltantes com a média e liste o resultado.
+
+<Exercise
+  lessonSlug="pandas-limpeza"
+  codeKey="pandas-projeto"
+  title="Mini-projeto — preços limpos"
+  expectedOutput="precos: [100.0, 125.0, 150.0, 125.0]"
+  hint="Média dos preços presentes: (100+150)/2 = 125. fillna com a média: [100, 125, 150, 125]."
+/>
+
+## Resumo
+
+- **Colunas calculadas**: `df["nova"] = df["a"] * df["b"]`
+- **isna()**: detecta nulos · **isna().sum()** conta
+- **mean()/sum()** ignoram NaN por padrão
+- **fillna({"col": valor})**: preenche nulos
+- **idxmax()/idxmin()**: índice da linha com maior/menor valor
+- Limpeza = 80% do trabalho real de dados
