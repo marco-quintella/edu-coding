@@ -113,3 +113,17 @@ O que fazer agora:
 2. **Monte seu portfólio** — cada projeto das lições (preço de imóvel, vinhos, segmentação) é um case de portfólio
 3. **Vá para o código real** — os padrões que você treinou aqui (train/test split, normalização, overfitting, avaliação) são os mesmos em produção
 4. **Esteja pronto para o que vem** — o corretor pedagógico e o chat de dúvidas estão chegando na plataforma
+
+## Mini-projeto: pipeline LGPD completo
+
+Você herdou um dataset com **emails de clientes e gastos mensais** e precisa: (1) pseudonimizar os emails ANTES de qualquer uso, e (2) rodar detecção de anomalia nos gastos (fraude). Dois passos que todo pipeline com dados brasileiros deve ter.
+
+<Exercise
+  lessonSlug="azure-cognitive"
+  codeKey="mp5-anon"
+  title="Mini-projeto — pseudonimização + anomalia"
+  expectedOutput="ANOMALO"
+  hint="Rode o código: os emails viram hash SHA-256 (pseudonimização) e o IsolationForest marca o gasto de 1500 como ANOMALO — o ponto que foge do padrão dos outros."
+/>
+
+**O que observar:** o gasto de R$1.500 destoa dos outros (~R$95-130) — o IsolationForest isola em 1 corte. E os emails: o hash truncado é **pseudonimização** (reversível por dicionário), não anonimização real. Para LGPD com dados sensíveis, anonimize de verdade ou não colete.

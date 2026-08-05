@@ -27,6 +27,10 @@ const EXPECTED_SLUGS = [
   'capstone-ex2',
   'capstone-ex3',
   'capstone-ex4',
+  // Mini-projetos Fases 03-05
+  'mp3-rag',
+  'mp4-audio',
+  'mp5-anon',
   // Fase 02
   'nlp-tokenizacao',
   'nlp-ex1',

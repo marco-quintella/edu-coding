@@ -89,6 +89,20 @@ resp = executor.invoke({"input": "Qual a capital do Brasil?"})
 - Agents podem "alucinar ferramentas" — valide as chamadas
 - Versionamento do framework muda rápido — pinne versões
 
+## Mini-projeto: seu primeiro RAG (sem LLM)
+
+RAG na prática não precisa de LangChain — o núcleo é **buscar o documento certo**. Este projeto monta um mini-RAG com TF-IDF: base de conhecimento da empresa + perguntas → rank dos documentos. O "retrieval" puro, antes de qualquer geração.
+
+<Exercise
+  lessonSlug="langchain-agents"
+  codeKey="mp3-rag"
+  title="Mini-projeto — RAG com TF-IDF"
+  expectedOutput="acertos: 2/3"
+  hint="Rode o código: 2 de 3 perguntas acham o documento certo. A que falha — 'cancelo' vs 'cancelar' — é o limite LEXICAL do TF-IDF. Embeddings resolveriam (semântica)."
+/>
+
+**O que observar:** a pergunta "Como cancelo minha assinatura?" acha o doc errado com score 0.000. Por quê? TF-IDF compara **palavras exatas** — "cancelo" ≠ "cancelar". Um sistema RAG de produção usa **embeddings**, que mapeiam "cancelo" e "cancelar" para vetores próximos (mesmo significado). Esse é o motivo de existir retrieval semântico.
+
 ## Próximos passos
 
 Você orquestrou LLMs. A Fase 04 muda o tipo de dado: **análise de vídeo, áudio e texto** — multimídia com serviços de IA (transcrição, extração, visão computacional).

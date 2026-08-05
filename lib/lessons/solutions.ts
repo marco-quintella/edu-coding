@@ -304,6 +304,93 @@ print(f"previsao 120m2 = R\${pred_120:.0f} mil")
 print(f"previsao 180m2 = R\${pred_180:.0f} mil")
 print(f"diferenca = R\${pred_180 - pred_120:.0f} mil")`,
   },
+
+  // ── Mini-projetos Fases 03-05 ──────────────────────────────
+  'mp3-rag': {
+    explanation:
+      'O núcleo do RAG: rank de documentos por similaridade. O TF-IDF acha 2/3 — a falha do "cancelo/cancelar" prova que retrieval lexical perde para embeddings (semânticos).',
+    code: `from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+
+docs = [
+    "A licenca do produto custa R$ 99 por mes e inclui suporte.",
+    "A API aceita 1000 requisicoes por dia no plano basico.",
+    "Para cancelar, envie email para cancelamento@empresa.com.",
+    "O reembolso e feito em ate 7 dias uteis apos a solicitacao.",
+    "O plano enterprise inclui SLA de 99.9% e suporte 24h.",
+]
+
+perguntas = [
+    ("Quanto custa a licenca?", 0),
+    ("Como cancelo minha assinatura?", 2),
+    ("Qual o SLA do plano enterprise?", 4),
+]
+
+vec = TfidfVectorizer().fit(docs + [p for p, _ in perguntas])
+X = vec.transform(docs)
+acertos = 0
+for pergunta, doc_esperado in perguntas:
+    q = vec.transform([pergunta])
+    scores = (X @ q.T).toarray().ravel()
+    melhor = int(np.argmax(scores))
+    ok = melhor == doc_esperado
+    acertos += ok
+    print(f"[{'ok' if ok else 'ERRO'}] {pergunta}")
+    print(f"  achou doc {melhor} (esperado {doc_esperado}) | score {scores[melhor]:.3f}")
+
+print(f"acertos: {acertos}/{len(perguntas)}")`,
+  },
+
+  'mp4-audio': {
+    explanation:
+      'Triagem de call center: transcrição → termos-chave → tema dominante. O Counter mostra o gargalo (cartão 3x) com zero ML — só contagem de texto.',
+    code: `from collections import Counter
+import re
+
+transcricoes = [
+    "o cliente ligou reclamando do cartao bloqueado na loja",
+    "segunda ligacao: cartao desbloqueado e cobranca duplicada",
+    "terceira chamada sobre o aplicativo que nao abre",
+    "o cartao foi usado em outra cidade sem autorizacao",
+]
+
+def extrair_termos(texto):
+    stops = {"cliente", "ligou", "ligacao", "chamada", "sobre", "que", "nao", "foi", "sem", "com"}
+    return [t for t in re.findall(r"[a-z]{4,}", texto.lower()) if t not in stops]
+
+temas = Counter()
+for t in transcricoes:
+    temas.update(extrair_termos(t))
+
+print("temas mais citados:")
+for palavra, n in temas.most_common(5):
+    print(f"  {palavra}: {n}x")`,
+  },
+
+  'mp5-anon': {
+    explanation:
+      'Dois passos obrigatórios de pipeline com dados brasileiros: hash antes de usar (pseudonimização) + IsolationForest para achar o ponto fora do padrão (fraude).',
+    code: `from sklearn.ensemble import IsolationForest
+import hashlib
+import numpy as np
+
+emails = ["maria@empresa.com", "joao@empresa.com", "ana@empresa.com",
+          "pedro@empresa.com", "lucas@empresa.com", "bia@empresa.com"]
+gastos = np.array([120, 95, 1500, 110, 130, 105]).reshape(-1, 1)
+
+def hash_email(email):
+    return hashlib.sha256(email.encode()).hexdigest()[:12]
+
+print("emails pseudonimizados:")
+for e in emails[:3]:
+    print(f"  {e} -> {hash_email(e)}")
+
+model = IsolationForest(contamination=0.1, random_state=42)
+labels = model.fit_predict(gastos)
+for i, (g, l) in enumerate(zip(gastos.ravel(), labels)):
+    status = "ANOMALO" if l == -1 else "normal"
+    print(f"  gasto {g:>5}: {status}")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

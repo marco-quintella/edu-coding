@@ -76,6 +76,20 @@ Vídeo → extrair frames + áudio
 - Moderar conteúdo (texto + imagem + vídeo)
 - Análise de reuniões (transcrição + sentimentos + tópicos)
 
+## Mini-projeto: triagem de transcrições (call center)
+
+Você recebeu as transcrições das 4 últimas chamadas do suporte. O objetivo: **achar o tema dominante** — o problema que aparece em mais chamadas — para priorizar o fix. Este é o pipeline de texto mais usado em produção: transcrição → limpeza → contagem → decisão.
+
+<Exercise
+  lessonSlug="analise-video-audio"
+  codeKey="mp4-audio"
+  title="Mini-projeto — temas das transcrições"
+  expectedOutput="cartao: 3x"
+  hint="Rode o código: o Counter agrega os termos-chave das 4 transcrições. O tema mais citado aparece primeiro — e é o que o time de produto deve atacar."
+/>
+
+**O que observar:** "cartao" aparece 3x — o problema é o cartão (bloqueio, cobrança duplicada, uso não autorizado). Com apenas 4 transcrições e uma contagem, você achou o gargalo. Em produção, o mesmo padrão escala para milhares de chamadas com TF-IDF + clustering de tópicos.
+
 ## Próximos passos
 
 Na próxima lição: **AWS Textract** — o serviço que extrai texto, tabelas e formulários de documentos digitalizados, indo além do OCR tradicional.
