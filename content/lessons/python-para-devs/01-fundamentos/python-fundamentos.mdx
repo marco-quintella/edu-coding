@@ -1,0 +1,131 @@
+Python é a linguagem mais pedida no mercado de dados e IA — e a porta de entrada para tudo que você verá neste curso. Esta lição estabelece os **fundamentos**: variáveis, tipos, condicionais e loops. São as mesmas peças que você usará em scripts, automações e pipelines de ML.
+
+> **Por que Python?** Em 2026, Python lidera o índice TIOBE e aparece em ~80% das vagas de dados/IA no Brasil. A sintaxe é legível — você escreve em português quase natural. E o ecossistema (pandas, scikit-learn, FastAPI) faz em 3 linhas o que outras linguagens fazem em 30.
+
+## Variáveis e tipos
+
+Python é **dinamicamente tipado**: a variável descobre o tipo sozinha. Você não declara `int x`, escreve `x = 10`.
+
+```python
+nome = "Ana"          # str (texto)
+idade = 25            # int (inteiro)
+altura = 1.68         # float (decimal)
+ativo = True          # bool (True/False)
+```
+
+**Pegadinha clássica:** `type()` revela o tipo real — use quando o código se comportar estranho:
+
+```python
+print(type(nome))    # <class 'str'>
+print(type(idade))   # <class 'int'>
+```
+
+## Operadores
+
+```python
+soma = 10 + 3        # 13
+divisao = 10 / 3     # 3.333... (sempre float!)
+div_inteira = 10 // 3  # 3 (descarta o resto)
+resto = 10 % 3       # 1 (útil p/ par/impar: x % 2)
+potencia = 2 ** 3    # 8
+
+# Comparações retornam bool
+print(10 > 5)        # True
+print(10 == "10")    # False! (int ≠ str)
+```
+
+**Pegadinha que derruba iniciantes:** `10 / 3` devolve `3.333...`, não `3`. Se você precisa de inteiro, use `//`.
+
+## Condicionais
+
+```python
+idade = 17
+
+if idade >= 18:
+    print("pode votar")
+elif idade >= 16:
+    print("voto opcional")
+else:
+    print("não vota")
+```
+
+A indentação **é a sintaxe** — 4 espaços, nada de chaves. O bloco `elif` encadeia condições.
+
+## Loops
+
+### for — repetir sobre uma sequência
+
+```python
+for i in range(5):        # 0, 1, 2, 3, 4
+    print(i)
+
+for fruta in ["maça", "banana", "uva"]:
+    print(fruta)
+```
+
+### while — repetir enquanto condição
+
+```python
+tentativas = 0
+while tentativas < 3:
+    print(f"tentativa {tentativas + 1}")
+    tentativas += 1       # SEM isso: loop infinito!
+```
+
+> **Pegadinha #1:** esquecer o `+= 1` no while = loop infinito (o navegador trava).
+> **Pegadinha #2:** `range(5)` vai de 0 a 4 — o fim é exclusivo.
+
+## F-strings (a forma certa de formatar)
+
+```python
+nome = "Ana"
+idade = 25
+print(f"{nome} tem {idade} anos")   # Ana tem 25 anos
+print(f"{idade * 2}")               # expressões funcionam
+```
+
+Sempre use f-strings em vez de concatenação com `+` — mais legível e sem erro de tipo.
+
+## Exercício 1: calculadora de IMC
+
+O IMC é `peso / altura²`. Complete o código para calcular e classificar.
+
+<Exercise
+  lessonSlug="python-fundamentos"
+  codeKey="python-ex1"
+  title="Calculadora de IMC"
+  expectedOutput="IMC = 22.86 (normal)"
+  hint="IMC = peso / (altura ** 2). Classificação: <18.5 magro, <25 normal, <30 sobrepeso, >=30 obeso. Use f-string com :.2f para 2 casas."
+/>
+
+## Exercício 2: par ou ímpar em loop
+
+Some apenas os números **pares** de 1 a 10 (use `% 2` e `range`).
+
+<Exercise
+  lessonSlug="python-fundamentos"
+  codeKey="python-ex2"
+  title="Soma dos pares"
+  expectedOutput="soma dos pares = 30"
+  hint="for i in range(1, 11): if i % 2 == 0: some. 2+4+6+8+10 = 30."
+/>
+
+## Mini-projeto: validação de senha
+
+Crie um validador que exige: mínimo 8 caracteres, pelo menos 1 número, pelo menos 1 maiúscula. Retorne a lista de requisitos que faltam.
+
+<Exercise
+  lessonSlug="python-fundamentos"
+  codeKey="python-projeto"
+  title="Mini-projeto — validador de senha"
+  expectedOutput="faltam: ['maiuscula', 'numero']"
+  hint="Use len(), any(c.isupper() for c in senha), any(c.isdigit() for c in senha). Monte a lista de faltas e imprima. Teste com uma senha de 8+ chars sem maiúscula nem número."
+/>
+
+## Resumo
+
+- **Tipos**: str, int, float, bool — descobertos automaticamente
+- **Operadores**: `/` float, `//` inteiro, `%` resto, `**` potência
+- **if/elif/else**: indentação define o bloco
+- **for** (sequência) e **while** (condição) — cuidado com loop infinito
+- **f-strings**: formatação legível com expressões

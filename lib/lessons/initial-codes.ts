@@ -5,6 +5,7 @@
  * puro, sem escapes de MDX. Evita o bug do next-mdx-remote/rsc que quebra
  * template literals e strings multi-linha como props de client components.
  */
+import { PYTHON_CODES } from './python-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1117,9 +1118,9 @@ for i, (g, l) in enumerate(zip(gastos.ravel(), labels)):
 }
 
 /**
- * Busca o código inicial de uma lição pelo slug.
+ * Busca o código inicial de uma lição pelo slug (cursos IA + Python).
  * Fallback: string vazia (editor abre em branco).
  */
 export function getInitialCode(lessonSlug: string): string {
-  return INITIAL_CODES[lessonSlug] ?? ''
+  return PYTHON_CODES[lessonSlug] ?? INITIAL_CODES[lessonSlug] ?? ''
 }

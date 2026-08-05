@@ -971,6 +971,83 @@ const COURSE = {
   ],
 }
 
+
+/** Catálogo completo — adicione novos cursos aqui. */
+const PYTHON_COURSE = {
+  slug: 'python-para-devs',
+  title: 'Python para Devs',
+  description:
+    'Do zero ao código de produção: fundamentos, listas, dicionários, funções e projetos reais. Base para dados, IA e automação.',
+  phases: [
+    {
+      slug: '01-fundamentos',
+      title: 'Fase 01 — Fundamentos de Python',
+      lessons: [
+        {
+          slug: 'python-fundamentos',
+          title: 'Fundamentos: variáveis, condicionais e loops',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Qual o resultado de 10 / 3 em Python?',
+              options: [
+                { id: 'a', text: '3' },
+                { id: 'b', text: '3.333... (float)' },
+                { id: 'c', text: '3.0' },
+                { id: 'd', text: 'Erro de sintaxe' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que range(5) gera?',
+              options: [
+                { id: 'a', text: '1, 2, 3, 4, 5' },
+                { id: 'b', text: '0, 1, 2, 3, 4' },
+                { id: 'c', text: '0, 1, 2, 3, 4, 5' },
+                { id: 'd', text: '5' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que imprime: print(10 == "10")?',
+              options: [
+                { id: 'a', text: 'True' },
+                { id: 'b', text: 'False' },
+                { id: 'c', text: 'Erro' },
+                { id: 'd', text: '10' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual a saída de 10 // 3?',
+              options: [
+                { id: 'a', text: '3.333' },
+                { id: 'b', text: '3.0' },
+                { id: 'c', text: '3' },
+                { id: 'd', text: '1' },
+              ],
+              correctOptionId: 'c',
+            },
+            {
+              question: 'O que acontece se esquecer o incremento num while?',
+              options: [
+                { id: 'a', text: 'Nada' },
+                { id: 'b', text: 'Loop infinito' },
+                { id: 'c', text: 'Erro de sintaxe' },
+                { id: 'd', text: 'O while termina sozinho' },
+              ],
+              correctOptionId: 'b',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE]
+
 async function seed() {
   console.log('Limpando tabelas...')
   // Ordem importa por causa das FKs
@@ -985,7 +1062,8 @@ async function seed() {
   await db.delete(phases)
   await db.delete(courses)
 
-  console.log('Inserindo curso...')
+  for (const COURSE of COURSES) {
+    console.log(`Inserindo curso: ${COURSE.slug}`)
   const [course] = await db
     .insert(courses)
     .values({
@@ -1034,8 +1112,10 @@ async function seed() {
     }
   }
 
+    console.log(`Curso: ${course.slug} (${course.id})`)
+  }
+
   console.log('Seed completo.')
-  console.log(`Curso: ${course.slug} (${course.id})`)
 }
 
 seed()
