@@ -74,6 +74,12 @@ export async function Nav({ user, dashboard }: Props) {
             Desafios
           </Link>
           <Link
+            href="/cheatsheets"
+            className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-secondary transition-colors hover:bg-background-hover hover:text-ink"
+          >
+            Cheat sheets
+          </Link>
+          <Link
             href="/courses"
             className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-secondary transition-colors hover:bg-background-hover hover:text-ink"
           >
