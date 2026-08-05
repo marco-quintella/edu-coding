@@ -1,0 +1,95 @@
+JSON é a **linguagem franca das APIs** — o formato que todo sistema entende. Nesta lição você domina a conversão entre JSON e Python, que é o primeiro passo de consumir qualquer API do mundo real.
+
+> **Por que importa?** Frontend ↔ backend, microsserviços, integrações — tudo fala JSON. Saber converter e navegar dados JSON é o fundamento de qualquer integração.
+
+## O formato
+
+```json
+{
+  "id": 1,
+  "nome": "Ana Silva",
+  "email": "ana@empresa.com",
+  "ativo": true
+}
+```
+
+JSON parece Python — mas não é: `true/false/null` minúsculos, aspas duplas obrigatórias, e tudo é texto.
+
+## Convertendo: dumps e loads
+
+```python
+import json
+
+usuario = {
+    "id": 1,
+    "nome": "Ana Silva",
+    "ativo": True,
+}
+
+# Python → JSON (serializar)
+texto = json.dumps(usuario, ensure_ascii=False)
+print(texto)   # {"id": 1, "nome": "Ana Silva", "ativo": true}
+
+# JSON → Python (desserializar)
+de_volta = json.loads(texto)
+print(de_volta["nome"])   # Ana Silva
+print(de_volta["ativo"])  # True (bool Python)
+```
+
+**Pegadinha clássica:** JSON `true` vira Python `True` (maiúsculo). `null` vira `None`.
+
+## O formato mais comum: lista de registros
+
+```python
+resposta = '[{"id": 1, "nome": "Ana"}, {"id": 2, "nome": "Bob"}]'
+dados = json.loads(resposta)   # lista de dicionários
+
+for u in dados:
+    print(f"{u['id']}: {u['nome']}")
+```
+
+**Isso É uma resposta de API.** Uma lista de dicionários = uma tabela. Sempre que você vê essa estrutura, pensa "dados de API".
+
+## Exercício 1: ida e volta
+
+Serialize o usuário, depois desserialize e acesse os campos.
+
+<Exercise
+  lessonSlug="apis-json"
+  codeKey="apis-ex1"
+  title="JSON ida e volta"
+  expectedOutput="ativo: True"
+  hint="json.dumps(usuario, ensure_ascii=False) → json.loads(texto). O ativo vira bool Python True."
+/>
+
+## Exercício 2: lista de usuários
+
+Parseie a resposta JSON (lista de usuários) e itere.
+
+<Exercise
+  lessonSlug="apis-json"
+  codeKey="apis-ex2"
+  title="Lista de usuários"
+  expectedOutput="usuarios: 3"
+  hint="json.loads(resposta) devolve uma lista; len() conta; itere com for u in dados."
+/>
+
+## Mini-projeto: produtos da API
+
+Processe a resposta de produtos: total, preço somado e o mais caro.
+
+<Exercise
+  lessonSlug="apis-json"
+  codeKey="apis-projeto"
+  title="Mini-projeto — produtos"
+  expectedOutput="mais caro: monitor"
+  hint="sum(p['preco'] for p in produtos) e max(produtos, key=lambda p: p['preco'])."
+/>
+
+## Resumo
+
+- **JSON**: texto universal — true/false/null minúsculos, aspas duplas
+- **json.dumps(obj)**: Python → JSON (string)
+- **json.loads(texto)**: JSON → Python (dict/list)
+- **true→True, false→False, null→None**
+- Lista de dicionários = tabela = resposta típica de API

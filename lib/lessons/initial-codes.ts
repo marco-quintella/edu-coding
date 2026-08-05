@@ -11,6 +11,7 @@ import { GIT_CODES } from './git-codes'
 import { EDA_CODES } from './eda-codes'
 import { PANDAS_CODES } from './pandas-codes'
 import { TESTES_CODES } from './testes-codes'
+import { APIS_CODES } from './apis-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1134,6 +1135,7 @@ export function getInitialCode(lessonSlug: string): string {
     EDA_CODES[lessonSlug] ??
     PANDAS_CODES[lessonSlug] ??
     TESTES_CODES[lessonSlug] ??
+    APIS_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

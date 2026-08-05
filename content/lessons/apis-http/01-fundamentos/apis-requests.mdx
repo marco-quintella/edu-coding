@@ -1,0 +1,84 @@
+Consumir uma API é fazer uma **requisição HTTP** e ler a resposta JSON. Nesta lição você usa o `urllib` (stdlib do Python) para buscar dados de APIs — inclusive uma API real de testes, direto do sandbox.
+
+> **Por que importa?** Todo app que você usa conversa com uma API. Saber fazer GET e ler a resposta é o primeiro passo de qualquer integração — e é 100% portável para `requests`, `httpx` e SDKs.
+
+## A requisição mais simples
+
+```python
+import json
+from urllib.request import urlopen
+
+url = "https://jsonplaceholder.typicode.com/todos/1"
+with urlopen(url) as resp:
+    dados = json.loads(resp.read())
+
+print(dados["title"])
+```
+
+O que acontece:
+1. `urlopen(url)` → abre a conexão HTTP e devolve a resposta
+2. `resp.read()` → lê o corpo (bytes)
+3. `json.loads(...)` → converte o JSON em dict Python
+
+> **jsonplaceholder** é uma API pública de testes (fake REST API) — perfeita para aprender sem chave.
+
+## Status codes — a linguagem do HTTP
+
+| Código | Significado |
+|---|---|
+| 200 | OK — sucesso |
+| 201 | Criado (POST) |
+| 404 | Não encontrado |
+| 500 | Erro do servidor |
+
+## Uma função reutilizável
+
+```python
+def get_json(url):
+    with urlopen(url) as resp:
+        return json.loads(resp.read())
+```
+
+## Exercício 1: buscando um recurso
+
+Use a API real de todos (tarefas) para buscar o item 1.
+
+<Exercise
+  lessonSlug="apis-requests"
+  codeKey="apis-ex1"
+  title="Primeiro GET"
+  expectedOutput="concluido: False"
+  hint="urlopen + json.loads(resp.read()) em https://jsonplaceholder.typicode.com/todos/1. O campo completed é False."
+/>
+
+## Exercício 2: lista de usuários real
+
+Busque os usuários da API e mostre os 3 primeiros.
+
+<Exercise
+  lessonSlug="apis-requests"
+  codeKey="apis-ex2"
+  title="Usuários da API"
+  expectedOutput="total: 10"
+  hint="A API /users devolve 10 usuários. len() conta e o slice [:3] mostra os primeiros."
+/>
+
+## Mini-projeto: posts do usuário 1
+
+Busque todos os posts e conte quantos são do usuário 1.
+
+<Exercise
+  lessonSlug="apis-requests"
+  codeKey="apis-projeto"
+  title="Mini-projeto — posts"
+  expectedOutput="do usuario 1: 10"
+  hint="List comprehension: [p for p in posts if p['userId'] == 1]. 100 posts no total, 10 do usuário 1."
+/>
+
+## Resumo
+
+- **urlopen(url)**: abre a conexão HTTP
+- **resp.read()**: lê o corpo · **json.loads()**: converte
+- **Status 200** = OK · **404** = não encontrado · **500** = erro servidor
+- API REST = URLs que devolvem JSON
+- jsonplaceholder: API pública para aprender (sem chave)

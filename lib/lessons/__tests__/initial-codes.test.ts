@@ -6,6 +6,7 @@ import { GIT_CODES } from '../git-codes'
 import { EDA_CODES } from '../eda-codes'
 import { PANDAS_CODES } from '../pandas-codes'
 import { TESTES_CODES } from '../testes-codes'
+import { APIS_CODES } from '../apis-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -152,6 +153,19 @@ const EXPECTED_SLUGS = [
   'testes-t-ex1',
   'testes-t-ex2',
   'testes-t-projeto',
+  // Curso APIs & HTTP
+  'apis-json',
+  'apis-ex1',
+  'apis-ex2',
+  'apis-projeto',
+  'apis-requests',
+  'apis-r-ex1',
+  'apis-r-ex2',
+  'apis-r-projeto',
+  'apis-erros',
+  'apis-e-ex1',
+  'apis-e-ex2',
+  'apis-e-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -224,6 +238,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é comentário/def em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|def |class |[a-zA-Z_])/)
+    }
+    // Códigos do curso APIs começam com import
+    for (const [slug, code] of Object.entries(APIS_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
     }
   })
 
