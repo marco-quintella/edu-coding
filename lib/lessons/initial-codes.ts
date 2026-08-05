@@ -13,6 +13,7 @@ import { PANDAS_CODES } from './pandas-codes'
 import { TESTES_CODES } from './testes-codes'
 import { APIS_CODES } from './apis-codes'
 import { AUTOMACAO_CODES } from './automacao-codes'
+import { JS_CODES } from './js-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1138,6 +1139,7 @@ export function getInitialCode(lessonSlug: string): string {
     TESTES_CODES[lessonSlug] ??
     APIS_CODES[lessonSlug] ??
     AUTOMACAO_CODES[lessonSlug] ??
+    JS_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

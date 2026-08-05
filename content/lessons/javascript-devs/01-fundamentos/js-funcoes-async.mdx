@@ -1,0 +1,102 @@
+O JavaScript moderno é **funcional e assíncrono**: map/filter/reduce transformam arrays sem loops, e async/await consome APIs de forma limpa. Nesta lição você domina os três métodos mais usados da linguagem + a chamada de API com fetch.
+
+> **Por que importa?** `map`, `filter` e `reduce` aparecem em TODA base de código JS — e são perguntas garantidas de entrevista. Async/await é como todo app web fala com servidores.
+
+## Arrow functions
+
+```js
+const dobrar = (x) => x * 2;
+const saudacao = (nome) => `Olá, ${nome}!`;
+
+console.log(dobrar(21));      // 42
+```
+
+## map / filter / reduce
+
+```js
+const precos = [100, 200, 50, 300];
+
+const comDesconto = precos.map((p) => p * 0.9);    // transforma cada item
+const caros = precos.filter((p) => p >= 150);      // seleciona
+const total = precos.reduce((acc, p) => acc + p, 0); // acumula
+
+// map: [90, 180, 45, 270]
+// filter: [200, 300]
+// reduce: 650
+```
+
+- **map**: novo array, mesma quantidade
+- **filter**: novo array, menos itens
+- **reduce**: um único valor (soma, concatenação...)
+
+## Async/await com fetch
+
+```js
+const resposta = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+const dados = await resposta.json();
+
+console.log(dados.title);        // o título da tarefa
+console.log(dados.completed);    // false
+```
+
+O `await` **espera a API responder** antes de continuar. O Node 24 tem `fetch` nativo (igual ao browser).
+
+## Erros com try/catch
+
+```js
+function dividir(a, b) {
+  if (b === 0) throw new Error("divisao por zero");
+  return a / b;
+}
+
+try {
+  console.log(dividir(10, 2));
+  dividir(1, 0);        // lança!
+} catch (e) {
+  console.log(`erro: ${e.message}`);   // erro: divisao por zero
+}
+```
+
+## Exercício 1: map/filter/reduce
+
+Transforme a lista de preços.
+
+<Exercise
+  lessonSlug="js-funcoes-async"
+  codeKey="js-ex1"
+  title="Preços"
+  expectedOutput="caros: 2"
+  hint="precos.map(p => p * 0.9), .filter(p => p >= 150) e .reduce((acc, p) => acc + p, 0)."
+/>
+
+## Exercício 2: consumindo API
+
+Use fetch + await para buscar uma tarefa.
+
+<Exercise
+  lessonSlug="js-funcoes-async"
+  codeKey="js-ex2"
+  title="Fetch"
+  expectedOutput="concluido: false"
+  hint="await fetch(url) → await resposta.json() → acesse .title e .completed."
+/>
+
+## Mini-projeto: divisão segura
+
+Implemente a função com throw e try/catch.
+
+<Exercise
+  lessonSlug="js-funcoes-async"
+  codeKey="js-projeto"
+  title="Mini-projeto — divisão"
+  expectedOutput="erro: divisao por zero"
+  hint="if (b === 0) throw new Error('divisao por zero'). O catch imprime e.message."
+/>
+
+## Resumo
+
+- **Arrow functions**: `(x) => x * 2`
+- **map**: transforma · **filter**: seleciona · **reduce**: acumula
+- **fetch + await**: consome APIs (nativo no Node 24)
+- **throw + try/catch**: erros controlados
+- Sem loops `for` para arrays — use map/filter/reduce

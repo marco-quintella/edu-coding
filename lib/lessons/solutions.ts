@@ -1558,6 +1558,105 @@ linhas = [l for l in resultado.stdout.split("\n") if l.strip()]
 print(f"linhas de saida: {len(linhas)}")
 print(f"primeira: {linhas[0]}")`,
   },
+
+  // ── Curso JavaScript para Devs ─────────────────────────────
+  'js-ex1': {
+    explanation:
+      'const não reatribui; let reatribui; typeof revela o tipo. Template literals com crase + ${}.',
+    code: `const nome = "Ana";
+let idade = 25;
+const ativo = true;
+
+console.log(\`\${nome} tem \${idade} anos\`);
+console.log(\`tipo de idade: \${typeof idade}\`);
+console.log(\`ativo: \${ativo}\`);`,
+  },
+  'js-ex2': {
+    explanation:
+      'push adiciona no fim; length conta; includes verifica. O array original muda com push.',
+    code: `const frutas = ["maça", "banana", "uva"];
+frutas.push("kiwi");
+console.log(\`frutas: \${frutas.length}\`);
+console.log(\`primeira: \${frutas[0]}\`);
+console.log(\`tem uva: \${frutas.includes("uva")}\`);`,
+  },
+  'js-projeto': {
+    explanation:
+      'obj.chave = valor adiciona propriedade; Object.keys devolve as chaves — 4 com o email.',
+    code: `const usuario = {
+  nome: "Ana",
+  idade: 25,
+  cidade: "São Paulo",
+};
+usuario.email = "ana@x.com";
+console.log(\`nome: \${usuario.nome}\`);
+console.log(\`chaves: \${Object.keys(usuario).length}\`);`,
+  },
+  'js-a-ex1': {
+    explanation:
+      'Array com push/length/includes — a manipulação básica do JS moderno.',
+    code: `const frutas = ["maça", "banana", "uva"];
+frutas.push("kiwi");
+console.log(\`frutas: \${frutas.length}\`);
+console.log(\`primeira: \${frutas[0]}\`);
+console.log(\`tem uva: \${frutas.includes("uva")}\`);`,
+  },
+  'js-a-ex2': {
+    explanation:
+      'Object.keys(obj).length conta as propriedades — 4 após adicionar o email.',
+    code: `const usuario = {
+  nome: "Ana",
+  idade: 25,
+  cidade: "São Paulo",
+};
+usuario.email = "ana@x.com";
+console.log(\`nome: \${usuario.nome}\`);
+console.log(\`chaves: \${Object.keys(usuario).length}\`);`,
+  },
+  'js-a-projeto': {
+    explanation:
+      'Array de objetos = dados de API. length conta; reduce com comparador acha o mais caro.',
+    code: `const produtos = [
+  { id: 1, nome: "teclado", preco: 120 },
+  { id: 2, nome: "mouse", preco: 60 },
+  { id: 3, nome: "monitor", preco: 800 },
+];
+console.log(\`produtos: \${produtos.length}\`);
+console.log(\`primeiro: \${produtos[0].nome}\`);
+console.log(\`mais caro: \${produtos.reduce((acc, p) => (p.preco > acc.preco ? p : acc)).nome}\`);`,
+  },
+  'js-f-ex1': {
+    explanation:
+      'map transforma cada item; filter seleciona; reduce acumula. 650 total, 2 caros (200 e 300).',
+    code: `const precos = [100, 200, 50, 300];
+const comDesconto = precos.map((p) => p * 0.9);
+const caros = precos.filter((p) => p >= 150);
+const total = precos.reduce((acc, p) => acc + p, 0);
+console.log(\`total: \${total}\`);
+console.log(\`caros: \${caros.length}\`);`,
+  },
+  'js-f-ex2': {
+    explanation:
+      'fetch retorna uma Promise; await espera; .json() converte. Node 24 tem fetch nativo.',
+    code: `const resposta = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+const dados = await resposta.json();
+console.log(\`titulo: \${dados.title}\`);
+console.log(\`concluido: \${dados.completed}\`);`,
+  },
+  'js-f-projeto': {
+    explanation:
+      'throw lança o erro; try/catch captura e acessa e.message. Divisão por zero controlada.',
+    code: `function dividir(a, b) {
+  if (b === 0) throw new Error("divisao por zero");
+  return a / b;
+}
+try {
+  console.log(dividir(10, 2));
+  dividir(1, 0);
+} catch (e) {
+  console.log(\`erro: \${e.message}\`);
+}`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

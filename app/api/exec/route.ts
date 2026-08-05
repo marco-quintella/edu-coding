@@ -82,6 +82,7 @@ export async function POST(req: NextRequest) {
       checkpointId: lesson.checkpointId,
       env,
       timeoutSec: 30,
+      runtime: (lesson.runtime ?? 'python') as 'python' | 'node',
     })
 
     // Incrementa contador após execução bem-sucedida

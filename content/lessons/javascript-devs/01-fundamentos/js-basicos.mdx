@@ -1,0 +1,82 @@
+JavaScript é a **linguagem da web** — o frontend inteiro roda nela, e com Node ela também domina o backend. Nesta lição você roda **JavaScript de verdade no sandbox** (Node 24): variáveis, tipos e template literals.
+
+> **Por que importa?** JavaScript lidera o mercado há anos — é a linguagem mais usada do mundo. E saber os fundamentos (const/let, tipos, template literals) é o que qualquer entrevista de frontend ou fullstack cobra primeiro.
+
+## const e let
+
+```js
+const nome = "Ana";     // não pode ser reatribuída (prefira sempre)
+let idade = 25;         // pode ser reatribuída
+idade = 26;             // ok
+// nome = "Bob";        // ERRO! const não reatribui
+```
+
+**Regra de ouro:** use `const` por padrão. Use `let` só quando precisar reatribuir.
+
+## Tipos e typeof
+
+```js
+const nome = "Ana";     // string
+const idade = 25;       // number (não tem int/float separados!)
+const ativo = true;     // boolean
+const lista = [1, 2];   // object (array)
+const nulo = null;      // object (quirk histórico!)
+
+console.log(typeof idade);   // "number"
+console.log(typeof nome);    // "string"
+```
+
+## Template literals
+
+```js
+const nome = "Ana";
+const idade = 25;
+console.log(`${nome} tem ${idade} anos`);   // Ana tem 25 anos
+console.log(`${idade * 2}`);                // expressões funcionam
+```
+
+Crase + `${}` — a forma moderna de montar strings (nunca concatene com `+`).
+
+## Exercício 1: perfil do usuário
+
+Crie as variáveis e monte a saída com template literals.
+
+<Exercise
+  lessonSlug="js-basicos"
+  codeKey="js-ex1"
+  title="Perfil"
+  expectedOutput="tipo de idade: number"
+  hint="const nome/idade/ativo; template literal com ${}; typeof idade."
+/>
+
+## Exercício 2: lista de frutas
+
+Use um array com push e includes.
+
+<Exercise
+  lessonSlug="js-basicos"
+  codeKey="js-ex2"
+  title="Frutas"
+  expectedOutput="tem uva: true"
+  hint="frutas.push('kiwi') adiciona; frutas.includes('uva') verifica; frutas.length conta."
+/>
+
+## Mini-projeto: usuário completo
+
+Crie um objeto usuário e adicione um email.
+
+<Exercise
+  lessonSlug="js-basicos"
+  codeKey="js-projeto"
+  title="Mini-projeto — usuário"
+  expectedOutput="chaves: 4"
+  hint="Objeto com nome/idade/cidade; usuario.email = ... adiciona; Object.keys(usuario).length conta 4."
+/>
+
+## Resumo
+
+- **const**: não reatribui (prefira) · **let**: reatribui
+- **typeof**: number, string, boolean, object
+- **Template literals**: `` `texto ${expr}` `` — a forma certa
+- **Array**: push, includes, length
+- **Objeto**: `obj.chave = valor` adiciona

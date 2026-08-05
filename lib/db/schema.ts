@@ -40,6 +40,8 @@ export const lessons = pgTable('lessons', {
   title: text('title').notNull(),
   mdxPath: text('mdx_path').notNull(),
   checkpointId: text('checkpoint_id').notNull(),
+  /** Runtime do sandbox: 'python' (padrão) ou 'node' */
+  runtime: text('runtime').notNull().default('python'),
   estimatedMinutes: integer('estimated_minutes').default(10),
   position: integer('position').notNull(),
 })

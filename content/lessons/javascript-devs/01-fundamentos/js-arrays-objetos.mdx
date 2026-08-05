@@ -1,0 +1,84 @@
+Arrays e objetos são as **estruturas de dados do JavaScript** — todo dado de uma API, todo estado de uma aplicação web. Nesta lição você domina os métodos modernos de array e a manipulação de objetos.
+
+> **Por que importa?** Dados de API chegam como arrays de objetos. Saber navegar e transformar essas estruturas é a skill #1 do dia a dia frontend.
+
+## Arrays: os métodos essenciais
+
+```js
+const frutas = ["maça", "banana", "uva"];
+
+frutas.push("kiwi");          // adiciona no fim
+frutas.length                 // 4
+frutas[0]                     // "maça"
+frutas.includes("uva")        // true
+```
+
+## Objetos
+
+```js
+const usuario = {
+  nome: "Ana",
+  idade: 25,
+};
+
+usuario.email = "ana@x.com";       // adiciona propriedade
+usuario["cidade"] = "São Paulo";   // sintaxe alternativa
+
+Object.keys(usuario).length        // 4 — conta as chaves
+```
+
+Objetos JS são **mapas chave→valor** — como os dicionários do Python, mas com sintaxe de ponto.
+
+## Array de objetos — dados de API
+
+```js
+const usuarios = [
+  { id: 1, nome: "Ana" },
+  { id: 2, nome: "Bob" },
+];
+console.log(usuarios[0].nome);   // Ana
+```
+
+## Exercício 1: lista de frutas
+
+Use os métodos de array para manipular a lista.
+
+<Exercise
+  lessonSlug="js-arrays-objetos"
+  codeKey="js-ex1"
+  title="Frutas"
+  expectedOutput="tem uva: true"
+  hint="push adiciona; includes verifica; length conta."
+/>
+
+## Exercício 2: objeto usuário
+
+Crie o objeto e adicione propriedades.
+
+<Exercise
+  lessonSlug="js-arrays-objetos"
+  codeKey="js-ex2"
+  title="Usuário"
+  expectedOutput="chaves: 4"
+  hint="usuario.email = 'ana@x.com' adiciona; Object.keys conta."
+/>
+
+## Mini-projeto: catálogo de produtos
+
+Crie um array de produtos e verifique propriedades.
+
+<Exercise
+  lessonSlug="js-arrays-objetos"
+  codeKey="js-projeto"
+  title="Mini-projeto — produtos"
+  expectedOutput="produtos: 3"
+  hint="Array de objetos com {id, nome, preco}. length conta; acesse produtos[0].nome."
+/>
+
+## Resumo
+
+- **push/length/includes**: manipulação básica de array
+- **Objeto**: `obj.chave = valor` adiciona
+- **Object.keys(obj)**: array com as chaves
+- **Array de objetos** = resposta de API
+- Sintaxe de ponto `obj.chave` + sintaxe de colchete `obj["chave"]`

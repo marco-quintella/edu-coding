@@ -1,0 +1,1 @@
+ALTER TABLE "lessons" ADD COLUMN "runtime" text DEFAULT 'python' NOT NULL;

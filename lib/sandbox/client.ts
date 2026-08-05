@@ -40,17 +40,36 @@ export async function runCode(
 
 /**
  * Roda código num sandbox já existente. Mais barato pra execs em sequência.
+ * Suporta runtime 'python' (padrão, com captura de plots) e 'node'.
  */
 export async function execOnSandbox(
   sandboxId: string,
   code: string,
   options: SandboxOptions
 ): Promise<ExecResult> {
-  const { timeoutSec = 30, pythonPath = '/opt/venv/bin/python' } = options
+  const {
+    timeoutSec = 30,
+    pythonPath = '/opt/venv/bin/python',
+    runtime = 'python',
+  } = options
   const start = Date.now()
 
   try {
-    // Embrulha com captura de plots matplotlib (AgG → PNG base64 no stdout)
+    if (runtime === 'node') {
+      // Node: sem wrapper de plots — executa o JS direto
+      const { stdout, stderr } = await execAsync(
+        `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- /opt/node/bin/node -e ${shellQuote(code)}`,
+        { maxBuffer: 1024 * 1024 }
+      )
+      return {
+        stdout,
+        stderr,
+        exitCode: 0,
+        durationMs: Date.now() - start,
+      }
+    }
+
+    // Python: embrulha com captura de plots matplotlib (AgG → PNG base64 no stdout)
     const wrapped = wrapWithPlotCapture(code)
     const { stdout, stderr } = await execAsync(
       `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- ${pythonPath} -c ${shellQuote(wrapped)}`,
