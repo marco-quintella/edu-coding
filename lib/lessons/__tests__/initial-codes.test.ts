@@ -14,6 +14,7 @@ import { OOP_CODES } from '../oop-codes'
 import { TS_CODES } from '../ts-codes'
 import { BACKEND_CODES } from '../backend-codes'
 import { DOCKER_CODES } from '../docker-codes'
+import { FASTAPI_CODES } from '../fastapi-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -264,6 +265,19 @@ const EXPECTED_SLUGS = [
   'docker-d-ex1',
   'docker-d-ex2',
   'docker-d-projeto',
+  // Curso FastAPI
+  'fastapi-primeiros-passos',
+  'fastapi-ex1',
+  'fastapi-ex2',
+  'fastapi-projeto',
+  'fastapi-rotas',
+  'fastapi-r-ex1',
+  'fastapi-r-ex2',
+  'fastapi-r-projeto',
+  'fastapi-post',
+  'fastapi-p-ex1',
+  'fastapi-p-ex2',
+  'fastapi-p-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -395,6 +409,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso Docker começam com import
     for (const [slug, code] of Object.entries(DOCKER_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso FastAPI começam com import
+    for (const [slug, code] of Object.entries(FASTAPI_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,

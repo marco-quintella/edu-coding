@@ -1,0 +1,91 @@
+FastAPI é o **framework Python #1 do mercado** para APIs — e o motivo é a mágica dos type hints: você declara os tipos, e o FastAPI valida, documenta e converte tudo automaticamente. Nesta lição você cria sua primeira API e testa com o `TestClient` real.
+
+> **Por que importa?** Python + FastAPI é o combo mais pedido em vagas de backend BR. E o TestClient permite testar a API inteira sem subir servidor — o padrão profissional.
+
+## A API mínima
+
+```python
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+app = FastAPI()
+
+@app.get("/")
+def raiz():
+    return {"mensagem": "olá fastapi"}
+
+client = TestClient(app)
+r = client.get("/")
+print(r.status_code)      # 200
+print(r.json())           # {'mensagem': 'olá fastapi'}
+```
+
+O que acontece:
+1. `@app.get("/")` — registra a função para GET na rota /
+2. A função **retorna um dict** — o FastAPI converte em JSON sozinho
+3. `TestClient(app)` — testa a API **sem subir servidor** (in-process)
+
+## Por que FastAPI?
+
+```python
+@app.get("/soma")
+def soma(a: int, b: int):     # type hints = validação automática
+    return {"resultado": a + b}
+```
+
+- `a: int` → se vier "abc", FastAPI devolve **422** (não aceita)
+- Docs automáticas (Swagger) em `/docs`
+- Validação de entrada SEM código extra
+
+## TestClient — o teste profissional
+
+```python
+client = TestClient(app)
+r = client.get("/")          # igual a um request HTTP real
+r.status_code                # 200
+r.json()                     # o JSON da resposta
+```
+
+## Exercício 1: primeira API
+
+Crie a rota / e teste.
+
+<Exercise
+  lessonSlug="fastapi-primeiros-passos"
+  codeKey="fastapi-ex1"
+  title="Primeira API"
+  expectedOutput="mensagem: olá fastapi"
+  hint="@app.get('/') retorna dict; TestClient(app).get('/').json()['mensagem']."
+/>
+
+## Exercício 2: rota desconhecida
+
+Veja o que acontece numa rota não registrada.
+
+<Exercise
+  lessonSlug="fastapi-primeiros-passos"
+  codeKey="fastapi-ex2"
+  title="404 automático"
+  expectedOutput="desconhecida: 404"
+  hint="FastAPI devolve 404 para rotas não registradas — sem código extra."
+/>
+
+## Mini-projeto: API com 2 rotas
+
+Crie / e /saude.
+
+<Exercise
+  lessonSlug="fastapi-primeiros-passos"
+  codeKey="fastapi-projeto"
+  title="Mini-projeto — rotas"
+  expectedOutput="saude: ok"
+  hint="@app.get('/saude') retorna {'status': 'ok'}; teste com client.get('/saude')."
+/>
+
+## Resumo
+
+- **@app.get("/")**: registra a rota · **return dict** → JSON automático
+- **TestClient**: testa sem subir servidor (in-process)
+- **Type hints**: validação automática (422 em tipo errado)
+- 404 automático para rotas não registradas
+- FastAPI = o padrão Python do mercado

@@ -1,0 +1,91 @@
+APIs recebem dados do cliente: **corpo do POST** (com Pydantic), **query params** (`?a=10&b=5`) e regras de negócio. Nesta lição você domina o POST com validação automática — o coração de qualquer sistema que recebe cadastros.
+
+> **Por que importa?** Criar recursos (cadastro, pedido, post) é POST + Pydantic. A validação automática do Pydantic é o que evita dados inválidos entrando no seu sistema.
+
+## Modelo Pydantic — o corpo tipado
+
+```python
+from pydantic import BaseModel
+
+class EchoRequest(BaseModel):
+    nome: str
+
+@app.post("/echo")
+def echo(req: EchoRequest):
+    return {"recebido": req.nome}
+```
+
+**Pydantic valida o JSON do corpo automaticamente:** se faltar `nome` ou vier número, FastAPI devolve 422 com a lista de erros — sem você escrever NENHUM if.
+
+## Query params
+
+```python
+@app.get("/soma")
+def soma(a: int, b: int):
+    return {"resultado": a + b}
+
+r = client.get("/soma", params={"a": 10, "b": 5})
+# {"resultado": 15}
+```
+
+Parâmetros simples da função = query params (após o `?` na URL).
+
+## Regra de negócio no POST
+
+```python
+class CadastroRequest(BaseModel):
+    nome: str
+    idade: int
+
+@app.post("/cadastro")
+def cadastro(req: CadastroRequest):
+    if req.idade < 18:
+        return {"erro": "menor de idade"}
+    return {"ok": True, "nome": req.nome}
+```
+
+Pydantic valida o TIPO (idade tem que ser int); a sua função valida a REGRA (idade >= 18).
+
+## Exercício 1: echo com POST
+
+Receba o nome no corpo e devolva.
+
+<Exercise
+  lessonSlug="fastapi-post"
+  codeKey="fastapi-ex1"
+  title="POST echo"
+  expectedOutput="recebido: Ana"
+  hint="class EchoRequest(BaseModel): nome: str. @app.post('/echo') recebe req e devolve {'recebido': req.nome}. client.post(..., json={'nome':'Ana'})."
+/>
+
+## Exercício 2: soma com query
+
+Some os query params.
+
+<Exercise
+  lessonSlug="fastapi-post"
+  codeKey="fastapi-ex2"
+  title="Query params"
+  expectedOutput="resultado: 15"
+  hint="@app.get('/soma') com def soma(a: int, b: int). client.get('/soma', params={'a':10,'b':5})."
+/>
+
+## Mini-projeto: cadastro validado
+
+POST /cadastro com regra de maioridade.
+
+<Exercise
+  lessonSlug="fastapi-post"
+  codeKey="fastapi-projeto"
+  title="Mini-projeto — cadastro"
+  expectedOutput="bob: menor de idade"
+  hint="Pydantic valida tipo; sua função valida regra: if req.idade < 18 → {'erro': 'menor de idade'}."
+/>
+
+## Resumo
+
+- **Pydantic BaseModel**: corpo tipado + validação automática (422)
+- **POST**: `@app.post("/rota")` + modelo como parâmetro
+- **Query params**: args da função (`a: int, b: int`)
+- Pydantic valida TIPO; sua função valida REGRA
+- 422 = dados inválidos — sem ifs de validação

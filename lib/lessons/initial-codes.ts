@@ -19,6 +19,7 @@ import { OOP_CODES } from './oop-codes'
 import { TS_CODES } from './ts-codes'
 import { BACKEND_CODES } from './backend-codes'
 import { DOCKER_CODES } from './docker-codes'
+import { FASTAPI_CODES } from './fastapi-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1150,6 +1151,7 @@ export function getInitialCode(lessonSlug: string): string {
     TS_CODES[lessonSlug] ??
     BACKEND_CODES[lessonSlug] ??
     DOCKER_CODES[lessonSlug] ??
+    FASTAPI_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

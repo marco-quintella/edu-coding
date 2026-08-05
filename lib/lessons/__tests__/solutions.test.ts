@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { SOLUTIONS, getSolution } from '../solutions'
+import { SOLUTIONS, FASTAPI_SOLUTIONS, getSolution } from '../solutions'
 import { getInitialCode } from '../initial-codes'
+
+const ALL_SOLUTIONS = { ...SOLUTIONS, ...FASTAPI_SOLUTIONS }
 
 describe('SOLUTIONS (comparação de soluções)', () => {
   it('toda solução tem codeKey correspondente no registro de códigos iniciais', () => {
-    for (const key of Object.keys(SOLUTIONS)) {
+    for (const key of Object.keys(ALL_SOLUTIONS)) {
       expect(
         getInitialCode(key),
         `initial-codes deve ter '${key}'`,
@@ -13,7 +15,7 @@ describe('SOLUTIONS (comparação de soluções)', () => {
   })
 
   it('toda solução tem explicação e código', () => {
-    for (const [key, s] of Object.entries(SOLUTIONS)) {
+    for (const [key, s] of Object.entries(ALL_SOLUTIONS)) {
       expect(s.explanation.length, `${key}: explicação`).toBeGreaterThan(10)
       expect(s.code.length, `${key}: código`).toBeGreaterThan(20)
     }

@@ -1,0 +1,88 @@
+APIs reais têm **recursos identificados por id**: `/usuarios/2`, `/produtos/3`. O FastAPI captura esses valores com **path parameters** tipados — e valida o tipo automaticamente. Nesta lição você constrói uma API com rotas dinâmicas e 404.
+
+> **Por que importa?** "Buscar o recurso X pelo id" é a operação #1 de qualquer API. E o 404 correto é o que o frontend usa para tratar "não encontrado".
+
+## Path parameter
+
+```python
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+app = FastAPI()
+
+@app.get("/usuarios/{usuario_id}")
+def buscar(usuario_id: int):
+    usuarios = {1: "Ana", 2: "Bob"}
+    if usuario_id not in usuarios:
+        return {"erro": "usuario nao existe"}
+    return {"id": usuario_id, "nome": usuarios[usuario_id]}
+
+client = TestClient(app)
+r = client.get("/usuarios/2")
+print(r.json())   # {'id': 2, 'nome': 'Bob'}
+```
+
+`{usuario_id}` captura o valor da URL; `: int` tipa e valida.
+
+## Validação automática (422)
+
+```python
+r = client.get("/usuarios/abc")   # "abc" não é int
+# FastAPI devolve 422 — recusa ANTES de chamar a função
+```
+
+O type hint `int` faz o FastAPI validar a entrada — sem código extra.
+
+## 404 para não encontrado
+
+```python
+if usuario_id not in usuarios:
+    return {"erro": "usuario nao existe"}   # 200 com erro
+# PROFISSIONAL: raise HTTPException(404, detail="...")
+```
+
+**Bônus profissional:** `raise HTTPException(status_code=404)` devolve 404 de verdade.
+
+## Exercício 1: lista de usuários
+
+Crie GET /usuarios devolvendo a lista.
+
+<Exercise
+  lessonSlug="fastapi-rotas"
+  codeKey="fastapi-ex1"
+  title="Lista"
+  expectedOutput="primeiro: Ana"
+  hint="@app.get('/usuarios') retorna a lista de dicts; TestClient lê .json() e itera."
+/>
+
+## Exercício 2: buscar por id
+
+Capture o id na URL e busque o usuário.
+
+<Exercise
+  lessonSlug="fastapi-rotas"
+  codeKey="fastapi-ex2"
+  title="Path param"
+  expectedOutput="nome: Bob"
+  hint="@app.get('/usuarios/{usuario_id}') com usuario_id: int; dict {1:'Ana', 2:'Bob'}; client.get('/usuarios/2')."
+/>
+
+## Mini-projeto: API de produtos
+
+Exponha /produtos e /produtos/{id}.
+
+<Exercise
+  lessonSlug="fastapi-rotas"
+  codeKey="fastapi-projeto"
+  title="Mini-projeto — produtos"
+  expectedOutput="mais caro: monitor"
+  hint="Lista de dicts de produtos; /produtos/{produto_id} busca por id (for + if). 3 é o monitor."
+/>
+
+## Resumo
+
+- **{param}**: path parameter · **: int** valida o tipo
+- **422**: tipo inválido (recusado antes da função)
+- **404**: recurso não existe (HTTPException ou dict de erro)
+- TestClient testa rotas dinâmicas como requests reais
+- FastAPI valida com type hints — zero código extra
