@@ -1,0 +1,88 @@
+Testes automatizados separam **código de hobby de código profissional**. Nesta lição você aprende o coração dos testes em Python: o `assert`, funções testáveis e edge cases — os mesmos conceitos que o pytest (a ferramenta da indústria) usa por baixo.
+
+> **Por que importa?** "Você escreve testes?" é pergunta obrigatória em entrevistas. E no trabalho, teste é o que permite refatorar sem medo — o teste avisa se você quebrou algo.
+
+## O assert — a verificação
+
+```python
+assert 2 + 3 == 5        # passa (True)
+assert 2 + 3 == 6        # falha — AssertionError!
+```
+
+O `assert` verifica uma condição: **se for falsa, lança AssertionError**. É a base de todo teste.
+
+## Funções testáveis = funções puras
+
+```python
+def somar(a, b):
+    return a + b
+
+# Testes:
+assert somar(2, 3) == 5
+assert somar(-1, -1) == -2
+assert somar(0, 0) == 0
+```
+
+Funções puras (mesma entrada → mesma saída) são **trivialmente testáveis** — sem estado externo, sem surpresa.
+
+## Edge cases — o que quebra de verdade
+
+```python
+def dividir(a, b):
+    if b == 0:
+        raise ValueError("divisao por zero")
+    return a / b
+
+# Edge case: divisão por zero DEVE falhar de forma controlada
+try:
+    dividir(1, 0)
+    print("não levantou")       # ruim
+except ValueError:
+    print("levantou ValueError") # bom!
+```
+
+Casos limites (zero, vazio, negativo, extremos) são onde 90% dos bugs moram.
+
+## Exercício 1: teste sua função
+
+Complete os asserts da função somar (3 casos).
+
+<Exercise
+  lessonSlug="testes-basicos"
+  codeKey="testes-ex1"
+  title="Testando somar"
+  expectedOutput="2+3 = 5"
+  hint="assert somar(a, b) == esperado para os 3 casos (positivos, negativos, zero)."
+/>
+
+## Exercício 2: divisão com edge case
+
+Implemente a divisão que lança ValueError para zero.
+
+<Exercise
+  lessonSlug="testes-basicos"
+  codeKey="testes-ex2"
+  title="Divisão defensiva"
+  expectedOutput="levantou ValueError"
+  hint="if b == 0: raise ValueError(...). O try/except captura e imprime."
+/>
+
+## Mini-projeto: calculadora testável
+
+Crie uma classe Calculadora com somar/subtrair/multiplicar e valide com asserts.
+
+<Exercise
+  lessonSlug="testes-basicos"
+  codeKey="testes-projeto"
+  title="Mini-projeto — calculadora"
+  expectedOutput="multiplicar: 42"
+  hint="Métodos somar/subtrair/multiplicar com return; 6*7 = 42."
+/>
+
+## Resumo
+
+- **assert**: verifica condição — falha com AssertionError
+- **Funções puras**: mesma entrada → mesma saída = fáceis de testar
+- **Edge cases**: zero, vazio, negativo — onde os bugs moram
+- **raise ValueError**: input inválido falha de forma controlada
+- Teste automatizado = refatorar sem medo

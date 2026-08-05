@@ -1,0 +1,78 @@
+**TDD (Test-Driven Development)** inverte a ordem natural: o teste vem PRIMEIRO, o código DEPOIS. Parece estranho — até você perceber que o teste define o comportamento esperado antes da implementação. É a metodologia favorita da indústria para código que não quebra.
+
+> **Por que importa?** "Você pratica TDD?" é pergunta comum em entrevistas senior. E o ciclo RED-GREEN-REFACTOR é o vocabulário que todo time usa.
+
+## O ciclo RED → GREEN → REFACTOR
+
+```
+RED    → escreva o teste ANTES do código → ele FALHA (função não existe)
+GREEN  → implemente o mínimo para o teste PASSAR
+REFACTOR → melhore o código sem quebrar o teste (ele garante!)
+```
+
+```python
+# 1. RED — teste primeiro (a função ainda não existe!)
+def test_calcular_desconto():
+    assert calcular_desconto(100, 10) == 90.0
+#    ↑ NameError — função não existe. RED.
+
+# 2. GREEN — implemente o mínimo
+def calcular_desconto(preco, percentual):
+    return preco * (1 - percentual / 100)
+
+# 3. REFACTOR — valide inputs, adicione edge cases...
+def calcular_desconto(preco, percentual):
+    if percentual < 0 or percentual > 100:
+        raise ValueError("percentual invalido")
+    return preco * (1 - percentual / 100)
+```
+
+## Por que escrever o teste primeiro?
+
+1. **Define o contrato** — você decide o comportamento esperado antes de implementar
+2. **Garante cobertura** — o teste existe porque a função nasceu dele
+3. **Refatorar sem medo** — o teste avisa se o comportamento mudou
+
+## Exercício 1: desconto com validação
+
+Implemente o cálculo de desconto validando o percentual (0-100).
+
+<Exercise
+  lessonSlug="testes-tdd"
+  codeKey="testes-ex1"
+  title="Desconto validado"
+  expectedOutput="50 com 0%: 50.00"
+  hint="if percentual < 0 or > 100: raise ValueError. return preco * (1 - percentual/100)."
+/>
+
+## Exercício 2: média com edge case
+
+Calcule a média das notas, lançando erro para lista vazia.
+
+<Exercise
+  lessonSlug="testes-tdd"
+  codeKey="testes-ex2"
+  title="Média defensiva"
+  expectedOutput="lista vazia: ValueError"
+  hint="if not notas: raise ValueError('lista vazia'). return sum(notas)/len(notas)."
+/>
+
+## Mini-projeto: conversor com TDD
+
+Implemente o conversor Fahrenheit → Celsius e valide os 3 casos clássicos (32F=0C, 212F=100C, 98.6F=37C).
+
+<Exercise
+  lessonSlug="testes-tdd"
+  codeKey="testes-projeto"
+  title="Mini-projeto — conversor"
+  expectedOutput="212F = 100.0C"
+  hint="c = (f - 32) * 5 / 9. 32F = 0C, 212F = 100C, 98.6F = 37C."
+/>
+
+## Resumo
+
+- **RED**: teste falha (função não existe) — o comportamento esperado
+- **GREEN**: implemente o mínimo para passar
+- **REFACTOR**: melhore com o teste como rede de segurança
+- **Validação de input**: raise ValueError para entrada inválida
+- TDD = código nasce testado

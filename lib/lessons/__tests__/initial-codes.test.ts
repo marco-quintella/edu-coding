@@ -5,6 +5,7 @@ import { SQL_CODES } from '../sql-codes'
 import { GIT_CODES } from '../git-codes'
 import { EDA_CODES } from '../eda-codes'
 import { PANDAS_CODES } from '../pandas-codes'
+import { TESTES_CODES } from '../testes-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -138,6 +139,19 @@ const EXPECTED_SLUGS = [
   'pandas-l-ex1',
   'pandas-l-ex2',
   'pandas-l-projeto',
+  // Curso Testes com Python
+  'testes-basicos',
+  'testes-ex1',
+  'testes-ex2',
+  'testes-projeto',
+  'testes-avancados',
+  'testes-a-ex1',
+  'testes-a-ex2',
+  'testes-a-projeto',
+  'testes-tdd',
+  'testes-t-ex1',
+  'testes-t-ex2',
+  'testes-t-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -202,6 +216,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é import em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Testes começam com comentário/def/import
+    for (const [slug, code] of Object.entries(TESTES_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário/def em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|def |class |[a-zA-Z_])/)
     }
   })
 

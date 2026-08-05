@@ -1923,7 +1923,198 @@ const PANDAS_COURSE = {
   ],
 }
 
-const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE, GIT_COURSE, EDA_COURSE, PANDAS_COURSE]
+
+/** Catálogo completo — adicione novos cursos aqui. */
+const TESTES_COURSE = {
+  slug: 'testes-python',
+  title: 'Testes com Python (pytest)',
+  description:
+    'assert, fixtures, parametrize e TDD — escreva código que não quebra. pytest roda no sandbox de verdade.',
+  phases: [
+    {
+      slug: '01-fundamentos',
+      title: 'Fase 01 — Fundamentos de Testes',
+      lessons: [
+        {
+          slug: 'testes-basicos',
+          title: 'assert e funções testáveis',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que o assert faz num teste?',
+              options: [
+                { id: 'a', text: 'Verifica se uma condição é verdadeira — falha se não for' },
+                { id: 'b', text: 'Repete o teste' },
+                { id: 'c', text: 'Ignora o teste' },
+                { id: 'd', text: 'Ordena os testes' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que funções puras são fáceis de testar?',
+              options: [
+                { id: 'a', text: 'Mesma entrada → mesma saída, sem efeitos colaterais' },
+                { id: 'b', text: 'Não precisam de assert' },
+                { id: 'c', text: 'São mais rápidas' },
+                { id: 'd', text: 'Não têm parâmetros' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que raise ValueError("msg") faz?',
+              options: [
+                { id: 'a', text: 'Lança uma exceção com mensagem' },
+                { id: 'b', text: 'Imprime um erro e continua' },
+                { id: 'c', text: 'Deleta o programa' },
+                { id: 'd', text: 'Retorna False' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como testar que uma função lança erro?',
+              options: [
+                { id: 'a', text: 'try/except capturando a exceção esperada' },
+                { id: 'b', text: 'Não é possível testar' },
+                { id: 'c', text: 'assert True' },
+                { id: 'd', text: 'com print' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que significa "edge case"?',
+              options: [
+                { id: 'a', text: 'Caso limite — ex: divisão por zero, lista vazia' },
+                { id: 'b', text: 'Caso normal de uso' },
+                { id: 'c', text: 'Um bug no código' },
+                { id: 'd', text: 'Um teste quebrado' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'testes-avancados',
+          title: 'Casos de teste e parametrize',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que o @pytest.mark.parametrize faz?',
+              options: [
+                { id: 'a', text: 'Roda o mesmo teste com vários conjuntos de dados' },
+                { id: 'b', text: 'Cria fixtures' },
+                { id: 'c', text: 'Pula testes lentos' },
+                { id: 'd', text: 'Ordena os testes' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Para que serve uma fixture?',
+              options: [
+                { id: 'a', text: 'Preparar dados/estado antes do teste (setup)' },
+                { id: 'b', text: 'Substituir o assert' },
+                { id: 'c', text: 'Rodar testes em paralelo' },
+                { id: 'd', text: 'Medir performance' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que testar com dados temporários (tempfile)?',
+              options: [
+                { id: 'a', text: 'Isola o teste — não suja o sistema real' },
+                { id: 'b', text: 'É mais rápido' },
+                { id: 'c', text: 'É obrigatório' },
+                { id: 'd', text: 'Evita escrever código' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual a vantagem de parametrize sobre repetir o teste?',
+              options: [
+                { id: 'a', text: 'Um código, N casos — cada falha é identificada' },
+                { id: 'b', text: 'Roda mais rápido' },
+                { id: 'c', text: 'Não precisa de assert' },
+                { id: 'd', text: 'Esconde erros' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que significa um teste "isolar"?',
+              options: [
+                { id: 'a', text: 'O teste não depende de estado externo (arquivos, rede, DB)' },
+                { id: 'b', text: 'O teste roda sozinho na máquina' },
+                { id: 'c', text: 'O teste não tem assert' },
+                { id: 'd', text: 'O teste é secreto' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'testes-tdd',
+          title: 'TDD: teste primeiro, código depois',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Qual o ciclo do TDD?',
+              options: [
+                { id: 'a', text: 'RED (teste falha) → GREEN (código passa) → REFACTOR' },
+                { id: 'b', text: 'GREEN → RED → GREEN' },
+                { id: 'c', text: 'Código → teste → deploy' },
+                { id: 'd', text: 'REFACTOR → RED → GREEN' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que escrever o teste ANTES do código?',
+              options: [
+                { id: 'a', text: 'Define o comportamento esperado antes de implementar' },
+                { id: 'b', text: 'É mais rápido' },
+                { id: 'c', text: 'Evita o git' },
+                { id: 'd', text: 'Não precisa de assert' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que significa "RED" no TDD?',
+              options: [
+                { id: 'a', text: 'O teste falha porque a função ainda não existe' },
+                { id: 'b', text: 'O código tem erro de sintaxe' },
+                { id: 'c', text: 'O teste está vermelho no relatório' },
+                { id: 'd', text: 'O CI quebrou' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Quando uma função deve lançar ValueError?',
+              options: [
+                { id: 'a', text: 'Quando recebe input inválido (ex: percentual > 100, lista vazia)' },
+                { id: 'b', text: 'Nunca' },
+                { id: 'c', text: 'Sempre que retorna 0' },
+                { id: 'd', text: 'Quando o teste passa' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual a maior vantagem de testes automatizados?',
+              options: [
+                { id: 'a', text: 'Refatorar sem medo — o teste avisa se quebrou algo' },
+                { id: 'b', text: 'Deixar o código mais curto' },
+                { id: 'c', text: 'Substituir a documentação' },
+                { id: 'd', text: 'Rodar o app' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE, GIT_COURSE, EDA_COURSE, PANDAS_COURSE, TESTES_COURSE]
 
 async function seed() {
   console.log('Limpando tabelas...')

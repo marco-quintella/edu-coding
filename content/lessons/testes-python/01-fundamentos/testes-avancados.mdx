@@ -1,0 +1,90 @@
+Um teste bom não repete código — usa **parametrize** (um teste, N casos) e **fixtures** (setup reutilizável). São as duas features do pytest que você vai usar todo dia na indústria.
+
+> **Por que importa?** Testar cada caso com um teste duplicado = manutenção infernal. Parametrize e fixtures são o que o pytest oferece para testar MUITO com POUCO código.
+
+## Parametrize: um teste, muitos casos
+
+```python
+import pytest
+
+@pytest.mark.parametrize("email,esperado", [
+    ("ana@empresa.com", True),
+    ("bob@empresa.com.br", True),
+    ("sem-arroba.com", False),
+    ("ana@", False),
+])
+def test_validar_email(email, esperado):
+    assert validar_email(email) == esperado
+```
+
+Cada tupla é um **caso de teste separado** — se um falha, os outros rodam e o relatório mostra qual.
+
+## Fixtures: setup sem repetir
+
+```python
+import pytest
+
+@pytest.fixture
+def config():
+    """Cria um arquivo de config temporário para o teste."""
+    import tempfile, json
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        json.dump({"timeout": 30}, f)
+        caminho = f.name
+    yield caminho           # entrega o dado ao teste
+    # cleanup roda depois do teste
+
+def test_carregar_config(config):
+    dados = carregar_config(config)
+    assert dados["timeout"] == 30
+```
+
+A fixture **prepara** (setup) e **limpa** (teardown) — o teste fica isolado, sem sujar o sistema.
+
+## Isolamento = teste confiável
+
+**Regra:** o teste nunca depende de estado externo (arquivos reais, rede, banco). Use `tempfile` para dados temporários — eles somem sozinhos.
+
+## Exercício 1: carregando config
+
+Crie um arquivo de config temporário e leia com a função.
+
+<Exercise
+  lessonSlug="testes-avancados"
+  codeKey="testes-ex1"
+  title="Config com tempfile"
+  expectedOutput="retries: 3"
+  hint="tempfile.NamedTemporaryFile escreve o JSON; a função carrega com json.load."
+/>
+
+## Exercício 2: validação com casos
+
+Teste a função validar_email com vários casos (tabela).
+
+<Exercise
+  lessonSlug="testes-avancados"
+  codeKey="testes-ex2"
+  title="Casos de email"
+  expectedOutput="ana@: False (esperado False)"
+  hint="validar_email = '@' in email and '.' in dominio. Tabela de casos [email, esperado]."
+/>
+
+## Mini-projeto: validação de senha
+
+Teste o validador com 4 casos: curta, sem número, válida, forte.
+
+<Exercise
+  lessonSlug="testes-avancados"
+  codeKey="testes-projeto"
+  title="Mini-projeto — senhas"
+  expectedOutput="'abcdefg1': OK"
+  hint="Erros: 'curta' (len < 8) e 'sem_numero' (sem dígito). abcdefg1 tem 8 chars + número = OK."
+/>
+
+## Resumo
+
+- **parametrize**: um teste, N casos — cada falha identificada
+- **fixture**: setup/teardown reutilizável — teste isolado
+- **tempfile**: dados temporários que somem sozinhos
+- **Isolamento**: teste nunca depende de arquivos/DB/rede reais
+- Tabela de casos (input, esperado) é o padrão de teste profissional

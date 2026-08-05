@@ -1157,6 +1157,140 @@ df["preco"] = df["preco"].fillna(df["preco"].mean())
 
 print(f"precos: {list(df['preco'])}")`,
   },
+
+  // ── Curso Testes com Python ───────────────────────────────
+  'testes-ex1': {
+    explanation:
+      'assert verifica a condição — falha com AssertionError. Os 3 casos cobrem positivos, negativos e zero.',
+    code: `def somar(a, b):
+    return a + b
+
+assert somar(2, 3) == 5
+assert somar(-1, -1) == -2
+assert somar(0, 0) == 0
+
+print(f"2+3 = {somar(2, 3)}")
+print(f"-1+-1 = {somar(-1, -1)}")`,
+  },
+  'testes-ex2': {
+    explanation:
+      'Divisão por zero DEVE falhar de forma controlada: raise ValueError. O try/except do teste captura e confirma.',
+    code: `def dividir(a, b):
+    if b == 0:
+        raise ValueError("divisao por zero")
+    return a / b
+
+print(f"10/2 = {dividir(10, 2)}")
+print(f"7/2 = {dividir(7, 2)}")
+
+try:
+    dividir(1, 0)
+    print("nao levantou erro")
+except ValueError:
+    print("levantou ValueError")`,
+  },
+  'testes-projeto': {
+    explanation:
+      'Classe com 3 métodos puros. Validação: 3+4=7, 10-4=6, 6*7=42 — os asserts equivalentes rodariam no pytest.',
+    code: `class Calculadora:
+    def somar(self, a, b):
+        return a + b
+    def subtrair(self, a, b):
+        return a - b
+    def multiplicar(self, a, b):
+        return a * b
+
+calc = Calculadora()
+print(f"somar: {calc.somar(3, 4)}")
+print(f"subtrair: {calc.subtrair(10, 4)}")
+print(f"multiplicar: {calc.multiplicar(6, 7)}")`,
+  },
+  'testes-a-ex1': {
+    explanation:
+      'tempfile cria arquivo temporário (setup); a função lê o JSON; os.unlink limpa (teardown) — teste isolado.',
+    code: `import json, tempfile, os
+
+def carregar_config(caminho):
+    with open(caminho) as f:
+        return json.load(f)
+
+with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+    json.dump({"timeout": 30, "retries": 3}, f)
+    caminho = f.name
+
+config = carregar_config(caminho)
+print(f"timeout: {config['timeout']}")
+print(f"retries: {config['retries']}")
+os.unlink(caminho)`,
+  },
+  'testes-a-ex2': {
+    explanation:
+      'Tabela de casos (input, esperado) — o padrão parametrize do pytest. 4 casos: 2 válidos, 2 inválidos.',
+    code: `def validar_email(email):
+    return "@" in email and "." in email.split("@")[-1]
+
+casos = [
+    ("ana@empresa.com", True),
+    ("bob@empresa.com.br", True),
+    ("sem-arroba.com", False),
+    ("ana@", False),
+]
+for email, esperado in casos:
+    resultado = validar_email(email)
+    print(f"{email}: {resultado} (esperado {esperado})")`,
+  },
+  'testes-a-projeto': {
+    explanation:
+      'Validador com 2 regras e 4 casos: curta, sem número, válida (8 chars + dígito) e forte.',
+    code: `def validar_senha(senha):
+    erros = []
+    if len(senha) < 8:
+        erros.append("curta")
+    if not any(c.isdigit() for c in senha):
+        erros.append("sem_numero")
+    return erros
+
+for senha in ["abc", "abcdefgh", "abcdefg1", "Abcdefgh1"]:
+    erros = validar_senha(senha)
+    print(f"'{senha}': {erros if erros else 'OK'}")`,
+  },
+  'testes-t-ex1': {
+    explanation:
+      'Validação de input antes do cálculo: percentual fora de 0-100 → ValueError. Desconto = preco * (1 - p/100).',
+    code: `def calcular_desconto(preco, percentual):
+    if percentual < 0 or percentual > 100:
+        raise ValueError("percentual invalido")
+    return preco * (1 - percentual / 100)
+
+print(f"100 com 10%: {calcular_desconto(100, 10):.2f}")
+print(f"200 com 25%: {calcular_desconto(200, 25):.2f}")
+print(f"50 com 0%: {calcular_desconto(50, 0):.2f}")`,
+  },
+  'testes-t-ex2': {
+    explanation:
+      'Lista vazia é edge case: média indefinida → ValueError. sum/len com lista não vazia.',
+    code: `def media(notas):
+    if not notas:
+        raise ValueError("lista vazia")
+    return sum(notas) / len(notas)
+
+print(f"media [7,8,9]: {media([7, 8, 9]):.1f}")
+print(f"media [10]: {media([10]):.1f}")
+try:
+    media([])
+    print("nao levantou")
+except ValueError:
+    print("lista vazia: ValueError")`,
+  },
+  'testes-t-projeto': {
+    explanation:
+      'Conversor simples: (f - 32) * 5/9. Os 3 casos clássicos validam: 32F=0C, 212F=100C, 98.6F=37C (febre!).',
+    code: `def fahrenheit_para_celsius(f):
+    return (f - 32) * 5 / 9
+
+for f in [32, 212, 98.6]:
+    print(f"{f}F = {fahrenheit_para_celsius(f):.1f}C")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */
