@@ -1,0 +1,99 @@
+Herança é o **reuso em escala**: uma classe base define o que é comum, e as subclasses especializam. Com polimorfismo, você trata objetos diferentes de forma uniforme. É o que dá poder ao OOP em sistemas reais.
+
+> **Por que importa?** "Todos os animais falam, mas cada um fala diferente" — herança + override é a base de frameworks inteiros (Django models, exceções do Python, componentes de UI).
+
+## Herança: class Filho(Pai)
+
+```python
+class Animal:
+    def __init__(self, nome):
+        self.nome = nome
+
+    def falar(self):
+        return "..."
+
+
+class Cachorro(Animal):      # herda nome e __init__ do Animal
+    def falar(self):          # SOBRESCREVE o comportamento
+        return "au au!"
+
+
+class Gato(Animal):
+    def falar(self):
+        return "miau!"
+
+
+rex = Cachorro("Rex")        # herda __init__ com nome
+print(rex.falar())           # au au!
+```
+
+A subclasse **herda tudo** da base — e pode **sobrescrever** (override) o que quiser mudar.
+
+## Polimorfismo: mesma chamada, comportamentos diferentes
+
+```python
+animais = [Cachorro("Rex"), Gato("Mimi")]
+for a in animais:
+    print(a.falar())    # au au! / miau! — mesmo método, cada um do seu jeito
+```
+
+O loop não precisa saber se é cachorro ou gato — ambos respondem a `falar()`.
+
+## Sobrescrever = especializar
+
+```python
+class Funcionario:
+    def __init__(self, nome, salario):
+        self.nome = nome
+        self.salario = salario
+
+    def bonus(self):
+        return self.salario * 0.10
+
+class Gerente(Funcionario):
+    def bonus(self):               # override: gerente ganha mais
+        return self.salario * 0.20
+```
+
+## Exercício 1: animais que falam
+
+Crie Cachorro e Gato herdando de Animal, cada um com seu som.
+
+<Exercise
+  lessonSlug="oop-heranca"
+  codeKey="oop-ex1"
+  title="Animais"
+  expectedOutput="Rex: au au!"
+  hint="class Cachorro(Animal) com def falar(self) sobrescrevendo. Lista com as duas instâncias."
+/>
+
+## Exercício 2: bônus diferenciado
+
+Sobrescreva o bônus do Gerente (20% vs 10%).
+
+<Exercise
+  lessonSlug="oop-heranca"
+  codeKey="oop-ex2"
+  title="Bônus"
+  expectedOutput="gerente: R$1000"
+  hint="class Gerente(Funcionario) com bonus() sobrescrito: salario * 0.20. 5000*0.2 = 1000."
+/>
+
+## Mini-projeto: veículos
+
+Crie Carro e Moto com descrições específicas.
+
+<Exercise
+  lessonSlug="oop-heranca"
+  codeKey="oop-projeto"
+  title="Mini-projeto — veículos"
+  expectedOutput="moto Honda"
+  hint="class Carro(Veiculo) sobrescreve descricao() retornando f'carro {marca}'. Polimorfismo no for."
+/>
+
+## Resumo
+
+- **Herança**: `class Filho(Pai)` — herda atributos e métodos
+- **Override**: redefinir o método na subclasse
+- **Polimorfismo**: `for a in lista: a.falar()` — cada um do seu jeito
+- Reuso + especialização = sistemas organizados

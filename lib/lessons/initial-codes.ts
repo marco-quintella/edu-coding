@@ -15,6 +15,7 @@ import { APIS_CODES } from './apis-codes'
 import { AUTOMACAO_CODES } from './automacao-codes'
 import { JS_CODES } from './js-codes'
 import { REGEX_CODES } from './regex-codes'
+import { OOP_CODES } from './oop-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1142,6 +1143,7 @@ export function getInitialCode(lessonSlug: string): string {
     AUTOMACAO_CODES[lessonSlug] ??
     JS_CODES[lessonSlug] ??
     REGEX_CODES[lessonSlug] ??
+    OOP_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

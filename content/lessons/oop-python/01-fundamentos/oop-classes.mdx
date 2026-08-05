@@ -1,0 +1,93 @@
+Orientação a Objetos é a forma de **organizar código em torno de entidades** — Conta, Usuário, Pedido — em vez de funções soltas. Nesta lição você domina o coração do OOP: classes, `__init__` e métodos.
+
+> **Por que importa?** Sistemas grandes (Django, sistemas bancários, jogos) são organizados em objetos. E a pergunta "o que é uma classe?" é a primeira de qualquer entrevista de backend.
+
+## Uma classe: a fábrica de objetos
+
+```python
+class Conta:
+    def __init__(self, titular, saldo=0):
+        self.titular = titular
+        self.saldo = saldo
+
+    def depositar(self, valor):
+        self.saldo += valor
+
+    def sacar(self, valor):
+        if valor > self.saldo:
+            return False
+        self.saldo -= valor
+        return True
+
+
+c = Conta("Ana", 100)      # cria a instância
+c.depositar(50)            # chama o método
+print(c.saldo)             # 150
+```
+
+## Os 3 pilares da sintaxe
+
+1. **`__init__`**: roda ao criar a instância — inicializa os atributos
+2. **`self`**: cada objeto tem o seu — `self.saldo` é O saldo DESTE objeto
+3. **Método**: função definida na classe, chamada como `c.depositar(50)`
+
+## Objetos como dados + comportamento
+
+```python
+class Produto:
+    def __init__(self, nome, preco):
+        self.nome = nome
+        self.preco = preco
+
+    def com_desconto(self, percentual):
+        return self.preco * (1 - percentual / 100)
+
+p = Produto("teclado", 120)
+print(p.com_desconto(10))   # 108.0
+```
+
+**A ideia central:** o objeto carrega seus DADOS (nome, preco) e o COMPORTAMENTO (com_desconto) junto.
+
+## Exercício 1: conta bancária
+
+Crie a classe Conta com depósito e saque.
+
+<Exercise
+  lessonSlug="oop-classes"
+  codeKey="oop-ex1"
+  title="Conta"
+  expectedOutput="sacar 30: True"
+  hint="__init__ com titular/saldo; métodos depositar e sacar (sacar devolve False se saldo insuficiente)."
+/>
+
+## Exercício 2: produto com desconto
+
+Calcule o preço com desconto.
+
+<Exercise
+  lessonSlug="oop-classes"
+  codeKey="oop-ex2"
+  title="Desconto"
+  expectedOutput="25%: 90.00"
+  hint="com_desconto retorna preco * (1 - percentual/100). 120 com 25% = 90."
+/>
+
+## Mini-projeto: carrinho de compras
+
+Crie a classe Carrinho que acumula itens e calcula o total.
+
+<Exercise
+  lessonSlug="oop-classes"
+  codeKey="oop-projeto"
+  title="Mini-projeto — carrinho"
+  expectedOutput="total: R$180"
+  hint="self.itens = [] no __init__; adicionar() faz append; total() soma os preços. 120+60 = 180."
+/>
+
+## Resumo
+
+- **Classe** = fábrica · **Instância** = objeto criado
+- **__init__**: inicializa · **self**: a própria instância
+- **Método**: função da classe, chamada com `objeto.metodo()`
+- Objeto = dados + comportamento juntos
+- `self.atributo = valor` cria o atributo da instância

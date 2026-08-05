@@ -10,6 +10,7 @@ import { APIS_CODES } from '../apis-codes'
 import { AUTOMACAO_CODES } from '../automacao-codes'
 import { JS_CODES } from '../js-codes'
 import { REGEX_CODES } from '../regex-codes'
+import { OOP_CODES } from '../oop-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -208,6 +209,19 @@ const EXPECTED_SLUGS = [
   'regex-a-ex1',
   'regex-a-ex2',
   'regex-a-projeto',
+  // Curso OOP Python
+  'oop-classes',
+  'oop-ex1',
+  'oop-ex2',
+  'oop-projeto',
+  'oop-heranca',
+  'oop-h-ex1',
+  'oop-h-ex2',
+  'oop-h-projeto',
+  'oop-encapsulamento',
+  'oop-e-ex1',
+  'oop-e-ex2',
+  'oop-e-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -312,6 +326,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é import em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso OOP começam com comentário ou class
+    for (const [slug, code] of Object.entries(OOP_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário/class em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|class |def )/)
     }
   })
 

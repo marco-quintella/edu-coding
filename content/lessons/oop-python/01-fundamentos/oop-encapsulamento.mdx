@@ -1,0 +1,97 @@
+Encapsulamento é **proteger o estado interno** do objeto: o saldo só muda via `depositar()`/`sacar()`, nunca por acesso direto. O Python faz isso com `__` (privado) e `@property` (acesso controlado). É o que mantém sistemas grandes estáveis.
+
+> **Por que importa?** Se o saldo pudesse ser alterado direto (`c.saldo = 999999`), regras de negócio (limites, taxas, validações) seriam furadas. Encapsulamento = regras respeitadas.
+
+## Atributo "privado" com __
+
+```python
+class Cliente:
+    def __init__(self, nome, idade):
+        self.nome = nome
+        self.__idade = idade   # privado (name mangling)
+
+    def e_maior(self):
+        return self.__idade >= 18
+```
+
+`__idade` não é acessível como `c.__idade` — só pelos métodos da classe. O Python renomeia internamente para `_Cliente__idade`.
+
+## Acesso controlado com @property
+
+```python
+class ContaBancaria:
+    def __init__(self, titular):
+        self.titular = titular
+        self.__saldo = 0
+
+    def depositar(self, valor):
+        self.__saldo += valor
+
+    @property
+    def saldo(self):          # leitura controlada
+        return self.__saldo
+```
+
+`c.saldo` (sem parênteses!) lê o valor — mas **ninguém pode escrever** `c.saldo = 999`. Toda mudança passa por `depositar()`.
+
+## Getter e setter
+
+```python
+class Temperatura:
+    def __init__(self, celsius):
+        self.celsius = celsius
+
+    @property
+    def fahrenheit(self):
+        return self.celsius * 9 / 5 + 32
+
+    @fahrenheit.setter
+    def fahrenheit(self, valor):
+        self.celsius = (valor - 32) * 5 / 9
+```
+
+**Getter** (leitura) e **setter** (escrita) com a mesma sintaxe de atributo.
+
+## Exercício 1: idade protegida
+
+Use o atributo privado para a validação.
+
+<Exercise
+  lessonSlug="oop-encapsulamento"
+  codeKey="oop-ex1"
+  title="Cliente"
+  expectedOutput="maior: True"
+  hint="self.__idade = idade; o método e_maior() acessa __idade >= 18."
+/>
+
+## Exercício 2: conversão de temperatura
+
+Use getter e setter de fahrenheit.
+
+<Exercise
+  lessonSlug="oop-encapsulamento"
+  codeKey="oop-ex2"
+  title="Temperatura"
+  expectedOutput="100F = 37.8C"
+  hint="@property fahrenheit calcula de celsius; @fahrenheit.setter converte de volta. (100-32)*5/9 = 37.8."
+/>
+
+## Mini-projeto: conta protegida
+
+Conta bancária onde o saldo só muda por depósito.
+
+<Exercise
+  lessonSlug="oop-encapsulamento"
+  codeKey="oop-projeto"
+  title="Mini-projeto — saldo"
+  expectedOutput="saldo: R$1500"
+  hint="self.__saldo = 0 no __init__; depositar soma; @property saldo expõe leitura. 1000+500 = 1500."
+/>
+
+## Resumo
+
+- **`__atributo`**: privado — acesso direto desencorajado (name mangling)
+- **@property**: getter com sintaxe de atributo (`c.saldo`)
+- **@property.setter**: escrita controlada
+- Encapsulamento = regras de negócio respeitadas
+- Estado interno só muda por métodos
