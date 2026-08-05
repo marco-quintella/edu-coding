@@ -13,6 +13,7 @@ import { REGEX_CODES } from '../regex-codes'
 import { OOP_CODES } from '../oop-codes'
 import { TS_CODES } from '../ts-codes'
 import { BACKEND_CODES } from '../backend-codes'
+import { DOCKER_CODES } from '../docker-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -250,6 +251,19 @@ const EXPECTED_SLUGS = [
   'node-e-ex1',
   'node-e-ex2',
   'node-e-projeto',
+  // Curso Docker
+  'docker-imagens',
+  'docker-ex1',
+  'docker-ex2',
+  'docker-projeto',
+  'docker-run',
+  'docker-r-ex1',
+  'docker-r-ex2',
+  'docker-r-projeto',
+  'docker-dockerfile',
+  'docker-d-ex1',
+  'docker-d-ex2',
+  'docker-d-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -378,6 +392,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é comentário/const em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|\/\/|const |let )/)
+    }
+    // Códigos do curso Docker começam com import
+    for (const [slug, code] of Object.entries(DOCKER_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
     }
   })
 

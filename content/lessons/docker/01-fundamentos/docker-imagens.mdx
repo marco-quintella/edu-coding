@@ -1,0 +1,81 @@
+Docker é o **empacotamento universal** — "funciona na minha máquina" deixa de existir quando o app roda num container idêntico em qualquer lugar. Nesta lição você roda **Docker de verdade no sandbox** e entende a dupla imagem/container.
+
+> **Por que importa?** Docker é requisito em ~50% das vagas de backend. Entender imagem vs container é a pergunta #1 de entrevista de DevOps — e aqui você VÊ funcionando.
+
+## Imagem vs container
+
+```
+IMAGEM (molde, estático)          CONTAINER (execução, instância)
+┌─────────────────────┐           ┌─────────────────────┐
+│ alpine: sistema +   │   docker  │  processo rodando   │
+│ app + config        │  ──run──▶ │  com as próprias    │
+│ (como um .zip)      │           │  libs e sistema     │
+└─────────────────────┘           └─────────────────────┘
+```
+
+- **Imagem**: o molde — pode ser baixada, versionada, compartilhada
+- **Container**: a execução — criado a partir da imagem, roda e morre
+
+## Verificando o ambiente
+
+```python
+import subprocess
+DOCKER = "/usr/local/bin/docker"
+
+r = subprocess.run([DOCKER, "version", "--format", "{{.Server.Version}}"], capture_output=True, text=True)
+print(r.stdout)   # a versão do daemon Docker
+```
+
+## Imagens locais
+
+```python
+r = subprocess.run([DOCKER, "images", "--format", "{{.Repository}}:{{.Tag}}"], capture_output=True, text=True)
+```
+
+## Por que os containers são leves?
+
+Diferente de VMs (que emulam hardware + sistema completo), containers **compartilham o kernel do host** — só o app e as libs ficam dentro. Por isso sobem em segundos.
+
+## Exercício 1: versão do Docker
+
+Verifique a versão do servidor Docker.
+
+<Exercise
+  lessonSlug="docker-imagens"
+  codeKey="docker-ex1"
+  title="Versão do Docker"
+  expectedOutput="server: 29.1.2"
+  hint="docker version --format '{{.Server.Version}}' via subprocess."
+/>
+
+## Exercício 2: containers rodando
+
+Conte os containers ativos agora.
+
+<Exercise
+  lessonSlug="docker-imagens"
+  codeKey="docker-ex2"
+  title="Containers ativos"
+  expectedOutput="rodando: 0"
+  hint="docker ps --format '{{.ID}}' lista os ativos. Com --rm, nada fica rodando → 0."
+/>
+
+## Mini-projeto: containers existentes
+
+Conte os containers (parados + rodando).
+
+<Exercise
+  lessonSlug="docker-imagens"
+  codeKey="docker-projeto"
+  title="Mini-projeto — containers"
+  expectedOutput="containers: 0"
+  hint="docker ps -aq lista TODOS os containers (parados inclusos). Ambiente limpo = 0."
+/>
+
+## Resumo
+
+- **Imagem** = molde estático · **Container** = execução
+- **docker images**: imagens locais · **docker ps -a**: todos os containers
+- **alpine**: distro mínima — imagens pequenas
+- Containers compartilham o kernel do host (leves, rápidos)
+- Docker = "funciona em qualquer lugar"

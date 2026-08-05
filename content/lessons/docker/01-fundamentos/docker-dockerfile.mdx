@@ -1,0 +1,95 @@
+O **Dockerfile** é a receita da imagem — e `docker build` transforma a receita em imagem executável. Nesta lição você escreve Dockerfiles de verdade e constrói/roda suas próprias imagens no sandbox.
+
+> **Por que importa?** Todo deploy moderno começa num Dockerfile. FROM, CMD, ENV, WORKDIR são o vocabulário que você usa para empacotar QUALQUER app.
+
+## O Dockerfile mínimo
+
+```dockerfile
+FROM alpine            # imagem base
+CMD ["echo", "app rodando"]   # comando ao rodar o container
+```
+
+```python
+# Construir a imagem (a partir da pasta do Dockerfile)
+docker build -q -t meu-app /tmp/app
+# Rodar
+docker run --rm meu-app   # → app rodando
+```
+
+- **FROM**: a base (tudo começa de uma imagem existente)
+- **CMD**: o comando padrão quando o container roda
+- **-t meu-app**: nome/tag da imagem
+
+## As instruções essenciais
+
+| Instrução | O que faz |
+|---|---|
+| `FROM` | imagem base |
+| `RUN` | executa comando DURANTE o build |
+| `WORKDIR` | diretório de trabalho dentro do container |
+| `COPY` | copia arquivos do host para a imagem |
+| `ENV` | variável de ambiente |
+| `CMD` | comando padrão ao rodar |
+
+## Dockerfile com WORKDIR e RUN
+
+```dockerfile
+FROM alpine
+WORKDIR /app
+RUN echo 'construido' > /app/arquivo.txt
+CMD cat /app/arquivo.txt
+```
+
+O `RUN` roda **durante o build**; o `CMD` quando o container roda.
+
+## ENV — configurando o app
+
+```dockerfile
+FROM alpine
+ENV APP_NOME=meu-app
+CMD echo "App: $APP_NOME"
+```
+
+## Exercício 1: sua primeira imagem
+
+Crie o Dockerfile e rode a imagem construída.
+
+<Exercise
+  lessonSlug="docker-dockerfile"
+  codeKey="docker-ex1"
+  title="Primeira imagem"
+  expectedOutput="saida: app rodando"
+  hint="Dockerfile: FROM alpine + CMD ['echo', 'app rodando']. docker build -t + docker run."
+/>
+
+## Exercício 2: WORKDIR e RUN
+
+Construa um arquivo durante o build e leia no run.
+
+<Exercise
+  lessonSlug="docker-dockerfile"
+  codeKey="docker-ex2"
+  title="Build com RUN"
+  expectedOutput="saida: construido"
+  hint="RUN echo 'construido' > /app/arquivo.txt no Dockerfile; CMD cat /app/arquivo.txt."
+/>
+
+## Mini-projeto: ENV no app
+
+Configure o nome do app com variável de ambiente.
+
+<Exercise
+  lessonSlug="docker-dockerfile"
+  codeKey="docker-projeto"
+  title="Mini-projeto — ENV"
+  expectedOutput="saida: App: meu-app"
+  hint="ENV APP_NOME=meu-app no Dockerfile; CMD echo \"App: $APP_NOME\"."
+/>
+
+## Resumo
+
+- **Dockerfile** = receita · **docker build** = cozinha a imagem
+- **FROM**: base · **RUN**: durante o build · **CMD**: ao rodar
+- **WORKDIR**: diretório de trabalho · **ENV**: variável de ambiente
+- **-t nome**: tag da imagem
+- Deploy moderno começa no Dockerfile

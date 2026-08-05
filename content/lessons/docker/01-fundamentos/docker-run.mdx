@@ -1,0 +1,98 @@
+Rodar containers é o **dia a dia do Docker**: `docker run` baixa a imagem, cria o container e executa. Nesta lição você roda containers de verdade — incluindo Python dentro de um container — e entende o ciclo de vida.
+
+> **Por que importa?** `docker run` é o comando mais usado da ferramenta. Saber rodar um app isolado (com suas próprias libs) é a base de deploy, testes e CI.
+
+## O comando run
+
+```python
+import subprocess
+DOCKER = "/usr/local/bin/docker"
+
+r = subprocess.run(
+    [DOCKER, "run", "--rm", "alpine", "echo", "container ok"],
+    capture_output=True, text=True,
+)
+print(r.stdout)   # container ok
+```
+
+O que acontece:
+1. **alpine**: imagem usada (baixa se não tiver)
+2. `docker run` cria o container e roda o comando (`echo`)
+3. **--rm**: remove o container automaticamente ao terminar
+4. O container **morre** quando o comando acaba
+
+## Python dentro de um container
+
+```python
+r = subprocess.run(
+    [DOCKER, "run", "--rm", "python:3.12-alpine", "python", "-c", "print('python no container')"],
+    capture_output=True, text=True,
+)
+print(r.stdout)   # python no container
+```
+
+**Isolamento total:** o Python roda com as libs DA imagem — não as do host. É assim que cada serviço carrega seu ambiente.
+
+## Exit codes
+
+```python
+r = subprocess.run([DOCKER, "run", "--rm", "alpine", "sh", "-c", "exit 3"], ...)
+print(r.returncode)   # 3 — o erro do container propaga
+```
+
+0 = sucesso, ≠ 0 = erro — igual a qualquer processo.
+
+## Ciclo de vida
+
+```
+docker run → cria → roda o processo → processo acaba → container para
+                                        │
+                      (sem --rm)        ▼
+                          fica em "Exited" (docker ps -a)
+                      (com --rm)        ▼
+                          é removido automaticamente
+```
+
+## Exercício 1: rodando um container
+
+Rode um container alpine com um echo.
+
+<Exercise
+  lessonSlug="docker-run"
+  codeKey="docker-ex1"
+  title="Primeiro run"
+  expectedOutput="saida: container ok"
+  hint="docker run --rm alpine echo 'container ok'."
+/>
+
+## Exercício 2: Python no container
+
+Rode Python dentro de um container.
+
+<Exercise
+  lessonSlug="docker-run"
+  codeKey="docker-ex2"
+  title="Python isolado"
+  expectedOutput="saida: python no container"
+  hint="docker run --rm python:3.12-alpine python -c 'print(...)'. Imagem com Python embutido."
+/>
+
+## Mini-projeto: exit code
+
+Rode um container que termina com erro e capture o código.
+
+<Exercise
+  lessonSlug="docker-run"
+  codeKey="docker-projeto"
+  title="Mini-projeto — exit 3"
+  expectedOutput="exit: 3"
+  hint="docker run --rm alpine sh -c 'exit 3' → returncode 3 propaga do container."
+/>
+
+## Resumo
+
+- **docker run IMAGEM COMANDO**: baixa, cria, roda
+- **--rm**: limpa o container ao terminar
+- **Imagens por uso**: alpine (mínimo), python:3.12-alpine (Python)
+- **Exit code**: 0 sucesso, ≠0 erro — propagado do container
+- Container morre quando o comando acaba
