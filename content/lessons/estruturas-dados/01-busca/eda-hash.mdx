@@ -1,0 +1,100 @@
+O `dict` do Python é uma **hash table** — e é o superpoder escondido nas entrevistas. A busca `x in dict` é **O(1) médio**: instantânea, não importa o tamanho. Isso transforma problemas O(n²) em O(n).
+
+> **Por que importa?** O Two-Sum é a pergunta #1 de entrevista. A diferença entre a solução "aceitável" (dois loops, O(n²)) e a "ótima" (dict, O(n)) é o que separa aprovação de reprovação.
+
+## O problema clássico: Two-Sum
+
+> Dada uma lista de números e um alvo, encontre os **índices** dos dois números que somam o alvo.
+
+**Solução ingênua — O(n²):** para cada número, percorra a lista de novo procurando o complemento.
+
+```python
+def dois_soma_lento(nums, alvo):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] + nums[j] == alvo:
+                return [i, j]
+```
+
+**Solução ótima — O(n):** guarde os números já vistos num dict. Para cada número, o complemento (`alvo - n`) precisa ser checado em O(1).
+
+```python
+def dois_soma(nums, alvo):
+    vistos = {}
+    for i, n in enumerate(nums):
+        falta = alvo - n
+        if falta in vistos:          # O(1)!
+            return [vistos[falta], i]
+        vistos[n] = i                # lembra: n está no índice i
+    return []
+```
+
+## Contagem de frequência — o padrão universal
+
+```python
+texto = "ia python dados ia python ia"
+freq = {}
+for palavra in texto.split():
+    freq[palavra] = freq.get(palavra, 0) + 1
+
+melhor = max(freq, key=freq.get)     # chave com maior valor
+print(f"{melhor}: {freq[melhor]}x")  # ia: 3x
+```
+
+`freq.get(palavra, 0)` devolve o valor atual (ou 0 se não existe) — o contador de um linha.
+
+## O padrão "já vi este?"
+
+```python
+vistos = set()
+for item in sequencia:
+    if item in vistos:      # O(1)
+        ...                  # é duplicado!
+    vistos.add(item)
+```
+
+Qualquer problema com "duplicado", "complemento", "frequência" → **pense em hash** (dict/set).
+
+## Exercício 1: Two-Sum com dict
+
+Implemente o Two-Sum com hash table.
+
+<Exercise
+  lessonSlug="eda-hash"
+  codeKey="eda-ex1"
+  title="Two-Sum otimizado"
+  expectedOutput="indices: [0, 1]"
+  hint="vistos = {}; para cada n, cheque alvo - n; se não achou, registre vistos[n] = i."
+/>
+
+## Exercício 2: palavra mais frequente
+
+Encontre a palavra que mais aparece num texto.
+
+<Exercise
+  lessonSlug="eda-hash"
+  codeKey="eda-ex2"
+  title="Frequência máxima"
+  expectedOutput="mais frequente: 'ia' (3x)"
+  hint="freq.get(palavra, 0) + 1 para contar; max(freq, key=freq.get) para achar a maior."
+/>
+
+## Mini-projeto: anagramas
+
+Duas palavras são anagramas se têm as MESMAS letras em ordem diferente. Verifique usando contagem.
+
+<Exercise
+  lessonSlug="eda-hash"
+  codeKey="eda-projeto"
+  title="Mini-projeto — anagramas"
+  expectedOutput="python/typhon: True"
+  hint="Counter(a.lower()) == Counter(b.lower()) — ou um dict de contagem manual. listen/silent e python/typhon são anagramas."
+/>
+
+## Resumo
+
+- **dict/set** = hash table: busca/inserção **O(1) médio**
+- **Two-Sum**: dict transforma O(n²) em O(n)
+- **Contagem**: `freq.get(x, 0) + 1` — o contador universal
+- **"Já vi?"**: use set — checagem de duplicados instantânea
+- Veja "duplicado/complemento/frequência" → pense em hash

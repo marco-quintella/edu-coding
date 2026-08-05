@@ -1,0 +1,86 @@
+"Ache o número 73 numa lista de 1 a 100" — você provavelmente não começaria pelo 1. **Busca binária** é exatamente essa intuição: cortar o problema pela metade a cada passo. É a pergunta mais clássica de entrevista e a base de complexidade de algoritmos.
+
+> **Por que importa?** Em entrevistas, "qual a complexidade?" é seguida de "implemente a busca binária". Dominar O(log n) vs O(n) mostra que você pensa em escala — não só em "fazer funcionar".
+
+## Busca linear: o jeito ingênuo
+
+```python
+def busca_linear(lista, alvo):
+    for i, v in enumerate(lista):
+        if v == alvo:
+            return i
+    return -1
+```
+
+Pior caso: **N operações** (o alvo é o último). Em 1 milhão de itens, 1 milhão de passos. `O(n)`.
+
+## Busca binária: corte pela metade
+
+```python
+def busca_binaria(lista, alvo):
+    esq, dir_ = 0, len(lista) - 1
+    passos = 0
+    while esq <= dir_:
+        passos += 1
+        meio = (esq + dir_) // 2
+        if lista[meio] == alvo:
+            return meio, passos
+        elif lista[meio] < alvo:
+            esq = meio + 1     # descarta a metade esquerda
+        else:
+            dir_ = meio - 1    # descarta a metade direita
+    return -1, passos
+```
+
+**Requisito: lista ordenada.** A cada passo, descartamos metade — em 1 milhão de itens, ~20 passos (`log₂(1.000.000) ≈ 20`). `O(log n)`.
+
+## Comparação na prática
+
+| N | Linear (pior caso) | Binária |
+|---|---|---|
+| 100 | 100 | 7 |
+| 1.000 | 1.000 | 10 |
+| 1.000.000 | 1.000.000 | 20 |
+
+## Exercício 1: implemente a busca binária
+
+Complete a função e encontre o 73 na lista de 1 a 100.
+
+<Exercise
+  lessonSlug="eda-busca"
+  codeKey="eda-ex1"
+  title="Busca binária"
+  expectedOutput="passos: 6"
+  hint="Implemente esq/dir/meio com while esq <= dir_. O 73 está no índice 72 (lista 1..100) e leva 6 passos."
+/>
+
+## Exercício 2: linear vs binária
+
+Compare as duas buscas numa lista de 1000 itens (pior caso: último elemento).
+
+<Exercise
+  lessonSlug="eda-busca"
+  codeKey="eda-ex2"
+  title="Comparando complexidades"
+  expectedOutput="binaria muito mais rapida: True"
+  hint="Linear percorre os 1000 (pior caso). Binária faz ~10 passos. O print final compara os dois."
+/>
+
+## Mini-projeto: palíndromo
+
+Verifique se uma palavra é palíndromo (lê-se igual de trás pra frente), ignorando maiúsculas e espaços.
+
+<Exercise
+  lessonSlug="eda-busca"
+  codeKey="eda-projeto"
+  title="Mini-projeto — palíndromo"
+  expectedOutput="'Ana': True"
+  hint="s.lower().replace(' ', '') e compare com s[::-1]. Ana é palíndromo; python não."
+/>
+
+## Resumo
+
+- **Busca linear**: O(n) — percorre tudo, serve para listas pequenas/desordenadas
+- **Busca binária**: O(log n) — exige lista ordenada, corta pela metade
+- `(esq + dir) // 2` acha o meio (divisão inteira)
+- Complexidade = como o tempo cresce com o tamanho da entrada

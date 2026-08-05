@@ -1542,7 +1542,197 @@ const GIT_COURSE = {
   ],
 }
 
-const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE, GIT_COURSE]
+/** Catálogo completo — adicione novos cursos aqui. */
+const EDA_COURSE = {
+  slug: 'estruturas-dados',
+  title: 'Estruturas de Dados & Algoritmos',
+  description:
+    'O que cai em entrevista: busca binária, hash tables, ordenação e complexidade — com exercícios verificados em Python.',
+  phases: [
+    {
+      slug: '01-busca',
+      title: 'Fase 01 — Busca e Complexidade',
+      lessons: [
+        {
+          slug: 'eda-busca',
+          title: 'Busca linear vs binária (O(log n))',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Qual a complexidade da busca binária?',
+              options: [
+                { id: 'a', text: 'O(n)' },
+                { id: 'b', text: 'O(log n)' },
+                { id: 'c', text: 'O(n²)' },
+                { id: 'd', text: 'O(1)' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual requisito da busca binária?',
+              options: [
+                { id: 'a', text: 'Lista ordenada' },
+                { id: 'b', text: 'Lista sem duplicados' },
+                { id: 'c', text: 'Lista pequena' },
+                { id: 'd', text: 'Lista de inteiros' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Quantos passos a busca binária usa para achar um item em 1.000.000 itens?',
+              options: [
+                { id: 'a', text: '1.000.000' },
+                { id: 'b', text: '~20' },
+                { id: 'c', text: '~100' },
+                { id: 'd', text: '~500.000' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'A busca linear em N itens faz quantas operações no pior caso?',
+              options: [
+                { id: 'a', text: 'N' },
+                { id: 'b', text: 'log N' },
+                { id: 'c', text: 'N²' },
+                { id: 'd', text: '1' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que o meio = (esq + dir) // 2 faz?',
+              options: [
+                { id: 'a', text: 'Acha o índice do meio (divisão inteira)' },
+                { id: 'b', text: 'Soma os extremos' },
+                { id: 'c', text: 'Retorna o menor' },
+                { id: 'd', text: 'Faz busca recursiva' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'eda-hash',
+          title: 'Hash tables: o dict como superpoder',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Qual a complexidade de busca num dict (hash table)?',
+              options: [
+                { id: 'a', text: 'O(n)' },
+                { id: 'b', text: 'O(1) médio' },
+                { id: 'c', text: 'O(n²)' },
+                { id: 'd', text: 'O(log n)' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que o padrão freq.get(palavra, 0) + 1 faz?',
+              options: [
+                { id: 'a', text: 'Conta ocorrências: valor atual (ou 0) + 1' },
+                { id: 'b', text: 'Deleta a palavra' },
+                { id: 'c', text: 'Ordena o dict' },
+                { id: 'd', text: 'Duplica a chave' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que o Two-Sum com dict é O(n) em vez de O(n²)?',
+              options: [
+                { id: 'a', text: 'Cada número é processado 1x e a busca do complemento é O(1)' },
+                { id: 'b', text: 'O dict é mais rápido que a lista' },
+                { id: 'c', text: 'Não precisa percorrer a lista' },
+                { id: 'd', text: 'A lista é ordenada' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que max(freq, key=freq.get) retorna?',
+              options: [
+                { id: 'a', text: 'A chave com maior valor' },
+                { id: 'b', text: 'O maior valor' },
+                { id: 'c', text: 'A maior chave' },
+                { id: 'd', text: 'O tamanho do dict' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual estrutura usar para checar "já vi este elemento" em O(1)?',
+              options: [
+                { id: 'a', text: 'dict/set (hash)' },
+                { id: 'b', text: 'lista' },
+                { id: 'c', text: 'string' },
+                { id: 'd', text: 'tuple' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'eda-ordenacao',
+          title: 'Ordenação e o poder do sorted()',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Qual a complexidade do sorted() do Python?',
+              options: [
+                { id: 'a', text: 'O(n²)' },
+                { id: 'b', text: 'O(n log n)' },
+                { id: 'c', text: 'O(n)' },
+                { id: 'd', text: 'O(1)' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual a complexidade do bubble sort no pior caso?',
+              options: [
+                { id: 'a', text: 'O(n)' },
+                { id: 'b', text: 'O(n log n)' },
+                { id: 'c', text: 'O(n²)' },
+                { id: 'd', text: 'O(log n)' },
+              ],
+              correctOptionId: 'c',
+            },
+            {
+              question: 'Como ordenar do maior para o menor com sorted()?',
+              options: [
+                { id: 'a', text: 'sorted(dados, reverse=True)' },
+                { id: 'b', text: 'sorted(dados, desc=True)' },
+                { id: 'c', text: 'sorted(dados, invert=True)' },
+                { id: 'd', text: 'sorted(-dados)' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como ordenar strings por tamanho?',
+              options: [
+                { id: 'a', text: 'sorted(lista, key=len)' },
+                { id: 'b', text: 'sorted(lista, key=sorted)' },
+                { id: 'c', text: 'sorted(lista, size=True)' },
+                { id: 'd', text: 'Não é possível' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que o bubble sort tem a otimização "trocou"?',
+              options: [
+                { id: 'a', text: 'Para parar cedo se a lista já está ordenada' },
+                { id: 'b', text: 'Para ordenar em paralelo' },
+                { id: 'c', text: 'Para contar as trocas' },
+                { id: 'd', text: 'É obrigatório no Python' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE, GIT_COURSE, EDA_COURSE]
 
 async function seed() {
   console.log('Limpando tabelas...')

@@ -1,0 +1,89 @@
+Ordenar é a operação mais comum em programação — e o Python faz isso com `sorted()` em **O(n log n)**. Esta lição mostra por que o built-in vence qualquer implementação manual, e o que os entrevistadores esperam que você saiba sobre complexidade.
+
+> **Por que importa?** "Ordene esta lista" parece trivial — até você precisar explicar POR QUE sorted() é melhor que escrever o próprio. E a pergunta clássica: "implemente um sort" testa se você entende O(n²) vs O(n log n).
+
+## O built-in: sorted()
+
+```python
+dados = [64, 34, 25, 12, 22, 11, 90]
+
+sorted(dados)                 # [11, 12, 22, 25, 34, 64, 90] — NÃO modifica a original
+dados.sort()                  # modifica a lista no lugar
+sorted(dados, reverse=True)   # do maior para o menor
+sorted(["bb", "a", "ccc"], key=len)   # ['a', 'bb', 'ccc'] — por tamanho
+```
+
+**O `key=` é o superpoder:** ordenar por qualquer critério sem escrever comparador.
+
+## Bubble sort: por que é O(n²)
+
+```python
+def bubble_sort(lista):
+    n = len(lista)
+    for i in range(n):
+        trocou = False
+        for j in range(n - 1 - i):
+            if lista[j] > lista[j + 1]:
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+                trocou = True
+        if not trocou:      # otimização: já ordenado, para cedo
+            break
+    return lista
+```
+
+Dois loops aninhados = **N × N operações** = O(n²). Em 100.000 itens, 10 bilhões de operações — o sorted() faz em milissegundos.
+
+## A tabela que todo dev deve saber
+
+| Algoritmo | Complexidade | Uso |
+|---|---|---|
+| sorted() / Timsort | O(n log n) | SEMPRE na prática |
+| Bubble sort | O(n²) | Nunca (só para aprender) |
+| Merge sort | O(n log n) | Entrevistas (dividir e conquistar) |
+| Quick sort | O(n log n) médio | Entrevistas |
+
+**Regra de ouro:** use `sorted()`/`.sort()` no código real. Implemente sorts na mão só para aprender/entrevista.
+
+## Exercício 1: bubble sort
+
+Implemente o bubble sort com a otimização "trocou".
+
+<Exercise
+  lessonSlug="eda-ordenacao"
+  codeKey="eda-ex1"
+  title="Bubble sort"
+  expectedOutput="bubble: [11, 12, 22, 25, 34, 64, 90]"
+  hint="Dois loops: i de 0..n, j de 0..n-1-i. Troque com lista[j], lista[j+1] = lista[j+1], lista[j]. Break se não trocou."
+/>
+
+## Exercício 2: sorted() na prática
+
+Use o built-in para ordenar de três formas: normal, reversa e por tamanho.
+
+<Exercise
+  lessonSlug="eda-ordenacao"
+  codeKey="eda-ex2"
+  title="Poder do sorted()"
+  expectedOutput="por tamanho: ['a', 'bb', 'ccc']"
+  hint="sorted(dados), sorted(dados, reverse=True), sorted(lista, key=len)."
+/>
+
+## Mini-projeto: merge de listas ordenadas
+
+Junte duas listas JÁ ordenadas numa única ordenada em O(n) — sem sorted().
+
+<Exercise
+  lessonSlug="eda-ordenacao"
+  codeKey="eda-projeto"
+  title="Mini-projeto — merge"
+  expectedOutput="merge: [1, 2, 3, 4, 5, 6, 7, 8]"
+  hint="Dois ponteiros i/j comparando a[i] vs b[j]; o menor entra no resultado. Depois estende os restos."
+/>
+
+## Resumo
+
+- **sorted()**: O(n log n), não modifica a original; `.sort()` modifica
+- **key=**: ordena por qualquer critério (len, campo, lambda)
+- **Bubble sort**: O(n²) — entenda para a entrevista, não use na prática
+- **Merge de listas ordenadas**: O(n) com dois ponteiros
+- Entrevista: saiba dizer a complexidade de qualquer operação

@@ -862,6 +862,163 @@ subprocess.run(["git", "clone", "-q", "/tmp/origem4", "dev_b"], check=True)
 os.chdir("/tmp/dev_b")
 print(f"arquivo: {'shared.txt' if os.path.exists('shared.txt') else 'faltando'}")`,
   },
+
+  // ── Curso Estruturas de Dados & Algoritmos ─────────────────
+  'eda-ex1': {
+    explanation:
+      'A busca binária corta o espaço pela metade a cada passo. Em 1..100, o 73 (índice 72) é achado em 6 passos — log₂(100) ≈ 7.',
+    code: `def busca_binaria(lista, alvo):
+    esq, dir_ = 0, len(lista) - 1
+    passos = 0
+    while esq <= dir_:
+        passos += 1
+        meio = (esq + dir_) // 2
+        if lista[meio] == alvo:
+            return meio, passos
+        elif lista[meio] < alvo:
+            esq = meio + 1
+        else:
+            dir_ = meio - 1
+    return -1, passos
+
+numeros = list(range(1, 101))
+indice, passos = busca_binaria(numeros, 73)
+print(f"encontrado no indice {indice}")
+print(f"passos: {passos}")`,
+  },
+  'eda-ex2': {
+    explanation:
+      'Pior caso: o alvo é o último. Linear percorre os 1000; binária faz ~10 (log₂(1000) ≈ 10). A diferença cresce com N.',
+    code: `def busca_binaria(lista, alvo):
+    esq, dir_ = 0, len(lista) - 1
+    passos = 0
+    while esq <= dir_:
+        passos += 1
+        meio = (esq + dir_) // 2
+        if lista[meio] == alvo:
+            return meio, passos
+        elif lista[meio] < alvo:
+            esq = meio + 1
+        else:
+            dir_ = meio - 1
+    return -1, passos
+
+N = 1000
+numeros = list(range(N))
+alvo = N - 1
+
+passos_linear = 0
+for i, v in enumerate(numeros):
+    passos_linear += 1
+    if v == alvo:
+        break
+
+_, passos_binaria = busca_binaria(numeros, alvo)
+print(f"linear: {passos_linear} passos")
+print(f"binaria: {passos_binaria} passos")
+print(f"binaria muito mais rapida: {passos_binaria < passos_linear}")`,
+  },
+  'eda-projeto': {
+    explanation:
+      's[::-1] inverte a string (fatiamento). Normalizar com lower() e sem espaços antes de comparar — Ana vira "ana".',
+    code: `def eh_palindromo(s):
+    s = s.lower().replace(" ", "")
+    return s == s[::-1]
+
+print(f"'arara': {eh_palindromo('arara')}")
+print(f"'Ana': {eh_palindromo('Ana')}")
+print(f"'python': {eh_palindromo('python')}")`,
+  },
+  'eda-h-ex1': {
+    explanation:
+      'O dict guarda número → índice. Para cada n, o complemento (alvo - n) é checado em O(1) — no total, O(n).',
+    code: `def dois_soma(nums, alvo):
+    vistos = {}
+    for i, n in enumerate(nums):
+        falta = alvo - n
+        if falta in vistos:
+            return [vistos[falta], i]
+        vistos[n] = i
+    return []
+
+nums = [2, 7, 11, 15]
+print(f"indices: {dois_soma(nums, 9)}")
+nums2 = [3, 2, 4]
+print(f"indices: {dois_soma(nums2, 6)}")`,
+  },
+  'eda-h-ex2': {
+    explanation:
+      'Contagem com freq.get(x, 0) + 1; max(freq, key=freq.get) devolve a CHAVE com maior valor — "ia" aparece 3x.',
+    code: `def mais_frequente(texto):
+    freq = {}
+    for palavra in texto.split():
+        freq[palavra] = freq.get(palavra, 0) + 1
+    melhor = max(freq, key=freq.get)
+    return melhor, freq[melhor]
+
+texto = "ia python dados ia python ia"
+palavra, count = mais_frequente(texto)
+print(f"mais frequente: '{palavra}' ({count}x)")`,
+  },
+  'eda-h-projeto': {
+    explanation:
+      'Counter compara contagens de letras sem se importar com a ordem. listen/silent, python/typhon e abc/cba são anagramas.',
+    code: `from collections import Counter
+
+def sao_anagramas(a, b):
+    return Counter(a.lower()) == Counter(b.lower())
+
+print(f"listen/silent: {sao_anagramas('listen', 'silent')}")
+print(f"python/typhon: {sao_anagramas('python', 'typhon')}")
+print(f"abc/cba: {sao_anagramas('abc', 'cba')}")`,
+  },
+  'eda-o-ex1': {
+    explanation:
+      'Bubble sort: a cada passada o maior "flutua" para o fim. A otimização "trocou" para cedo quando já está ordenado. O(n²).',
+    code: `def bubble_sort(lista):
+    n = len(lista)
+    for i in range(n):
+        trocou = False
+        for j in range(n - 1 - i):
+            if lista[j] > lista[j + 1]:
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+                trocou = True
+        if not trocou:
+            break
+    return lista
+
+dados = [64, 34, 25, 12, 22, 11, 90]
+print(f"bubble: {bubble_sort(dados)}")`,
+  },
+  'eda-o-ex2': {
+    explanation:
+      'sorted() é Timsort, O(n log n). reverse=True inverte; key=len ordena pelo critério — sem escrever comparador.',
+    code: `dados = [64, 34, 25, 12, 22, 11, 90]
+palavras = ["bb", "a", "ccc"]
+
+print(f"sorted: {sorted(dados)}")
+print(f"reverso: {sorted(dados, reverse=True)}")
+print(f"por tamanho: {sorted(palavras, key=len)}")`,
+  },
+  'eda-o-projeto': {
+    explanation:
+      'Merge de listas ordenadas: dois ponteiros comparam o menor de cada lista — O(n). É o passo central do merge sort.',
+    code: `def merge(a, b):
+    resultado = []
+    i = j = 0
+    while i < len(a) and j < len(b):
+        if a[i] < b[j]:
+            resultado.append(a[i]); i += 1
+        else:
+            resultado.append(b[j]); j += 1
+    resultado.extend(a[i:])
+    resultado.extend(b[j:])
+    return resultado
+
+a = [1, 3, 5, 7]
+b = [2, 4, 6, 8]
+print(f"merge: {merge(a, b)}")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

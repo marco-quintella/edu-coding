@@ -8,6 +8,7 @@
 import { PYTHON_CODES } from './python-codes'
 import { SQL_CODES } from './sql-codes'
 import { GIT_CODES } from './git-codes'
+import { EDA_CODES } from './eda-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1128,6 +1129,7 @@ export function getInitialCode(lessonSlug: string): string {
     PYTHON_CODES[lessonSlug] ??
     SQL_CODES[lessonSlug] ??
     GIT_CODES[lessonSlug] ??
+    EDA_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

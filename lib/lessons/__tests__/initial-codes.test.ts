@@ -3,6 +3,7 @@ import { INITIAL_CODES, getInitialCode } from '../initial-codes'
 import { PYTHON_CODES } from '../python-codes'
 import { SQL_CODES } from '../sql-codes'
 import { GIT_CODES } from '../git-codes'
+import { EDA_CODES } from '../eda-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -110,6 +111,19 @@ const EXPECTED_SLUGS = [
   'git-r-ex1',
   'git-r-ex2',
   'git-r-projeto',
+  // Curso Estruturas de Dados & Algoritmos
+  'eda-busca',
+  'eda-ex1',
+  'eda-ex2',
+  'eda-projeto',
+  'eda-hash',
+  'eda-h-ex1',
+  'eda-h-ex2',
+  'eda-h-projeto',
+  'eda-ordenacao',
+  'eda-o-ex1',
+  'eda-o-ex2',
+  'eda-o-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -158,6 +172,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso EDA começam com comentário ou def
+    for (const [slug, code] of Object.entries(EDA_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário/def em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|def |[a-zA-Z_])/)
     }
   })
 
