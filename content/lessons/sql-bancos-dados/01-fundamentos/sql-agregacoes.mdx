@@ -1,0 +1,105 @@
+Dados brutos são barulho — **agregações transformam linhas em informação**: total por vendedor, média por categoria, contagem por mês. Esta lição domina `GROUP BY`, `COUNT`, `SUM`, `AVG` e `HAVING` — o coração de qualquer relatório.
+
+> **Por que importa?** Toda dashboard que você já viu (vendas, usuários, métricas) é um `GROUP BY` por trás. Saber agrupar é o que separa "sei SELECT" de "sei analisar dados".
+
+## Agregações básicas
+
+```python
+import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+
+cur.execute("CREATE TABLE vendas (id INTEGER, produto TEXT, valor REAL, vendedor TEXT)")
+cur.executemany("INSERT INTO vendas VALUES (?, ?, ?, ?)", [
+    (1, "notebook", 3500, "ana"), (2, "mouse", 60, "bob"),
+    (3, "teclado", 120, "ana"), (4, "monitor", 800, "carol"),
+    (5, "webcam", 250, "bob"),
+])
+
+cur.execute("SELECT COUNT(*) FROM vendas")       # 5 (linhas)
+cur.execute("SELECT SUM(valor) FROM vendas")     # 4730
+cur.execute("SELECT AVG(valor) FROM vendas")     # 946
+cur.execute("SELECT MAX(valor) FROM vendas")     # 3500
+```
+
+## GROUP BY: agrupando
+
+```python
+cur.execute("""
+    SELECT vendedor, COUNT(*) as vendas, SUM(valor) as total
+    FROM vendas
+    GROUP BY vendedor
+    ORDER BY total DESC
+""")
+# ana:    2 vendas, 3620
+# carol:  1 venda,  800
+# bob:    2 vendas, 310
+```
+
+O `GROUP BY vendedor` junta as linhas de cada vendedor e aplica as agregações em cada grupo. O `as total` dá nome à coluna calculada.
+
+## HAVING: filtrando grupos
+
+A pegadinha clássica: **WHERE filtra LINHAS antes de agrupar; HAVING filtra GRUPOS depois de agrupar**.
+
+```python
+# ❌ Errado — WHERE não conhece SUM:
+cur.execute("SELECT vendedor, SUM(valor) FROM vendas WHERE SUM(valor) > 500 GROUP BY vendedor")
+
+# ✅ Certo — HAVING filtra o grupo:
+cur.execute("""
+    SELECT vendedor, SUM(valor) as total
+    FROM vendas
+    GROUP BY vendedor
+    HAVING SUM(valor) > 500
+""")
+```
+
+**Ordem completa das cláusulas:**
+```
+SELECT → FROM → WHERE (linhas) → GROUP BY (agrupa) → HAVING (grupos) → ORDER BY
+```
+
+## Exercício 1: ranking de vendedores
+
+Agrupe as vendas por vendedor, mostrando contagem e total, ordenado do maior total.
+
+<Exercise
+  lessonSlug="sql-agregacoes"
+  codeKey="sql-agreg-ex1"
+  title="Ranking de vendedores"
+  expectedOutput="ana: 2 vendas, R$3620"
+  hint="GROUP BY vendedor + COUNT(*) + SUM(valor) + ORDER BY total DESC. Ana é a líder (3620)."
+/>
+
+## Exercício 2: clientes VIP
+
+Quais clientes têm total de pedidos acima de R$500?
+
+<Exercise
+  lessonSlug="sql-agregacoes"
+  codeKey="sql-agreg-ex2"
+  title="Clientes VIP"
+  expectedOutput="ana: R$3620"
+  hint="GROUP BY cliente + HAVING SUM(valor) > 500. Ana (3620) e Carol (800) — Ana é a primeira."
+/>
+
+## Mini-projeto: ticket médio
+
+Calcule o ticket médio (AVG) por vendedor e liste quem está acima da média geral.
+
+<Exercise
+  lessonSlug="sql-agregacoes"
+  codeKey="sql-agreg-projeto"
+  title="Mini-projeto — ticket médio"
+  expectedOutput="ana acima da media"
+  hint="AVG(valor) por vendedor com GROUP BY; média geral com SELECT AVG(valor) da tabela. Compare cada vendedor."
+/>
+
+## Resumo
+
+- **COUNT/SUM/AVG/MAX/MIN**: agregações por coluna
+- **GROUP BY**: agrupa linhas com mesmo valor
+- **HAVING**: filtra GRUPOS (≠ WHERE que filtra linhas)
+- **Ordem**: WHERE → GROUP BY → HAVING → ORDER BY
+- `as nome` dá nome a colunas calculadas

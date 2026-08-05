@@ -507,6 +507,160 @@ vendas = [
 print(f"total: R\${total_bruto(vendas):.0f}")
 print(f"comissao: R\${comissao(vendas):.0f}")`,
   },
+
+  // ── Curso SQL & Bancos de Dados ────────────────────────────
+  'sql-select-ex1': {
+    explanation:
+      'WHERE filtra as linhas (cidade = SP) e ORDER BY ordena. Ana e Carol são de SP — Carol é a última em ordem alfabética.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE clientes (id INTEGER, nome TEXT, cidade TEXT)")
+cur.executemany("INSERT INTO clientes VALUES (?, ?, ?)", [
+    (1, "Ana", "SP"), (2, "Bob", "RJ"), (3, "Carol", "SP"), (4, "Dan", "BH"),
+])
+cur.execute("SELECT nome, cidade FROM clientes WHERE cidade = 'SP' ORDER BY nome")
+for nome, cidade in cur.fetchall():
+    print(f"{nome}: {cidade}")`,
+  },
+  'sql-select-ex2': {
+    explanation:
+      'WHERE preco >= 100 filtra; ORDER BY preco DESC ordena do maior para o menor. O monitor (800) lidera.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE produtos (id INTEGER, nome TEXT, preco REAL)")
+cur.executemany("INSERT INTO produtos VALUES (?, ?, ?)", [
+    (1, "teclado", 120), (2, "mouse", 60), (3, "monitor", 800), (4, "webcam", 250),
+])
+cur.execute("SELECT nome, preco FROM produtos WHERE preco >= 100 ORDER BY preco DESC")
+for nome, preco in cur.fetchall():
+    print(f"{nome}: R\${preco:.0f}")`,
+  },
+  'sql-select-projeto': {
+    explanation:
+      'O parâmetro ? na query evita SQL injection. A função retorna [r[0] for r in cur.fetchall()] — os ids. SP = [1, 3].',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE clientes (id INTEGER, nome TEXT, cidade TEXT)")
+cur.executemany("INSERT INTO clientes VALUES (?, ?, ?)", [
+    (1, "Ana", "SP"), (2, "Bob", "RJ"), (3, "Carol", "SP"), (4, "Dan", "BH"),
+])
+def buscar_por_cidade(cidade):
+    cur.execute("SELECT id FROM clientes WHERE cidade = ? ORDER BY id", (cidade,))
+    return [r[0] for r in cur.fetchall()]
+print(f"SP: {buscar_por_cidade('SP')}")
+print(f"RJ: {buscar_por_cidade('RJ')}")`,
+  },
+  'sql-agreg-ex1': {
+    explanation:
+      'GROUP BY vendedor agrupa as linhas; COUNT(*) conta cada grupo; SUM(valor) soma. Ana lidera com 3620.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE vendas (id INTEGER, produto TEXT, valor REAL, vendedor TEXT)")
+cur.executemany("INSERT INTO vendas VALUES (?, ?, ?, ?)", [
+    (1, "notebook", 3500, "ana"), (2, "mouse", 60, "bob"),
+    (3, "teclado", 120, "ana"), (4, "monitor", 800, "carol"),
+    (5, "webcam", 250, "bob"),
+])
+cur.execute("SELECT vendedor, COUNT(*) as vendas, SUM(valor) as total FROM vendas GROUP BY vendedor ORDER BY total DESC")
+for vendedor, vendas, total in cur.fetchall():
+    print(f"{vendedor}: {vendas} vendas, R\${total:.0f}")`,
+  },
+  'sql-agreg-ex2': {
+    explanation:
+      'HAVING filtra GRUPOS (depois do GROUP BY) — WHERE não conhece SUM. Ana (3620) e Carol (800) passam do corte 500.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE pedidos (id INTEGER, cliente TEXT, valor REAL)")
+cur.executemany("INSERT INTO pedidos VALUES (?, ?, ?)", [
+    (1, "ana", 3500), (2, "bob", 60), (3, "ana", 120), (4, "carol", 800), (5, "bob", 250),
+])
+cur.execute("SELECT cliente, SUM(valor) as total FROM pedidos GROUP BY cliente HAVING SUM(valor) > 500 ORDER BY total DESC")
+for cliente, total in cur.fetchall():
+    print(f"{cliente}: R\${total:.0f}")`,
+  },
+  'sql-agreg-projeto': {
+    explanation:
+      'Ticket médio por vendedor (AVG + GROUP BY) comparado com a média geral (AVG da tabela toda). Ana é a única acima.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE vendas (id INTEGER, vendedor TEXT, valor REAL)")
+cur.executemany("INSERT INTO vendas VALUES (?, ?, ?)", [
+    (1, "ana", 3500), (2, "bob", 60), (3, "ana", 120), (4, "carol", 800), (5, "bob", 250),
+])
+cur.execute("SELECT vendedor, AVG(valor) FROM vendas GROUP BY vendedor")
+por_vendedor = cur.fetchall()
+cur.execute("SELECT AVG(valor) FROM vendas")
+media_geral = cur.fetchone()[0]
+for vendedor, media in por_vendedor:
+    status = "acima da media" if media > media_geral else "abaixo da media"
+    print(f"{vendedor} {status}")`,
+  },
+  'sql-joins-ex1': {
+    explanation:
+      'LEFT JOIN mantém todos os clientes; COUNT(p.id) conta pedidos; SUM(p.valor) soma. Ana: 2 pedidos, 3620.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE clientes (id INTEGER PRIMARY KEY, nome TEXT)")
+cur.execute("CREATE TABLE pedidos (id INTEGER PRIMARY KEY, cliente_id INTEGER, valor REAL)")
+cur.executemany("INSERT INTO clientes VALUES (?, ?)", [(1, "ana"), (2, "bob"), (3, "carol")])
+cur.executemany("INSERT INTO pedidos VALUES (?, ?, ?)", [
+    (1, 1, 3500), (2, 2, 60), (3, 1, 120), (4, 3, 800),
+])
+cur.execute("""
+    SELECT c.nome, COUNT(p.id) as pedidos, SUM(p.valor) as total
+    FROM clientes c
+    LEFT JOIN pedidos p ON c.id = p.cliente_id
+    GROUP BY c.nome
+    ORDER BY total DESC
+""")
+for nome, pedidos, total in cur.fetchall():
+    print(f"{nome}: {pedidos} pedidos, R\${total:.0f}")`,
+  },
+  'sql-joins-ex2': {
+    explanation:
+      'LEFT JOIN + WHERE p.id IS NULL = o padrão "registros sem correspondência". Carol não tem pedidos.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE clientes (id INTEGER PRIMARY KEY, nome TEXT)")
+cur.execute("CREATE TABLE pedidos (id INTEGER PRIMARY KEY, cliente_id INTEGER, valor REAL)")
+cur.executemany("INSERT INTO clientes VALUES (?, ?)", [(1, "ana"), (2, "bob"), (3, "carol")])
+cur.executemany("INSERT INTO pedidos VALUES (?, ?, ?)", [(1, 1, 3500), (2, 2, 60), (3, 1, 120)])
+cur.execute("""
+    SELECT c.nome FROM clientes c
+    LEFT JOIN pedidos p ON c.id = p.cliente_id
+    WHERE p.id IS NULL
+""")
+for (nome,) in cur.fetchall():
+    print(f"sem pedidos: {nome}")`,
+  },
+  'sql-joins-projeto': {
+    explanation:
+      'COALESCE(SUM(p.valor), 0) troca NULL por 0 (cliente sem pedido). Carol aparece com 0 pedidos e R$0.',
+    code: `import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE clientes (id INTEGER PRIMARY KEY, nome TEXT)")
+cur.execute("CREATE TABLE pedidos (id INTEGER PRIMARY KEY, cliente_id INTEGER, valor REAL)")
+cur.executemany("INSERT INTO clientes VALUES (?, ?)", [(1, "ana"), (2, "bob"), (3, "carol")])
+cur.executemany("INSERT INTO pedidos VALUES (?, ?, ?)", [(1, 1, 3500), (2, 2, 60), (3, 1, 120)])
+cur.execute("""
+    SELECT c.nome, COUNT(p.id) as pedidos, COALESCE(SUM(p.valor), 0) as total
+    FROM clientes c
+    LEFT JOIN pedidos p ON c.id = p.cliente_id
+    GROUP BY c.nome
+    ORDER BY total DESC
+""")
+for nome, pedidos, total in cur.fetchall():
+    print(f"{nome}: {pedidos} pedidos, R\${total:.0f}")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

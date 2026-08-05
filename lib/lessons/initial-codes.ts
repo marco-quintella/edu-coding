@@ -6,6 +6,7 @@
  * template literals e strings multi-linha como props de client components.
  */
 import { PYTHON_CODES } from './python-codes'
+import { SQL_CODES } from './sql-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1122,5 +1123,10 @@ for i, (g, l) in enumerate(zip(gastos.ravel(), labels)):
  * Fallback: string vazia (editor abre em branco).
  */
 export function getInitialCode(lessonSlug: string): string {
-  return PYTHON_CODES[lessonSlug] ?? INITIAL_CODES[lessonSlug] ?? ''
+  return (
+    PYTHON_CODES[lessonSlug] ??
+    SQL_CODES[lessonSlug] ??
+    INITIAL_CODES[lessonSlug] ??
+    ''
+  )
 }

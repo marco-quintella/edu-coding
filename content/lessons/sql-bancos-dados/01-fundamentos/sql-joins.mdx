@@ -1,0 +1,103 @@
+Um banco real não é uma tabela gigante — é **várias tabelas pequenas relacionadas** (normalização). Para juntar as informações, usamos `JOIN`. Esta lição domina `INNER JOIN`, `LEFT JOIN` e a modelagem por trás (chaves primárias e estrangeiras).
+
+> **Por que importa?** Clientes numa tabela, pedidos noutra. Responder "quanto cada cliente gastou" exige juntar as duas — e é a pergunta #1 em entrevistas de SQL.
+
+## O problema: dados separados
+
+```python
+import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+
+cur.execute("CREATE TABLE clientes (id INTEGER PRIMARY KEY, nome TEXT)")
+cur.execute("CREATE TABLE pedidos (id INTEGER PRIMARY KEY, cliente_id INTEGER, valor REAL)")
+
+cur.executemany("INSERT INTO clientes VALUES (?, ?)", [(1, "ana"), (2, "bob"), (3, "carol")])
+cur.executemany("INSERT INTO pedidos VALUES (?, ?, ?)", [
+    (1, 1, 3500), (2, 2, 60), (3, 1, 120), (4, 3, 800),
+])
+```
+
+- **PRIMARY KEY** (id): identifica cada linha unicamente
+- **FOREIGN KEY** (cliente_id): aponta para a PRIMARY KEY de outra tabela
+
+## INNER JOIN — só quem tem match
+
+```python
+cur.execute("""
+    SELECT c.nome, p.valor
+    FROM clientes c
+    INNER JOIN pedidos p ON c.id = p.cliente_id
+""")
+# ana 3500 | bob 60 | ana 120 | carol 800
+```
+
+O `ON` define o elo: `c.id = p.cliente_id`. O alias `c`/`p` encurta os nomes.
+
+## LEFT JOIN — mantém TODA a esquerda
+
+```python
+cur.execute("""
+    SELECT c.nome, p.valor
+    FROM clientes c
+    LEFT JOIN pedidos p ON c.id = p.cliente_id
+""")
+# ana 3500 | bob 60 | ana 120 | carol 800 | (e mais se houver cliente sem pedido)
+```
+
+O LEFT JOIN mantém todas as linhas da tabela da esquerda; quem não tem match fica com **NULL** na direita.
+
+## O padrão "cliente sem pedidos"
+
+```python
+cur.execute("""
+    SELECT c.nome FROM clientes c
+    LEFT JOIN pedidos p ON c.id = p.cliente_id
+    WHERE p.id IS NULL
+""")
+# ↑ clientes que NÃO têm pedido (LEFT JOIN + IS NULL)
+```
+
+## Exercício 1: total por cliente
+
+Junte clientes e pedidos e mostre o total gasto por cliente (com LEFT JOIN para não perder ninguém).
+
+<Exercise
+  lessonSlug="sql-joins"
+  codeKey="sql-joins-ex1"
+  title="Total por cliente"
+  expectedOutput="ana: 2 pedidos, R$3620"
+  hint="LEFT JOIN + GROUP BY c.nome + COUNT(p.id) + SUM(p.valor). Ana: 2 pedidos, 3620."
+/>
+
+## Exercício 2: clientes sem pedidos
+
+Quais clientes nunca fizeram pedido?
+
+<Exercise
+  lessonSlug="sql-joins"
+  codeKey="sql-joins-ex2"
+  title="Clientes sem pedidos"
+  expectedOutput="sem pedidos: carol"
+  hint="LEFT JOIN + WHERE p.id IS NULL. Carol não tem pedidos."
+/>
+
+## Mini-projeto: relatório completo
+
+Monte o relatório: cada cliente com nº de pedidos e total, **incluindo os sem pedidos** (total 0).
+
+<Exercise
+  lessonSlug="sql-joins"
+  codeKey="sql-joins-projeto"
+  title="Mini-projeto — relatório"
+  expectedOutput="ana: 2 pedidos, R$3620"
+  hint="LEFT JOIN + GROUP BY c.nome + COUNT(p.id) + COALESCE(SUM(p.valor), 0). Ana: 2 pedidos, R$3620."
+/>
+
+## Resumo
+
+- **PRIMARY KEY**: identifica linhas · **FOREIGN KEY**: aponta para outra tabela
+- **INNER JOIN**: só quem tem match dos dois lados
+- **LEFT JOIN**: tudo da esquerda + NULL na direita quando não há match
+- **"X sem Y"**: LEFT JOIN + WHERE coluna_da_direita IS NULL
+- **ON** define o elo entre as tabelas

@@ -1162,7 +1162,197 @@ const PYTHON_COURSE = {
   ],
 }
 
-const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE]
+/** Catálogo completo — adicione novos cursos aqui. */
+const SQL_COURSE = {
+  slug: 'sql-bancos-dados',
+  title: 'SQL & Bancos de Dados',
+  description:
+    'Consultas, agregações e modelagem com SQLite na prática. A habilidade mais pedida em vagas de backend e dados.',
+  phases: [
+    {
+      slug: '01-fundamentos',
+      title: 'Fase 01 — Consultas Essenciais',
+      lessons: [
+        {
+          slug: 'sql-select',
+          title: 'SELECT, WHERE e ORDER BY',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'Qual cláusula filtra linhas no SQL?',
+              options: [
+                { id: 'a', text: 'SELECT' },
+                { id: 'b', text: 'WHERE' },
+                { id: 'c', text: 'ORDER BY' },
+                { id: 'd', text: 'GROUP BY' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que ORDER BY preco DESC faz?',
+              options: [
+                { id: 'a', text: 'Ordena do menor para o maior' },
+                { id: 'b', text: 'Ordena do maior para o menor' },
+                { id: 'c', text: 'Filtra preços altos' },
+                { id: 'd', text: 'Remove duplicados' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Como filtrar preços >= 100 no SQL?',
+              options: [
+                { id: 'a', text: 'WHERE preco >= 100' },
+                { id: 'b', text: 'FILTER preco 100' },
+                { id: 'c', text: 'SELECT preco > 100' },
+                { id: 'd', text: 'WHERE preco MIN 100' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual é a ordem correta das cláusulas?',
+              options: [
+                { id: 'a', text: 'SELECT → WHERE → ORDER BY' },
+                { id: 'b', text: 'WHERE → SELECT → ORDER BY' },
+                { id: 'c', text: 'ORDER BY → SELECT → WHERE' },
+                { id: 'd', text: 'SELECT → ORDER BY → WHERE' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que SELECT nome FROM clientes retorna?',
+              options: [
+                { id: 'a', text: 'A tabela inteira' },
+                { id: 'b', text: 'Só a coluna nome' },
+                { id: 'c', text: 'O nome do banco' },
+                { id: 'd', text: 'Nada' },
+              ],
+              correctOptionId: 'b',
+            },
+          ],
+        },
+        {
+          slug: 'sql-agregacoes',
+          title: 'Agregações: GROUP BY e HAVING',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que COUNT(*) faz?',
+              options: [
+                { id: 'a', text: 'Conta as linhas do grupo' },
+                { id: 'b', text: 'Soma os valores' },
+                { id: 'c', text: 'Acha a média' },
+                { id: 'd', text: 'Ordena os dados' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual a diferença entre WHERE e HAVING?',
+              options: [
+                { id: 'a', text: 'WHERE filtra antes de agrupar; HAVING filtra grupos' },
+                { id: 'b', text: 'São idênticos' },
+                { id: 'c', text: 'HAVING filtra linhas; WHERE filtra grupos' },
+                { id: 'd', text: 'WHERE só funciona com JOIN' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que SUM(valor) retorna?',
+              options: [
+                { id: 'a', text: 'A média dos valores' },
+                { id: 'b', text: 'A soma dos valores' },
+                { id: 'c', text: 'O maior valor' },
+                { id: 'd', text: 'A contagem de valores' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'GROUP BY vendedor agrupa por quê?',
+              options: [
+                { id: 'a', text: 'Por cada valor único da coluna vendedor' },
+                { id: 'b', text: 'Por ordem alfabética' },
+                { id: 'c', text: 'Pelo total de vendas' },
+                { id: 'd', text: 'Não agrupa nada' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como achar vendedores com total > 500?',
+              options: [
+                { id: 'a', text: 'WHERE SUM(valor) > 500' },
+                { id: 'b', text: 'HAVING SUM(valor) > 500' },
+                { id: 'c', text: 'GROUP BY SUM(valor) > 500' },
+                { id: 'd', text: 'ORDER BY total > 500' },
+              ],
+              correctOptionId: 'b',
+            },
+          ],
+        },
+        {
+          slug: 'sql-joins',
+          title: 'JOINs e Modelagem',
+          checkpoint: 'ml-base',
+          minutes: 40,
+          quiz: [
+            {
+              question: 'O que um INNER JOIN retorna?',
+              options: [
+                { id: 'a', text: 'Todas as linhas das duas tabelas' },
+                { id: 'b', text: 'Só as linhas que têm correspondência nas duas' },
+                { id: 'c', text: 'Só as linhas sem correspondência' },
+                { id: 'd', text: 'Uma tabela combinada aleatória' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'LEFT JOIN retorna todas as linhas da tabela...',
+              options: [
+                { id: 'a', text: 'Da direita, mesmo sem match' },
+                { id: 'b', text: 'Da esquerda, mesmo sem match (NULL na direita)' },
+                { id: 'c', text: 'Das duas, sempre' },
+                { id: 'd', text: 'De nenhuma' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Para que serve a chave primária (PRIMARY KEY)?',
+              options: [
+                { id: 'a', text: 'Identifica cada linha unicamente' },
+                { id: 'b', text: 'Acelera o SELECT' },
+                { id: 'c', text: 'Ordena a tabela' },
+                { id: 'd', text: 'Cria índices automáticos' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como achar clientes SEM pedidos?',
+              options: [
+                { id: 'a', text: 'LEFT JOIN + WHERE p.id IS NULL' },
+                { id: 'b', text: 'INNER JOIN + WHERE p.id > 0' },
+                { id: 'c', text: 'SELECT sem JOIN' },
+                { id: 'd', text: 'DELETE FROM pedidos' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'ON c.id = p.cliente_id faz o quê?',
+              options: [
+                { id: 'a', text: 'Define como as tabelas se relacionam' },
+                { id: 'b', text: 'Cria uma coluna nova' },
+                { id: 'c', text: 'Ordena os resultados' },
+                { id: 'd', text: 'Conta as linhas' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE]
 
 async function seed() {
   console.log('Limpando tabelas...')

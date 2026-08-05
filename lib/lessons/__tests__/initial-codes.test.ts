@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { INITIAL_CODES, getInitialCode } from '../initial-codes'
 import { PYTHON_CODES } from '../python-codes'
+import { SQL_CODES } from '../sql-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -82,6 +83,19 @@ const EXPECTED_SLUGS = [
   'python-l3-ex1',
   'python-l3-ex2',
   'python-l3-projeto',
+  // Curso SQL & Bancos de Dados
+  'sql-select',
+  'sql-select-ex1',
+  'sql-select-ex2',
+  'sql-select-projeto',
+  'sql-agregacoes',
+  'sql-agreg-ex1',
+  'sql-agreg-ex2',
+  'sql-agreg-projeto',
+  'sql-joins',
+  'sql-joins-ex1',
+  'sql-joins-ex2',
+  'sql-joins-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -114,6 +128,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é import/comentário/variável em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|def |[a-zA-Z_][a-zA-Z0-9_]* =)/)
+    }
+    // Códigos do curso SQL começam com import sqlite3
+    for (const [slug, code] of Object.entries(SQL_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
     }
   })
 
