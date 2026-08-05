@@ -68,6 +68,12 @@ export async function Nav({ user, dashboard }: Props) {
             Glossário
           </Link>
           <Link
+            href="/desafios"
+            className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-secondary transition-colors hover:bg-background-hover hover:text-ink"
+          >
+            Desafios
+          </Link>
+          <Link
             href="/courses"
             className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-secondary transition-colors hover:bg-background-hover hover:text-ink"
           >
