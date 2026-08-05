@@ -7,6 +7,7 @@ import { EDA_CODES } from '../eda-codes'
 import { PANDAS_CODES } from '../pandas-codes'
 import { TESTES_CODES } from '../testes-codes'
 import { APIS_CODES } from '../apis-codes'
+import { AUTOMACAO_CODES } from '../automacao-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -166,6 +167,19 @@ const EXPECTED_SLUGS = [
   'apis-e-ex1',
   'apis-e-ex2',
   'apis-e-projeto',
+  // Curso Automação com Python
+  'automacao-arquivos',
+  'automacao-ex1',
+  'automacao-ex2',
+  'automacao-projeto',
+  'automacao-pastas',
+  'automacao-p-ex1',
+  'automacao-p-ex2',
+  'automacao-p-projeto',
+  'automacao-sistema',
+  'automacao-s-ex1',
+  'automacao-s-ex2',
+  'automacao-s-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -245,6 +259,14 @@ describe('INITIAL_CODES', () => {
       expect(
         firstLine,
         `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Automação começam com import/comentário
+    for (const [slug, code] of Object.entries(AUTOMACAO_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#)/)
     }
   })

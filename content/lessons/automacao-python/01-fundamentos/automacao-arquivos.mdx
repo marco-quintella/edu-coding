@@ -1,0 +1,82 @@
+Automação começa com arquivos — **ler, processar e escrever** é 90% do trabalho repetitivo que um dev automatiza. Nesta lição você domina o módulo embutido de arquivos do Python, com o padrão `with open()` que a indústria usa.
+
+> **Por que importa?** Relatórios, logs, CSVs, configs — tudo é arquivo. Saber processar arquivos com Python é o primeiro passo de qualquer automação, e o padrão `with` previne o bug clássico de arquivo não fechado.
+
+## O padrão: with open()
+
+```python
+# Escrever (modo "w" — sobrescreve)
+with open("/tmp/notas.txt", "w") as f:
+    f.write("ana 7.5\nbob 5.0\ncarol 8.0\n")
+
+# Ler (modo "r" — padrão)
+with open("/tmp/notas.txt") as f:
+    for linha in f:
+        print(linha.strip())
+```
+
+O `with` garante: **o arquivo fecha sozinho** ao sair do bloco — mesmo com erro no meio. Nunca esqueça o arquivo aberto.
+
+## Modos de abertura
+
+| Modo | O que faz |
+|---|---|
+| `"r"` | Leitura (padrão) |
+| `"w"` | Escrita — **sobrescreve** tudo! |
+| `"a"` | Adiciona no fim (append) |
+| `"x"` | Cria — falha se existir |
+
+## Processando linhas
+
+```python
+with open("/tmp/vendas.txt") as f:
+    for linha in f:              # itera linha por linha
+        vendedor, valor = linha.split()   # "ana 1000" → ["ana", "1000"]
+        total += int(valor)
+```
+
+O `split()` divide pela linha em partes — o jeito mais comum de processar dados de texto.
+
+## Exercício 1: lendo arquivo
+
+Crie um arquivo com notas e leia-o de volta.
+
+<Exercise
+  lessonSlug="automacao-arquivos"
+  codeKey="automacao-ex1"
+  title="Lendo arquivo"
+  expectedOutput="primeira: ana 7.5"
+  hint="with open(path, 'w') escreve; with open(path) lê. f.readlines() devolve as linhas."
+/>
+
+## Exercício 2: processando dados
+
+Leia o arquivo de vendas e some os valores.
+
+<Exercise
+  lessonSlug="automacao-arquivos"
+  codeKey="automacao-ex2"
+  title="Somando vendas"
+  expectedOutput="total: R$5300"
+  hint="for linha in f: vendedor, valor = linha.split(); total += int(valor). 1000+2000+1500+800 = 5300."
+/>
+
+## Mini-projeto: relatório de vendas
+
+Leia o arquivo com produto/qtd/preço e calcule o faturamento.
+
+<Exercise
+  lessonSlug="automacao-arquivos"
+  codeKey="automacao-projeto"
+  title="Mini-projeto — relatório"
+  expectedOutput="faturamento: R$3800"
+  hint="produto, qtd, preco = linha.split(); total += int(qtd) * int(preco). 5*120+10*60+2*800+4*250 = 3800."
+/>
+
+## Resumo
+
+- **with open(path, modo) as f**: abre e fecha sozinho
+- **"r"** leitura · **"w"** escrita (sobrescreve) · **"a"** append
+- **for linha in f**: itera o arquivo linha por linha
+- **linha.split()**: divide pelos espaços
+- Automação = ler → processar → escrever

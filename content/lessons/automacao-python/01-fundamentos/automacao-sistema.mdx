@@ -1,0 +1,76 @@
+A automação final: **rodar comandos do sistema** (subprocess) e **trabalhar com datas** (datetime). É assim que scripts de backup, deploy e relatórios automáticos funcionam — Python orquestrando o sistema.
+
+> **Por que importa?** Toda automação real um dia precisa rodar um comando externo (git, docker, scripts do sistema) ou registrar "quando isso rodou". subprocess e datetime fecham o ciclo.
+
+## Rodando comandos com subprocess
+
+```python
+import subprocess
+
+resultado = subprocess.run(["echo", "olá mundo"], capture_output=True, text=True)
+print(resultado.stdout.strip())   # olá mundo
+print(resultado.returncode)       # 0 = sucesso
+```
+
+- **capture_output=True**: captura a saída em vez de imprimir
+- **text=True**: devolve string (não bytes)
+- **returncode**: 0 = sucesso, diferente de 0 = erro
+
+## Trabalhando com datas
+
+```python
+from datetime import datetime, timedelta
+
+agora = datetime.now()
+amanha = agora + timedelta(days=1)
+
+print(agora.strftime("%d/%m/%Y"))   # 05/08/2026
+```
+
+- **datetime.now()**: agora
+- **timedelta(days=1)**: diferença — soma/subtrai datas
+- **strftime("%d/%m/%Y")**: formata
+
+## Exercício 1: rodando comando
+
+Execute um comando e mostre a saída e o exit code.
+
+<Exercise
+  lessonSlug="automacao-sistema"
+  codeKey="automacao-ex1"
+  title="Primeiro subprocess"
+  expectedOutput="exit code: 0"
+  hint="subprocess.run(['echo', 'olá mundo'], capture_output=True, text=True). returncode é 0."
+/>
+
+## Exercício 2: datas no relatório
+
+Mostre a data de hoje e de amanhã.
+
+<Exercise
+  lessonSlug="automacao-sistema"
+  codeKey="automacao-ex2"
+  title="Datas"
+  expectedOutput="amanha: 06/08/2026"
+  hint="datetime.now() + timedelta(days=1), formatado com strftime('%d/%m/%Y')."
+/>
+
+## Mini-projeto: pipeline de comando
+
+Execute um comando e conte as linhas da saída.
+
+<Exercise
+  lessonSlug="automacao-sistema"
+  codeKey="automacao-projeto"
+  title="Mini-projeto — pipeline"
+  expectedOutput="linhas de saida: 4"
+  hint="printf 'a\nb\nc\nd\n' gera 4 linhas; filtre as vazias com [l for l in saida.split('\n') if l.strip()]."
+/>
+
+## Resumo
+
+- **subprocess.run(cmd, capture_output=True, text=True)**: roda comando
+- **returncode**: 0 = sucesso
+- **datetime.now()**: agora · **timedelta(days=1)**: +1 dia
+- **strftime("%d/%m/%Y")**: formata a data
+- Automação completa = arquivos + pastas + sistema + datas

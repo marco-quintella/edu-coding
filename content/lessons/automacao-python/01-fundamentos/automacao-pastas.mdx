@@ -1,0 +1,69 @@
+Organizar pastas e arquivos é a automação mais comum do dia a dia: **mover, copiar, listar e filtrar**. Os módulos `os` e `shutil` são o canivete suíço — e com eles você cria scripts que fazem o trabalho manual de minutos em segundos.
+
+> **Por que importa?** "Organizar downloads por extensão", "backup da pasta X", "renomear em lote" — toda empresa tem essas tarefas repetitivas, e quem automatiza se destaca.
+
+## Criando e verificando pastas
+
+```python
+import os, shutil
+
+os.makedirs("/tmp/projeto/dados", exist_ok=True)   # cria (sem erro se existe)
+os.path.exists("/tmp/projeto/dados")               # True/False
+```
+
+## Copiando arquivos
+
+```python
+shutil.copy("/tmp/projeto/dados/relatorio.csv", "/tmp/projeto/backup/")
+```
+
+## Listando e filtrando
+
+```python
+arquivos = os.listdir("/tmp/docs")          # ['a.txt', 'b.csv', ...]
+txts = [n for n in arquivos if n.endswith(".txt")]   # filtro por extensão
+```
+
+## Exercício 1: copiar e verificar
+
+Crie um arquivo, copie para outra pasta e confirme.
+
+<Exercise
+  lessonSlug="automacao-pastas"
+  codeKey="automacao-ex1"
+  title="Backup com shutil"
+  expectedOutput="existe: True"
+  hint="os.makedirs cria as pastas; shutil.copy copia; os.path.exists confirma."
+/>
+
+## Exercício 2: filtrando por extensão
+
+Crie arquivos e liste apenas os .txt.
+
+<Exercise
+  lessonSlug="automacao-pastas"
+  codeKey="automacao-ex2"
+  title="Filtro de arquivos"
+  expectedOutput="txt: ['a.txt', 'c.txt']"
+  hint="os.listdir + list comprehension com endswith('.txt')."
+/>
+
+## Mini-projeto: organizador de downloads
+
+Liste os arquivos de uma pasta e agrupe por extensão.
+
+<Exercise
+  lessonSlug="automacao-pastas"
+  codeKey="automacao-projeto"
+  title="Mini-projeto — organizador"
+  expectedOutput="pdfs: ['doc.pdf', 'outro.pdf']"
+  hint="ext = nome.split('.')[-1]; por_ext.setdefault(ext, []).append(nome)."
+/>
+
+## Resumo
+
+- **os.makedirs(path, exist_ok=True)**: cria pastas sem erro
+- **os.path.exists(path)**: verifica
+- **shutil.copy(origem, destino)**: copia arquivo
+- **os.listdir(pasta)**: lista os nomes
+- Filtro por extensão: `[n for n in arquivos if n.endswith(".txt")]`
