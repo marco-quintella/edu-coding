@@ -1,0 +1,76 @@
+A regex resolve problemas do dia a dia em **uma linha**: dividir texto por múltiplos separadores, extrair domínios de emails, mascarar CPFs. Nesta lição você aplica `re.split` e combina as técnicas em mini-projetos reais.
+
+> **Por que importa?** `split()` do Python só divide por UM separador. `re.split` divide por um PADRÃO — múltiplos separadores de uma vez. É a diferença entre 3 linhas de código e 1.
+
+## Split por padrão
+
+```python
+import re
+
+texto = "ana; bob,carol|dan"
+partes = re.split(r"[;,|]", texto)
+# ['ana', ' bob', 'carol', 'dan']
+```
+
+A classe `[;,|]` casa QUALQUER um dos separadores.
+
+## Extraindo domínios
+
+```python
+texto = "contato@empresa.com.br e dev@github.com"
+dominios = re.findall(r"@([a-z0-9.]+)", texto)
+# ['empresa.com.br', 'github.com']
+```
+
+O grupo `(...)` captura só a parte depois do `@`.
+
+## Mascarando CPF
+
+```python
+cpf = "123.456.789-00"
+mascarado = re.sub(r"\d", "*", cpf[:-2]) + cpf[-2:]
+# '***.***.***-00' — só os 2 últimos visíveis
+```
+
+## Exercício 1: dividindo por separadores
+
+Use re.split para dividir por `;`, `,` e `|`.
+
+<Exercise
+  lessonSlug="regex-aplicacoes"
+  codeKey="regex-ex1"
+  title="Split múltiplo"
+  expectedOutput="partes: ['ana', ' bob', 'carol', 'dan']"
+  hint="re.split(r'[;,|]', texto)."
+/>
+
+## Exercício 2: domínios de emails
+
+Extraia os domínios dos emails.
+
+<Exercise
+  lessonSlug="regex-aplicacoes"
+  codeKey="regex-ex2"
+  title="Domínios"
+  expectedOutput="dominios: ['empresa.com.br', 'github.com']"
+  hint="re.findall(r'@([a-z0-9.]+)', texto) — o grupo captura só o domínio."
+/>
+
+## Mini-projeto: mascarando CPF
+
+Masque o CPF mostrando só os 2 últimos dígitos.
+
+<Exercise
+  lessonSlug="regex-aplicacoes"
+  codeKey="regex-projeto"
+  title="Mini-projeto — CPF"
+  expectedOutput="cpf: ***.***.***-00"
+  hint="re.sub(r'\\d', '*', cpf[:-2]) mascara tudo menos os 2 últimos; concatene cpf[-2:]. LGPD: nunca logar CPF completo!"
+/>
+
+## Resumo
+
+- **re.split(r"[;,|]", texto)**: divide por qualquer separador da classe
+- **findall com grupo**: `r"@([a-z0-9.]+)"` extrai só a parte capturada
+- **Máscara de dados**: `\d` → `*` protege CPF/telefone em logs (LGPD)
+- Regex transforma 3 linhas de loop em 1 linha

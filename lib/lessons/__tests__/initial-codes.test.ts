@@ -9,6 +9,7 @@ import { TESTES_CODES } from '../testes-codes'
 import { APIS_CODES } from '../apis-codes'
 import { AUTOMACAO_CODES } from '../automacao-codes'
 import { JS_CODES } from '../js-codes'
+import { REGEX_CODES } from '../regex-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -194,6 +195,19 @@ const EXPECTED_SLUGS = [
   'js-f-ex1',
   'js-f-ex2',
   'js-f-projeto',
+  // Curso Expressões Regulares
+  'regex-basico',
+  'regex-ex1',
+  'regex-ex2',
+  'regex-projeto',
+  'regex-grupos',
+  'regex-g-ex1',
+  'regex-g-ex2',
+  'regex-g-projeto',
+  'regex-aplicacoes',
+  'regex-a-ex1',
+  'regex-a-ex2',
+  'regex-a-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -290,6 +304,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é comentário/const em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|\/\/|const |let )/)
+    }
+    // Códigos do curso Regex começam com import
+    for (const [slug, code] of Object.entries(REGEX_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
     }
   })
 

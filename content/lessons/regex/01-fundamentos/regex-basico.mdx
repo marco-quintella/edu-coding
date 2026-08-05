@@ -1,0 +1,71 @@
+Expressões regulares (**regex**) são a forma de **buscar padrões em texto** — e a skill transversal mais subestimada do mercado: aparece em logs, validação de formulários, extração de dados e sanitização. Nesta lição você domina o básico com o módulo `re` do Python.
+
+> **Por que importa?** "Extraia os emails deste texto", "valide o telefone", "limpe essa string" — perguntas de regex aparecem em TODA vaga que mexe com dados. E resolver com regex em 1 linha é o diferencial.
+
+## Os três fundamentos
+
+```python
+import re
+
+texto = "O email é ana@empresa.com e suporte@x.com"
+
+re.findall(r"[a-z]+@[a-z.]+", texto)   # lista com TODAS as ocorrências
+re.search(r"padrão", texto)            # primeira ocorrência (Match ou None)
+re.fullmatch(r"padrão", texto)         # exige que o TEXTO INTEIRO case
+```
+
+## Os tijolos da regex
+
+| Padrão | Significado |
+|---|---|
+| `\d` | dígito (0-9) |
+| `\s` | espaço (espaço, tab, quebra) |
+| `\w` | letra/dígito/underscore |
+| `[a-z]` | classe: qualquer letra minúscula |
+| `[^a-z]` | negação: tudo que NÃO é letra minúscula |
+| `+` | uma ou mais do anterior |
+| `*` | zero ou mais |
+| `{4}` | exatamente 4 |
+| `.` | qualquer caractere |
+
+## Exercício 1: extraindo emails
+
+Use findall para extrair os emails do texto.
+
+<Exercise
+  lessonSlug="regex-basico"
+  codeKey="regex-ex1"
+  title="Extraindo emails"
+  expectedOutput="emails: ['ana@empresa.com', 'suporte@x.com']"
+  hint="re.findall(r'[a-z]+@[a-z.]+', texto)."
+/>
+
+## Exercício 2: validando telefone
+
+Valide telefones brasileiros (parênteses opcionais).
+
+<Exercise
+  lessonSlug="regex-basico"
+  codeKey="regex-ex2"
+  title="Telefone válido"
+  expectedOutput="11999991234: True"
+  hint="re.fullmatch(r'\\(?\\d{2}\\)? ?\\d{4,5}-?\\d{4}', fone)."
+/>
+
+## Mini-projeto: extraindo datas
+
+Extraia todas as datas dd/mm/aaaa de um texto.
+
+<Exercise
+  lessonSlug="regex-basico"
+  codeKey="regex-projeto"
+  title="Mini-projeto — datas"
+  expectedOutput="datas: ['05/08/2026', '20/12/2026']"
+  hint="re.findall(r'\\d{2}/\\d{2}/\\d{4}', texto)."
+/>
+
+## Resumo
+
+- **findall**: todas as ocorrências · **search**: primeira · **fullmatch**: texto inteiro
+- **\d** dígito, **\s** espaço, **[a-z]** classe, **+** uma ou mais, **{n}** exatamente n
+- Regex = padrão → busca, validação, extração

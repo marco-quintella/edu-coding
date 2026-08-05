@@ -1,0 +1,79 @@
+Buscar é só metade — **extrair dados específicos** de um texto é onde a regex brilha. Os parênteses criam **grupos capturáveis**: você pesca o número do pedido, a data, o domínio do email — tudo em uma linha.
+
+> **Por que importa?** "Extraia o valor desta fatura", "pegue o domínio deste email", "ache o id neste log" — extração é o caso de uso #1 de regex em produção.
+
+## Grupos com parênteses
+
+```python
+import re
+
+texto = "Pedido #1234 de 2026-08-05 no valor de R$ 450,00"
+m = re.search(r"#(\d+) de (\d{4}-\d{2}-\d{2})", texto)
+
+m.group(1)   # '1234' — o primeiro grupo
+m.group(2)   # '2026-08-05' — o segundo grupo
+```
+
+Cada `(...)` vira um grupo — `m.group(1)`, `m.group(2)`...
+
+## Sanitização com re.sub
+
+```python
+texto = "Olá, mundo! Como vai? #python @dev"
+limpo = re.sub(r"[^a-zA-Z0-9\s]", "", texto)
+# 'Olá mundo Como vai python dev'  (nota: acentos removidos!)
+```
+
+`re.sub(padrão, novo, texto)` **substitui** as ocorrências — o jeito de limpar entradas do usuário.
+
+## Mascarando dados sensíveis
+
+```python
+telefone = "(11) 99999-1234"
+mascarado = re.sub(r"\d", "*", telefone)
+# '(**) *****-****'
+```
+
+## Exercício 1: extraindo do pedido
+
+Use grupos para extrair o número e a data.
+
+<Exercise
+  lessonSlug="regex-grupos"
+  codeKey="regex-ex1"
+  title="Grupos no pedido"
+  expectedOutput="data: 2026-08-05"
+  hint="re.search(r'#(\\d+) de (\\d{4}-\\d{2}-\\d{2})', texto). group(1) e group(2)."
+/>
+
+## Exercício 2: sanitizando texto
+
+Remova os caracteres especiais (mantendo letras, números e espaços).
+
+<Exercise
+  lessonSlug="regex-grupos"
+  codeKey="regex-ex2"
+  title="Sanitização"
+  expectedOutput="limpo: Ol mundo Como vai python dev"
+  hint="re.sub(r'[^a-zA-Z0-9\\s]', '', texto) — note que acentos são removidos (não estão na classe)."
+/>
+
+## Mini-projeto: mascarando telefone
+
+Oculte os dígitos de um telefone.
+
+<Exercise
+  lessonSlug="regex-grupos"
+  codeKey="regex-projeto"
+  title="Mini-projeto — máscara"
+  expectedOutput="mascarado: Contato: (**) *****-****"
+  hint="re.sub(r'\\d', '*', texto) troca cada dígito por *."
+/>
+
+## Resumo
+
+- **Parênteses = grupos**: `m.group(1)`, `m.group(2)`
+- **re.sub(padrão, novo, texto)**: substitui ocorrências
+- **Sanitização**: `[^a-zA-Z0-9\s]` remove tudo que não é letra/número/espaço
+- **Máscara**: `\d` → `*` esconde dados sensíveis
+- Extração é o caso de uso #1 de regex
