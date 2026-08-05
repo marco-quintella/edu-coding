@@ -1,11 +1,14 @@
 import { describe, it, expect } from 'vitest'
 import { SOLUTIONS, getSolution } from '../solutions'
-import { INITIAL_CODES } from '../initial-codes'
+import { getInitialCode } from '../initial-codes'
 
 describe('SOLUTIONS (comparação de soluções)', () => {
   it('toda solução tem codeKey correspondente no registro de códigos iniciais', () => {
     for (const key of Object.keys(SOLUTIONS)) {
-      expect(INITIAL_CODES[key], `initial-codes deve ter '${key}'`).toBeDefined()
+      expect(
+        getInitialCode(key),
+        `initial-codes deve ter '${key}'`,
+      ).not.toBe('')
     }
   })
 

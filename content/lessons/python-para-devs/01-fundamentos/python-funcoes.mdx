@@ -1,0 +1,106 @@
+Funções são a unidade de **reuso e organização** — o que separa um script de um programa. Nesta lição você aprende a criar funções com parâmetros, valores default e retorno. E o conceito mais importante da engenharia: **funções puras** (mesma entrada → mesma saída, sem efeitos colaterais).
+
+> **Por que importa?** Em entrevistas e code reviews, "função pura" é a palavra que impressiona. É o fundamento de testes automatizados, composição e código previsível.
+
+## Anatomia de uma função
+
+```python
+def calcular_imc(peso, altura):
+    """Documenta o que a função faz."""
+    imc = peso / (altura ** 2)
+    return imc
+
+resultado = calcular_imc(70, 1.75)   # chama e guarda o retorno
+print(f"{resultado:.1f}")
+```
+
+- `def` + nome + `(parâmetros)` + `:`
+- `return` devolve o valor (sem return, devolve `None`!)
+- **Docstring** `"""..."""` — documente sempre
+
+## Parâmetros default
+
+```python
+def saudacao(nome, idioma="pt"):
+    if idioma == "pt":
+        return f"Olá, {nome}!"
+    return f"Hello, {nome}!"
+
+print(saudacao("Ana"))          # Olá, Ana!
+print(saudacao("Bob", "en"))    # Hello, Bob!
+```
+
+O default permite chamar com 1 argumento — o parâmetro é **opcional**.
+
+## Funções puras vs impuras
+
+```python
+# PURA: mesma entrada → mesma saída, não toca nada externo
+def calcular_media(notas):
+    return sum(notas) / len(notas)
+
+# IMPURA: depende/muda estado externo (imprevisível!)
+contador = 0
+def incrementar():
+    global contador
+    contador += 1
+    return contador
+```
+
+**Regra de ouro:** prefira funções puras. Elas são testáveis, composáveis e sem surpresas. Se a função precisa de algo de fora, **passe como parâmetro** em vez de ler variável global.
+
+## Composição — funções chamando funções
+
+```python
+def desconto(preco, percentual=10):
+    return preco * (1 - percentual / 100)
+
+def preco_final(preco, percentual, frete=20):
+    return desconto(preco, percentual) + frete
+
+print(preco_final(100, 25))   # 75 + 20 = 95
+```
+
+## Exercício 1: função com default
+
+Complete a função de desconto que usa 10% como padrão mas aceita outro percentual.
+
+<Exercise
+  lessonSlug="python-funcoes"
+  codeKey="python-l3-ex1"
+  title="Desconto com parâmetro default"
+  expectedOutput="com 25%: R$75.00"
+  hint="return preco * (1 - percentual / 100). Chame desconto(100) e depois desconto(100, 25)."
+/>
+
+## Exercício 2: função pura
+
+Escreva duas funções puras: uma que calcula a média e outra que diz se passou (corte 6.0).
+
+<Exercise
+  lessonSlug="python-funcoes"
+  codeKey="python-l3-ex2"
+  title="Média e aprovação"
+  expectedOutput="aprovado: True"
+  hint="calcular_media(notas) e aprovado(media, corte=6.0) — retorne media >= corte."
+/>
+
+## Mini-projeto: processador de vendas
+
+Crie funções compostas: uma calcula o total bruto das vendas, outra a comissão (5%).
+
+<Exercise
+  lessonSlug="python-funcoes"
+  codeKey="python-l3-projeto"
+  title="Mini-projeto — comissões"
+  expectedOutput="comissao: R$225"
+  hint="total_bruto = sum(v['valor'] for v in vendas). comissao = total * taxa. A soma é 4500, 5% = 225."
+/>
+
+## Resumo
+
+- **Função**: `def nome(params): ... return valor` (sem return → None)
+- **Default**: parâmetros opcionais (`def f(x, y=10)`)
+- **Pura**: mesma entrada → mesma saída, sem efeito colateral — prefira sempre
+- **Composição**: funções pequenas que se chamam > funções gigantes
+- **Docstring**: documente o que a função faz

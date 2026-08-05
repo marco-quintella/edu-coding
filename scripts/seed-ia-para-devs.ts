@@ -1041,6 +1041,122 @@ const PYTHON_COURSE = {
             },
           ],
         },
+        {
+          slug: 'python-listas-dicts',
+          title: 'Listas e Dicionários',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que frutas[1:3] retorna em ["maça","banana","uva","kiwi"]?',
+              options: [
+                { id: 'a', text: '["maça","banana"]' },
+                { id: 'b', text: '["banana","uva"]' },
+                { id: 'c', text: '["banana","uva","kiwi"]' },
+                { id: 'd', text: '["uva","kiwi"]' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que acontece com usuario["inexistente"] num dicionário?',
+              options: [
+                { id: 'a', text: 'Retorna None' },
+                { id: 'b', text: 'Lança KeyError' },
+                { id: 'c', text: 'Cria a chave vazia' },
+                { id: 'd', text: 'Retorna 0' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Para que serve freq.get(palavra, 0)?',
+              options: [
+                { id: 'a', text: 'Deleta a palavra' },
+                { id: 'b', text: 'Retorna o valor, ou 0 se a chave não existe' },
+                { id: 'c', text: 'Ordena o dicionário' },
+                { id: 'd', text: 'Conta os caracteres' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual a forma de adicionar uma chave num dicionário?',
+              options: [
+                { id: 'a', text: 'dicionario.add("chave")' },
+                { id: 'b', text: 'dicionario["chave"] = valor' },
+                { id: 'c', text: 'dicionario.push("chave")' },
+                { id: 'd', text: 'insert(dicionario, "chave")' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que faz a soma sum(v["valor"] for v in vendas)?',
+              options: [
+                { id: 'a', text: 'Conta as vendas' },
+                { id: 'b', text: 'Soma o campo valor de cada venda' },
+                { id: 'c', text: 'Ordena as vendas' },
+                { id: 'd', text: 'Filtra vendas altas' },
+              ],
+              correctOptionId: 'b',
+            },
+          ],
+        },
+        {
+          slug: 'python-funcoes',
+          title: 'Funções e Composição',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que uma função retorna se não tem return?',
+              options: [
+                { id: 'a', text: '0' },
+                { id: 'b', text: 'None' },
+                { id: 'c', text: 'Erro' },
+                { id: 'd', text: 'A função inteira' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que é uma função pura?',
+              options: [
+                { id: 'a', text: 'Função sem parâmetros' },
+                { id: 'b', text: 'Mesma entrada → mesma saída, sem efeitos colaterais' },
+                { id: 'c', text: 'Função que usa variáveis globais' },
+                { id: 'd', text: 'Função que imprime' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Para que serve um parâmetro default (def f(x, y=10))?',
+              options: [
+                { id: 'a', text: 'Torna y obrigatório' },
+                { id: 'b', text: 'Torna y opcional — usa 10 se não passar' },
+                { id: 'c', text: 'Impede passar y' },
+                { id: 'd', text: 'Deixa a função mais rápida' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'O que significa "compor funções"?',
+              options: [
+                { id: 'a', text: 'Copiar funções' },
+                { id: 'b', text: 'Uma função chamar outra para construir resultado maior' },
+                { id: 'c', text: 'Juntar funções em um arquivo' },
+                { id: 'd', text: 'Renomear funções' },
+              ],
+              correctOptionId: 'b',
+            },
+            {
+              question: 'Qual a principal vantagem de funções puras?',
+              options: [
+                { id: 'a', text: 'São mais rápidas' },
+                { id: 'b', text: 'São testáveis e previsíveis — mesma entrada, mesma saída' },
+                { id: 'c', text: 'Não precisam de parâmetros' },
+                { id: 'd', text: 'Usam menos memória' },
+              ],
+              correctOptionId: 'b',
+            },
+          ],
+        },
       ],
     },
   ],

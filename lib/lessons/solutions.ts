@@ -391,6 +391,122 @@ for i, (g, l) in enumerate(zip(gastos.ravel(), labels)):
     status = "ANOMALO" if l == -1 else "normal"
     print(f"  gasto {g:>5}: {status}")`,
   },
+
+  // ── Curso Python para Devs ─────────────────────────────────
+  'python-ex1': {
+    explanation:
+      'O IMC usa ** (potência). A cadeia if/elif classifica — a primeira condição verdadeira vence. O :.2f limita a 2 casas.',
+    code: `peso = 70.0
+altura = 1.75
+imc = peso / (altura ** 2)
+if imc < 18.5:
+    classificacao = "magro"
+elif imc < 25:
+    classificacao = "normal"
+elif imc < 30:
+    classificacao = "sobrepeso"
+else:
+    classificacao = "obeso"
+print(f"IMC = {imc:.2f} ({classificacao})")`,
+  },
+  'python-ex2': {
+    explanation:
+      'range(1, 11) vai de 1 a 10 (fim exclusivo). O % 2 == 0 filtra os pares — 2+4+6+8+10 = 30.',
+    code: `soma = 0
+for i in range(1, 11):
+    if i % 2 == 0:
+        soma += i
+print(f"soma dos pares = {soma}")`,
+  },
+  'python-projeto': {
+    explanation:
+      'any(condição for c in senha) retorna True se QUALQUER char satisfaz. A lista de faltas só acumula o que não passou.',
+    code: `def validar(senha):
+    faltas = []
+    if len(senha) < 8:
+        faltas.append("tamanho")
+    if not any(c.isupper() for c in senha):
+        faltas.append("maiuscula")
+    if not any(c.isdigit() for c in senha):
+        faltas.append("numero")
+    return faltas
+
+senha = "abcdefgh"
+print(f"faltam: {validar(senha)}")`,
+  },
+  'python-l2-ex1': {
+    explanation:
+      'O padrão freq.get(palavra, 0) + 1 é o contador universal: devolve o valor atual (ou 0) e soma 1. len(freq) conta as chaves únicas.',
+    code: `frase = "python é ótimo e python é simples"
+freq = {}
+for palavra in frase.split():
+    freq[palavra] = freq.get(palavra, 0) + 1
+print(f"total de palavras: {len(frase.split())}")
+print(f"palavras unicas: {len(freq)}")
+print(f"'python' aparece: {freq['python']}x")`,
+  },
+  'python-l2-ex2': {
+    explanation:
+      'sum(notas)/len(notas) para a média. A comprehension sum(1 for n in notas if n >= 7) conta os aprovados sem loop explícito.',
+    code: `notas = [7.5, 8.0, 6.5, 9.0, 5.5]
+media = sum(notas) / len(notas)
+acima = sum(1 for n in notas if n >= 7)
+print(f"media: {media:.1f}")
+print(f"acima da media: {acima}")`,
+  },
+  'python-l2-projeto': {
+    explanation:
+      'Dicionário de dicionários: agenda[nome] guarda um dict com tel/cidade. items() itera chave+valor juntos.',
+    code: `agenda = {
+    "ana": {"tel": "11-9999", "cidade": "SP"},
+    "bob": {"tel": "21-8888", "cidade": "RJ"},
+}
+agenda["carol"] = {"tel": "31-7777", "cidade": "BH"}
+
+print(f"contatos: {len(agenda)}")
+for nome, info in agenda.items():
+    print(f"{nome}: {info['cidade']}")`,
+  },
+  'python-l3-ex1': {
+    explanation:
+      'O default (percentual=10) permite chamar com 1 argumento. A fórmula: preco * (1 - percentual/100) subtrai a fração.',
+    code: `def desconto(preco, percentual=10):
+    return preco * (1 - percentual / 100)
+
+print(f"com 10%: R\${desconto(100):.2f}")
+print(f"com 25%: R\${desconto(100, 25):.2f}")`,
+  },
+  'python-l3-ex2': {
+    explanation:
+      'Duas funções puras: calcular_media só depende do parâmetro; aprovado compara com o corte. Composição: aprovado(calcular_media(notas)).',
+    code: `def calcular_media(notas):
+    return sum(notas) / len(notas)
+
+def aprovado(media, corte=6.0):
+    return media >= corte
+
+notas = [7.0, 8.5, 5.5]
+media = calcular_media(notas)
+print(f"media: {media:.1f}")
+print(f"aprovado: {aprovado(media)}")`,
+  },
+  'python-l3-projeto': {
+    explanation:
+      'Composição real: comissao() chama total_bruto(). Total 4500 (1000+2000+1500), comissão 5% = 225. Funções pequenas e puras.',
+    code: `def total_bruto(vendas):
+    return sum(venda["valor"] for venda in vendas)
+
+def comissao(vendas, taxa=0.05):
+    return total_bruto(vendas) * taxa
+
+vendas = [
+    {"vendedor": "ana", "valor": 1000},
+    {"vendedor": "bob", "valor": 2000},
+    {"vendedor": "ana", "valor": 1500},
+]
+print(f"total: R\${total_bruto(vendas):.0f}")
+print(f"comissao: R\${comissao(vendas):.0f}")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

@@ -1,0 +1,116 @@
+Listas e dicionários são o coração de Python — **80% dos programas reais são manipulação dessas duas estruturas**. Nesta lição você domina: listas (sequências ordenadas) e dicionários (mapas chave→valor). São elas que fazem o pandas e o JSON "funcionarem".
+
+> **Por que importa?** Todo dado que você consome (API, CSV, banco) chega como lista de dicionários. Saber filtrar, contar e agrupar é a habilidade #1 de quem trabalha com dados.
+
+## Listas
+
+```python
+frutas = ["maça", "banana", "uva"]
+
+# Acesso por índice (começa em 0!)
+print(frutas[0])        # maça
+print(frutas[-1])       # uva (último!)
+
+# Fatiamento [inicio:fim] — fim exclusivo
+print(frutas[1:3])      # ['banana', 'uva']
+
+# Métodos essenciais
+frutas.append("kiwi")   # adiciona no fim
+frutas.insert(1, "pera")
+frutas.remove("uva")
+frutas.sort()           # ordena no lugar
+print(len(frutas))      # tamanho
+```
+
+**Pegadinha clássica:** `frutas[1:3]` NÃO inclui o índice 3 — o fim é exclusivo (mesma regra do `range`).
+
+## Dicionários — mapa chave → valor
+
+```python
+usuario = {
+    "nome": "Ana",
+    "idade": 25,
+    "cidade": "São Paulo",
+}
+
+print(usuario["nome"])        # Ana
+print(usuario.get("cidade"))  # São Paulo
+print(usuario.get("email", "sem email"))  # default!
+
+usuario["email"] = "ana@x.com"   # adiciona/atualiza
+del usuario["cidade"]            # remove
+
+# Iterar
+for chave, valor in usuario.items():
+    print(f"{chave}: {valor}")
+```
+
+**Pegadinha:** `usuario["inexistente"]` **lança KeyError** e quebra o programa. `usuario.get("inexistente", default)` retorna o default sem quebrar.
+
+## Contagem com dicionário — o padrão mais usado
+
+```python
+frase = "python é ótimo e python é simples"
+freq = {}
+for palavra in frase.split():
+    freq[palavra] = freq.get(palavra, 0) + 1
+print(freq)  # {'python': 2, 'é': 2, ...}
+```
+
+O `get(palavra, 0)` devolve 0 se a palavra ainda não existe — o truque do contador.
+
+## Lista de dicionários — dados do mundo real
+
+APIs e bancos devolvem exatamente isso:
+
+```python
+vendas = [
+    {"vendedor": "ana", "valor": 1000},
+    {"vendedor": "bob", "valor": 2000},
+]
+total = sum(v["valor"] for v in vendas)   # 3000
+```
+
+## Exercício 1: contador de palavras
+
+Complete o código para contar a frequência das palavras de uma frase usando um dicionário.
+
+<Exercise
+  lessonSlug="python-listas-dicts"
+  codeKey="python-l2-ex1"
+  title="Contador de palavras"
+  expectedOutput="palavras unicas: 5"
+  hint="freq[palavra] = freq.get(palavra, 0) + 1 dentro de um for. Depois len(freq) dá as únicas."
+/>
+
+## Exercício 2: notas com listas
+
+Calcule a média das notas e quantas estão acima (>= 7) usando listas.
+
+<Exercise
+  lessonSlug="python-listas-dicts"
+  codeKey="python-l2-ex2"
+  title="Média e aprovados"
+  expectedOutput="acima da media: 3"
+  hint="sum(notas) / len(notas) para a média. sum(1 for n in notas if n >= 7) conta os acima."
+/>
+
+## Mini-projeto: agenda de contatos
+
+Construa uma agenda (dicionário de dicionários), adicione um contato e liste todos.
+
+<Exercise
+  lessonSlug="python-listas-dicts"
+  codeKey="python-l2-projeto"
+  title="Mini-projeto — agenda"
+  expectedOutput="carol: BH"
+  hint="agenda[nome] = {'tel': ..., 'cidade': ...}. Itere com agenda.items()."
+/>
+
+## Resumo
+
+- **Listas**: ordenadas, mutáveis, índice 0-based, `append/sort/remove`
+- **Fatiamento** `[a:b]`: fim exclusivo
+- **Dicionários**: chave→valor, `get` com default evita KeyError
+- **Contagem**: `freq.get(palavra, 0) + 1` — o padrão universal
+- **Dados reais**: lista de dicionários + comprehension = 80% do trabalho

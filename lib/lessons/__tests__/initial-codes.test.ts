@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { INITIAL_CODES, getInitialCode } from '../initial-codes'
+import { PYTHON_CODES } from '../python-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -68,13 +69,32 @@ const EXPECTED_SLUGS = [
   'azure-cognitive',
   'azure-ex1',
   'azure-ex2',
+  // Curso Python para Devs
+  'python-fundamentos',
+  'python-ex1',
+  'python-ex2',
+  'python-projeto',
+  'python-listas-dicts',
+  'python-l2-ex1',
+  'python-l2-ex2',
+  'python-l2-projeto',
+  'python-funcoes',
+  'python-l3-ex1',
+  'python-l3-ex2',
+  'python-l3-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
   it('tem código para todos os slugs de lição do seed', () => {
     for (const slug of EXPECTED_SLUGS) {
-      expect(INITIAL_CODES[slug], `sem initialCode para: ${slug}`).toBeDefined()
-      expect(INITIAL_CODES[slug].length, `código vazio para: ${slug}`).toBeGreaterThan(0)
+      expect(
+        getInitialCode(slug),
+        `sem initialCode para: ${slug}`,
+      ).not.toBe('')
+      expect(
+        getInitialCode(slug).length,
+        `código vazio para: ${slug}`,
+      ).toBeGreaterThan(0)
     }
   })
 
@@ -86,6 +106,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|def )/)
+    }
+    // Códigos do curso Python começam com variável (peso =, frase =, etc.)
+    for (const [slug, code] of Object.entries(PYTHON_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import/comentário/variável em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|def |[a-zA-Z_][a-zA-Z0-9_]* =)/)
     }
   })
 
