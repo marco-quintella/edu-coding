@@ -9,8 +9,8 @@ interface Course {
   description: string | null
 }
 
-const coverSeed = (slug: string) =>
-  `https://picsum.photos/seed/${slug.replace(/[^a-z0-9]/g, '-')}-cover/800/450`
+const coverSrc = (slug: string) =>
+  slug === 'ia-para-devs' ? '/images/course-ia-para-devs.jpg' : null
 
 export function Catalog({ courses }: { courses: Course[] }) {
   return (
@@ -31,15 +31,21 @@ export function Catalog({ courses }: { courses: Course[] }) {
                 href={`/courses/${c.slug}`}
                 className="group block overflow-hidden rounded-[16px] border border-line bg-surface transition-all hover:-translate-y-0.5 hover:border-accent hover:shadow-pop active:scale-[0.99]"
               >
-                {/* Imagem real (placeholder foto, seed descritivo) — nunca div-fake */}
+                {/* Imagem real temática (foto de código, self-hosted) — nunca div-fake */}
                 <div className="relative aspect-[16/9] overflow-hidden bg-background-hover">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={coverSeed(c.slug)}
-                    alt={`Capa do curso ${c.title}`}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
+                  {coverSrc(c.slug) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={coverSrc(c.slug)!}
+                      alt={`Capa do curso ${c.title}`}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div className="grid h-full w-full place-items-center bg-accent-soft">
+                      <span className="text-sm font-semibold text-accent-strong">Em breve</span>
+                    </div>
+                  )}
                 </div>
                 <div className="p-6">
                   <span className="inline-block rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-strong">

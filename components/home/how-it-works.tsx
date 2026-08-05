@@ -49,13 +49,13 @@ export function HowItWorks() {
             </div>
           </div>
 
-          {/* Imagem editorial de apoio — foto real, não fake screenshot */}
+          {/* Imagem editorial de apoio — foto real de código, self-hosted */}
           <Reveal delay={150}>
             <div className="relative overflow-hidden rounded-[24px] border border-line">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://picsum.photos/seed/edu-coding-execute/1000/1200"
-                alt="Dev em um editor de código com um sandbox aberto ao lado"
+                src="/images/editor-sandbox.jpg"
+                alt="Editor de código aberto com um sandbox de execução ao lado"
                 loading="lazy"
                 className="h-full w-full object-cover"
               />
