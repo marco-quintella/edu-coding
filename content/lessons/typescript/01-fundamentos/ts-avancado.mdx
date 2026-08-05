@@ -1,0 +1,92 @@
+O TypeScript brilha nos **tipos avançados**: union types (`A | B`), narrowing (`typeof`) e generics (`<T>`). São as ferramentas que fazem o TS expressar "isso pode ser número OU string" e "essa função funciona com qualquer tipo".
+
+> **Por que importa?** Dados reais são incertos: uma API devolve `string | null`, um campo pode ser `number | undefined`. Union + narrowing é como o TS lida com a incerteza do mundo real — e generics é a pergunta de entrevista senior.
+
+## Union types: um OU outro
+
+```ts
+function formatar(valor: number | string): string {
+  if (typeof valor === "number") {
+    return valor.toFixed(2);       // narrowing: aqui é number
+  }
+  return valor.toUpperCase();      // aqui é string
+}
+
+console.log(formatar(3.14159));    // 3.14
+console.log(formatar("olá"));      // OLÁ
+```
+
+O `typeof` faz o **narrowing** — o TS sabe que dentro do if é number, dentro do else é string.
+
+## Union com literais
+
+```ts
+type Status = "ativo" | "inativo";
+let s: Status = "ativo";
+// s = "pausado";   // ERRO! não é um dos literais
+```
+
+## Generics: uma função, qualquer tipo
+
+```ts
+function primeiro<T>(lista: T[]): T | undefined {
+  return lista[0];
+}
+
+console.log(primeiro([1, 2, 3]));       // 1 (T = number)
+console.log(primeiro(["a", "b"]));      // "a" (T = string)
+console.log(primeiro([]));              // undefined
+```
+
+O `<T>` é um **placeholder de tipo**: a função funciona com qualquer tipo, e o TS **preserva** o tipo na chamada (não vira `any`).
+
+## Por que o mercado adotou?
+
+1. **Erros em dev, não em produção**
+2. **Refatorar com segurança** — o compilador acha todos os usos quebrados
+3. **Autocomplete** — o editor conhece seus dados
+4. **Documentação viva** — o tipo É a documentação
+
+## Exercício 1: formatador com union
+
+Implemente o formatador com narrowing.
+
+<Exercise
+  lessonSlug="ts-avancado"
+  codeKey="ts-ex1"
+  title="Formatador union"
+  expectedOutput="3.14"
+  hint="typeof valor === 'number' → toFixed(2). Else → toUpperCase()."
+/>
+
+## Exercício 2: todo tipado
+
+Busque um todo e valide os campos com a interface.
+
+<Exercise
+  lessonSlug="ts-avancado"
+  codeKey="ts-ex2"
+  title="Todo tipado"
+  expectedOutput="concluido: false"
+  hint="type Todo = { userId, id, title, completed }. await resposta.json() tipado com : Todo."
+/>
+
+## Mini-projeto: genérico
+
+Implemente primeiro<T> que devolve o primeiro item.
+
+<Exercise
+  lessonSlug="ts-avancado"
+  codeKey="ts-projeto"
+  title="Mini-projeto — genérico"
+  expectedOutput="a"
+  hint="function primeiro<T>(lista: T[]): T | undefined { return lista[0]; }. Com string[] devolve 'a'."
+/>
+
+## Resumo
+
+- **Union**: `number | string` — um OU outro
+- **Narrowing**: `typeof` dentro do if afunila o tipo
+- **Generics**: `<T>` preserva o tipo em funções genéricas
+- **T | undefined**: valor opcional (lista vazia)
+- TS = segurança de tipos em desenvolvimento

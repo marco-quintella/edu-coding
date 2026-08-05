@@ -1,0 +1,94 @@
+TypeScript é **JavaScript com tipos** — a evolução que o mercado inteiro adotou. Nesta lição você roda TypeScript de verdade no sandbox (Node 24 com type stripping): tipos básicos, anotações e type aliases.
+
+> **Por que importa?** TS é o padrão de facto em frontend (React/Next) e cresce no backend (Node). "TypeScript" aparece em ~40% das vagas de dev — e a pergunta "por que tipos?" é garantida em entrevista.
+
+## O problema que TS resolve
+
+```js
+// JavaScript: erro só em PRODUÇÃO
+function somar(a, b) {
+  return a + b;
+}
+somar("2", 3);   // "23" — concatenação silenciosa, bug invisível!
+```
+
+```ts
+// TypeScript: erro em DESENVOLVIMENTO
+function somar(a: number, b: number): number {
+  return a + b;
+}
+somar("2", 3);   // Erro de tipo ANTES de rodar
+```
+
+**A promessa do TS:** erros de tipo aparecem na hora de escrever, não às 3h da manhã em produção.
+
+## Tipos básicos
+
+```ts
+const nome: string = "Ana";
+const idade: number = 25;
+const ativo: boolean = true;
+const tags: string[] = ["dev", "python"];
+```
+
+## Type aliases
+
+```ts
+type Usuario = {
+  nome: string;
+  idade: number;
+  ativo: boolean;
+};
+
+const ana: Usuario = { nome: "Ana", idade: 25, ativo: true };
+```
+
+O `type` dá um **nome para uma forma de dado** — reutilizável em todo o código.
+
+## TS roda em algum lugar?
+
+TS é **compilado para JS** (o Node/browser roda JS). No sandbox usamos o type stripping do Node 24 — os tipos são "apagados" na hora de rodar. Os tipos NÃO existem em runtime.
+
+## Exercício 1: usuário tipado
+
+Crie o type Usuario e a instância.
+
+<Exercise
+  lessonSlug="ts-tipos"
+  codeKey="ts-ex1"
+  title="Usuário tipado"
+  expectedOutput="ativo: true"
+  hint="type Usuario = { nome: string; idade: number; ativo: boolean }. Instância com template literal."
+/>
+
+## Exercício 2: funções tipadas
+
+Tipar parâmetros e retorno de funções.
+
+<Exercise
+  lessonSlug="ts-tipos"
+  codeKey="ts-ex2"
+  title="Funções tipadas"
+  expectedOutput="Olá, Ana!"
+  hint="function somar(a: number, b: number): number. Retorno tipado."
+/>
+
+## Mini-projeto: status com union
+
+Use union type para status e arrays tipados.
+
+<Exercise
+  lessonSlug="ts-tipos"
+  codeKey="ts-projeto"
+  title="Mini-projeto — status"
+  expectedOutput="soma: 10"
+  hint="type Status = 'ativo' | 'inativo'. number[] com reduce. 1+2+3+4 = 10."
+/>
+
+## Resumo
+
+- **: number / : string / : boolean** — anotações de tipo
+- **T[]** — array de T
+- **type Alias = { ... }** — forma de dado nomeada
+- TS = JS + tipos em desenvolvimento (compilado para JS)
+- Erro de tipo em dev, não em produção

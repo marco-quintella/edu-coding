@@ -55,10 +55,12 @@ export async function execOnSandbox(
   const start = Date.now()
 
   try {
-    if (runtime === 'node') {
-      // Node: sem wrapper de plots — executa o JS direto
+    if (runtime === 'node' || runtime === 'ts') {
+      // Node/TS: sem wrapper de plots — executa o JS direto.
+      // TS usa type-stripping nativo do Node 24 (--experimental-strip-types).
+      const bin = runtime === 'ts' ? '/opt/node/bin/node --experimental-strip-types' : '/opt/node/bin/node'
       const { stdout, stderr } = await execAsync(
-        `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- /opt/node/bin/node -e ${shellQuote(code)}`,
+        `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- ${bin} -e ${shellQuote(code)}`,
         { maxBuffer: 1024 * 1024 }
       )
       return {

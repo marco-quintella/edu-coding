@@ -1,0 +1,107 @@
+Interfaces são o **contrato de forma** do TypeScript: "um objeto Produto DEVE ter id, nome e preco". É assim que o TS valida dados de API, parâmetros e objetos complexos — antes de virar bug.
+
+> **Por que importa?** Dados de API tipados = o compilador avisa se você acessar `produto.precu` (typo) ou esquecer um campo. É a proteção #1 em codebases grandes.
+
+## Interface: o contrato
+
+```ts
+interface Produto {
+  id: number;
+  nome: string;
+  preco: number;
+}
+
+const teclado: Produto = { id: 1, nome: "teclado", preco: 120 };
+// const quebrado: Produto = { id: 1, nome: "teclado" };  // ERRO! falta preco
+```
+
+**Interface = regra:** o objeto precisa ter exatamente aqueles campos (com os tipos certos).
+
+## Array de interfaces — dados de API
+
+```ts
+interface Produto {
+  id: number;
+  nome: string;
+  preco: number;
+}
+
+const produtos: Produto[] = [
+  { id: 1, nome: "teclado", preco: 120 },
+  { id: 2, nome: "mouse", preco: 60 },
+];
+
+console.log(produtos[0].nome);   // teclado — o TS garante que existe
+```
+
+**Este é o padrão de API tipada:** `interface` para a forma, `Produto[]` para a lista.
+
+## Tipando o fetch
+
+```ts
+type Todo = {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+};
+
+const resposta = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+const dados: Todo = await resposta.json();
+console.log(dados.title);   // TS conhece os campos!
+```
+
+O TS **não valida em runtime** — mas dá autocomplete e pega erros de campo em desenvolvimento.
+
+## Interface vs type
+
+```ts
+interface Usuario { nome: string }
+type Usuario = { nome: string }
+```
+
+Ambos funcionam para objetos. **Interface** é o tradicional (e extensível com `extends`); **type** é mais flexível (unions, etc.). Use interface para objetos de API.
+
+## Exercício 1: catálogo tipado
+
+Crie a interface Produto e o array.
+
+<Exercise
+  lessonSlug="ts-interfaces"
+  codeKey="ts-ex1"
+  title="Produtos tipados"
+  expectedOutput="mais caro: teclado"
+  hint="interface Produto { id, nome, preco }. reduce com comparador para o mais caro (120 vs 60 → teclado)."
+/>
+
+## Exercício 2: tipando fetch
+
+Use a interface Todo com o fetch.
+
+<Exercise
+  lessonSlug="ts-interfaces"
+  codeKey="ts-ex2"
+  title="Fetch tipado"
+  expectedOutput="concluido: false"
+  hint="type Todo = { userId, id, title, completed }. const dados: Todo = await resposta.json()."
+/>
+
+## Mini-projeto: formatador com union
+
+Formate número OU string de formas diferentes.
+
+<Exercise
+  lessonSlug="ts-interfaces"
+  codeKey="ts-projeto"
+  title="Mini-projeto — union"
+  expectedOutput="OLÁ"
+  hint="function formatar(valor: number | string): string. typeof discrimina: number → toFixed(2), string → toUpperCase()."
+/>
+
+## Resumo
+
+- **interface**: contrato de forma — campos obrigatórios e tipados
+- **T[]**: array de T — lista de objetos tipados
+- **fetch tipado**: `const dados: Todo = await resposta.json()`
+- **Union**: `number | string` + `typeof` para discriminar
+- TS valida em dev, não em runtime

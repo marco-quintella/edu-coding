@@ -11,6 +11,7 @@ import { AUTOMACAO_CODES } from '../automacao-codes'
 import { JS_CODES } from '../js-codes'
 import { REGEX_CODES } from '../regex-codes'
 import { OOP_CODES } from '../oop-codes'
+import { TS_CODES } from '../ts-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -222,6 +223,19 @@ const EXPECTED_SLUGS = [
   'oop-e-ex1',
   'oop-e-ex2',
   'oop-e-projeto',
+  // Curso TypeScript
+  'ts-tipos',
+  'ts-ex1',
+  'ts-ex2',
+  'ts-projeto',
+  'ts-interfaces',
+  'ts-i-ex1',
+  'ts-i-ex2',
+  'ts-i-projeto',
+  'ts-avancado',
+  'ts-a-ex1',
+  'ts-a-ex2',
+  'ts-a-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -334,6 +348,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é comentário/class em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|class |def )/)
+    }
+    // Códigos do curso TS começam com comentário, type ou const
+    for (const [slug, code] of Object.entries(TS_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário/type/const em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|\/\/|type |interface |const |function )/)
     }
   })
 

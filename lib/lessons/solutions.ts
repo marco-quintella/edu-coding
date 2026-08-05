@@ -1922,6 +1922,131 @@ c.depositar(500)
 print(f"titular: {c.titular}")
 print(f"saldo: R\${c.saldo:.0f}")`,
   },
+
+  // ── Curso TypeScript ───────────────────────────────────────
+  'ts-ex1': {
+    explanation:
+      'type alias nomeia a forma; a instância : Usuario valida os campos. Template literal com ${}.',
+    code: `type Usuario = {
+  nome: string;
+  idade: number;
+  ativo: boolean;
+};
+
+const ana: Usuario = { nome: "Ana", idade: 25, ativo: true };
+console.log(\`\${ana.nome} tem \${ana.idade} anos\`);
+console.log(\`ativo: \${ana.ativo}\`);`,
+  },
+  'ts-ex2': {
+    explanation:
+      'Parâmetros e retorno tipados: (a: number, b: number): number. Erro de tipo aparece em dev.',
+    code: `function somar(a: number, b: number): number {
+  return a + b;
+}
+
+function saudacao(nome: string): string {
+  return \`Olá, \${nome}!\`;
+}
+
+console.log(somar(2, 3));
+console.log(saudacao("Ana"));`,
+  },
+  'ts-projeto': {
+    explanation:
+      'Union literal: Status só aceita "ativo" ou "inativo". T[] tipa o array; reduce soma 1+2+3+4 = 10.',
+    code: `type Status = "ativo" | "inativo";
+
+const statuses: Status[] = ["ativo", "inativo", "ativo"];
+const numeros: number[] = [1, 2, 3, 4];
+
+console.log(\`statuses: \${statuses.length}\`);
+console.log(\`primeiro: \${statuses[0]}\`);
+console.log(\`soma: \${numeros.reduce((a, b) => a + b, 0)}\`);`,
+  },
+  'ts-i-ex1': {
+    explanation:
+      'interface define o contrato; Produto[] tipa a lista. reduce com comparador acha o mais caro (teclado, 120).',
+    code: `interface Produto {
+  id: number;
+  nome: string;
+  preco: number;
+}
+
+const produtos: Produto[] = [
+  { id: 1, nome: "teclado", preco: 120 },
+  { id: 2, nome: "mouse", preco: 60 },
+];
+
+console.log(\`produtos: \${produtos.length}\`);
+console.log(\`mais caro: \${produtos.reduce((a, b) => (b.preco > a.preco ? b : a)).nome}\`);`,
+  },
+  'ts-i-ex2': {
+    explanation:
+      'type Todo descreve a API; const dados: Todo tipa o JSON. TS conhece os campos (autocomplete + validação).',
+    code: `type Todo = {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+};
+
+const resposta = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+const dados: Todo = await resposta.json();
+console.log(\`titulo: \${dados.title}\`);
+console.log(\`concluido: \${dados.completed}\`);`,
+  },
+  'ts-i-projeto': {
+    explanation:
+      'Union number | string com narrowing: typeof discrimina. Número → toFixed(2), string → toUpperCase().',
+    code: `function formatar(valor: number | string): string {
+  if (typeof valor === "number") {
+    return valor.toFixed(2);
+  }
+  return valor.toUpperCase();
+}
+
+console.log(formatar(3.14159));
+console.log(formatar("olá"));`,
+  },
+  'ts-a-ex1': {
+    explanation:
+      'Narrowing com typeof: dentro do if o TS sabe que é number. 3.14 com toFixed(2).',
+    code: `function formatar(valor: number | string): string {
+  if (typeof valor === "number") {
+    return valor.toFixed(2);
+  }
+  return valor.toUpperCase();
+}
+
+console.log(formatar(3.14159));
+console.log(formatar("olá"));`,
+  },
+  'ts-a-ex2': {
+    explanation:
+      'Interface de API + fetch tipado: o compilador valida os campos do JSON devolvido.',
+    code: `type Todo = {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+};
+
+const resposta = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+const dados: Todo = await resposta.json();
+console.log(\`titulo: \${dados.title}\`);
+console.log(\`concluido: \${dados.completed}\`);`,
+  },
+  'ts-a-projeto': {
+    explanation:
+      'Genérico <T>: funciona com qualquer tipo preservando-o. [] devolve undefined (T | undefined).',
+    code: `function primeiro<T>(lista: T[]): T | undefined {
+  return lista[0];
+}
+
+console.log(primeiro([1, 2, 3]));
+console.log(primeiro(["a", "b", "c"]));
+console.log(primeiro([]));`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */
