@@ -1352,7 +1352,197 @@ const SQL_COURSE = {
   ],
 }
 
-const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE]
+/** Catálogo completo — adicione novos cursos aqui. */
+const GIT_COURSE = {
+  slug: 'git-github',
+  title: 'Git & GitHub na Prática',
+  description:
+    'Versionamento do jeito que as empresas usam: commits, branches, merges e remotos. O sandbox roda git de verdade.',
+  phases: [
+    {
+      slug: '01-fundamentos',
+      title: 'Fase 01 — Fundamentos do Git',
+      lessons: [
+        {
+          slug: 'git-commits',
+          title: 'Commits: o coração do versionamento',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que o comando git init faz?',
+              options: [
+                { id: 'a', text: 'Inicia um repositório git na pasta' },
+                { id: 'b', text: 'Cria o GitHub' },
+                { id: 'c', text: 'Faz o primeiro commit' },
+                { id: 'd', text: 'Deleta o projeto' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Qual a sequência para salvar mudanças?',
+              options: [
+                { id: 'a', text: 'add → commit' },
+                { id: 'b', text: 'commit → add' },
+                { id: 'c', text: 'push → add' },
+                { id: 'd', text: 'init → push' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que git status mostra?',
+              options: [
+                { id: 'a', text: 'O estado do working tree (modificados/não rastreados)' },
+                { id: 'b', text: 'O histórico de commits' },
+                { id: 'c', text: 'Os arquivos deletados' },
+                { id: 'd', text: 'A velocidade do disco' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Um arquivo aparece como "M" no status. O que significa?',
+              options: [
+                { id: 'a', text: 'Modificado (mudou desde o último commit)' },
+                { id: 'b', text: 'Movido para outra pasta' },
+                { id: 'c', text: 'Mesclado com outro branch' },
+                { id: 'd', text: 'Muito grande' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Por que um commit precisa de uma mensagem?',
+              options: [
+                { id: 'a', text: 'Para documentar O QUE mudou e POR QUÊ' },
+                { id: 'b', text: 'Para o GitHub aceitar' },
+                { id: 'c', text: 'É opcional, não precisa' },
+                { id: 'd', text: 'Para gerar o hash' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'git-branches',
+          title: 'Branches e Merges',
+          checkpoint: 'ml-base',
+          minutes: 40,
+          quiz: [
+            {
+              question: 'Para que serve um branch?',
+              options: [
+                { id: 'a', text: 'Trabalhar numa feature sem quebrar a main' },
+                { id: 'b', text: 'Apagar arquivos' },
+                { id: 'c', text: 'Acelerar o commit' },
+                { id: 'd', text: 'Criar usuários' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que git checkout -b feature faz?',
+              options: [
+                { id: 'a', text: 'Cria a branch feature e muda para ela' },
+                { id: 'b', text: 'Deleta a branch feature' },
+                { id: 'c', text: 'Faz merge da feature' },
+                { id: 'd', text: 'Renomeia para feature' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que o merge faz?',
+              options: [
+                { id: 'a', text: 'Junta as mudanças de uma branch na atual' },
+                { id: 'b', text: 'Separa as mudanças' },
+                { id: 'c', text: 'Apaga a branch' },
+                { id: 'd', text: 'Cria um novo repositório' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'Como ver em qual branch você está?',
+              options: [
+                { id: 'a', text: 'git branch (o * marca a atual)' },
+                { id: 'b', text: 'git commit' },
+                { id: 'c', text: 'git merge' },
+                { id: 'd', text: 'git status --branch' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que é um conflito de merge?',
+              options: [
+                { id: 'a', text: 'Duas branches mudaram o mesmo trecho de forma incompatível' },
+                { id: 'b', text: 'O disco está cheio' },
+                { id: 'c', text: 'O git não sabe qual mensagem usar' },
+                { id: 'd', text: 'Erro de rede no GitHub' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+        {
+          slug: 'git-remoto',
+          title: 'Remotos: GitHub e Push/Pull',
+          checkpoint: 'ml-base',
+          minutes: 35,
+          quiz: [
+            {
+              question: 'O que git clone faz?',
+              options: [
+                { id: 'a', text: 'Copia um repositório remoto para a máquina' },
+                { id: 'b', text: 'Cria um repositório vazio' },
+                { id: 'c', text: 'Apaga o repositório' },
+                { id: 'd', text: 'Faz backup do disco' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que git push faz?',
+              options: [
+                { id: 'a', text: 'Envia seus commits para o remoto' },
+                { id: 'b', text: 'Baixa os commits do remoto' },
+                { id: 'c', text: 'Cria um commit' },
+                { id: 'd', text: 'Inicia o repositório' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que git pull faz?',
+              options: [
+                { id: 'a', text: 'Baixa os commits do remoto e mescla' },
+                { id: 'b', text: 'Envia para o remoto' },
+                { id: 'c', text: 'Deleta o remoto' },
+                { id: 'd', text: 'Lista os remotos' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'O que é um repositório bare?',
+              options: [
+                { id: 'a', text: 'Um repo sem working tree — só o histórico (serve de "servidor")' },
+                { id: 'b', text: 'Um repo sem commits' },
+                { id: 'c', text: 'Um repo sem branches' },
+                { id: 'd', text: 'Um repo corrompido' },
+              ],
+              correctOptionId: 'a',
+            },
+            {
+              question: 'git remote -v mostra...',
+              options: [
+                { id: 'a', text: 'Os repositórios remotos configurados' },
+                { id: 'b', text: 'As versões do git' },
+                { id: 'c', text: 'Os arquivos remotos' },
+                { id: 'd', text: 'Os usuários online' },
+              ],
+              correctOptionId: 'a',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+const COURSES: Array<typeof COURSE> = [COURSE, PYTHON_COURSE, SQL_COURSE, GIT_COURSE]
 
 async function seed() {
   console.log('Limpando tabelas...')

@@ -1,0 +1,102 @@
+Git é o **sistema de versionamento que o mundo usa** — toda empresa, todo projeto open source. Nesta lição você roda **git de verdade** no sandbox: cria repositório, faz commits e entende o ciclo de vida dos arquivos. É a base para trabalhar em equipe (GitHub, GitLab, Bitbucket).
+
+> **Por que importa?** `git` aparece em 100% das vagas de desenvolvimento. E ao contrário do que parece, o núcleo é pequeno: init, add, commit, status, log. Domine esses 5 e você já trabalha.
+
+## O ciclo de vida de um arquivo
+
+```
+working tree (você edita) → staging (add) → repositório (commit)
+```
+
+1. **Working tree**: os arquivos no disco, onde você edita
+2. **Staging area** (index): arquivos "marcados" para o próximo commit
+3. **Repositório**: o histórico salvo (commits)
+
+```python
+import subprocess, os
+
+os.makedirs("/tmp/meuprojeto", exist_ok=True)
+os.chdir("/tmp/meuprojeto")
+
+# 1. Cria o repositório
+subprocess.run(["git", "init", "-q"], check=True)
+
+# Configuração de identidade (1x por máquina)
+subprocess.run(["git", "config", "user.email", "voce@email.com"], check=True)
+subprocess.run(["git", "config", "user.name", "Seu Nome"], check=True)
+
+# 2. Cria um arquivo e o adiciona ao staging
+with open("app.py", "w") as f:
+    f.write("print('ola')\n")
+subprocess.run(["git", "add", "."], check=True)
+
+# 3. Commit — salva no histórico
+subprocess.run(["git", "commit", "-q", "-m", "primeiro commit"], check=True)
+
+# 4. Estado atual (limpo = tudo commitado)
+subprocess.run(["git", "status"], check=True)
+```
+
+## git status: o painel de controle
+
+```python
+out = subprocess.run(["git", "status", "--short"], capture_output=True, text=True)
+print(out.stdout)
+# M app.py        → modificado (mudou desde o último commit)
+# ?? novo.py      → não rastreado (nunca foi commitado)
+# (vazio)         → working tree limpo
+```
+
+## Commits: o quê e o porquê
+
+Um commit é um **snapshot** do projeto com uma mensagem. A mensagem responde: *o que mudou? por quê?*
+
+```python
+subprocess.run(["git", "commit", "-q", "-m", "fix: corrige bug de login"])  # boa
+subprocess.run(["git", "commit", "-q", "-m", "a"])                          # ruim
+```
+
+## Exercício 1: seu primeiro commit
+
+Crie um repositório, commite um arquivo e verifique o subject do último commit.
+
+<Exercise
+  lessonSlug="git-commits"
+  codeKey="git-ex1"
+  title="Primeiro commit"
+  expectedOutput="ultimo commit: primeiro commit"
+  hint="git init → config user → criar arquivo → git add . → git commit -m 'primeiro commit'. Verifique com git log -1 --format=%s (o %s é o subject, determinístico)."
+/>
+
+## Exercício 2: detectando mudanças
+
+Depois do commit, altere o arquivo e veja o git status marcar a mudança.
+
+<Exercise
+  lessonSlug="git-commits"
+  codeKey="git-ex2"
+  title="Status com mudança"
+  expectedOutput="status: M a.txt"
+  hint="Crie a.txt com 'v1', commite, reescreva com 'v2' SEM commitar. git status --short mostra ' M a.txt'."
+/>
+
+## Mini-projeto: histórico de commits
+
+Faça 2 commits e confirme a contagem do histórico.
+
+<Exercise
+  lessonSlug="git-commits"
+  codeKey="git-projeto"
+  title="Mini-projeto — 2 commits"
+  expectedOutput="commits: 2"
+  hint="git rev-list --count HEAD conta os commits. Commit 1: a.txt; commit 2: b.txt."
+/>
+
+## Resumo
+
+- **git init**: cria o repositório
+- **git add**: working tree → staging
+- **git commit**: staging → histórico (com mensagem!)
+- **git status**: mostra o estado (M = modificado, ?? = não rastreado)
+- **git log**: histórico
+- Mensagens de commit: descrevem O QUE e POR QUÊ

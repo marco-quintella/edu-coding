@@ -661,6 +661,207 @@ cur.execute("""
 for nome, pedidos, total in cur.fetchall():
     print(f"{nome}: {pedidos} pedidos, R\${total:.0f}")`,
   },
+
+  // ── Curso Git & GitHub ─────────────────────────────────────
+  'git-ex1': {
+    explanation:
+      'git init cria o repo; add leva ao staging; commit salva no histórico. git log -1 --format=%s mostra só o subject — determinístico (o hash muda por timestamp).',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/repo1", ignore_errors=True)
+os.makedirs("/tmp/repo1", exist_ok=True)
+os.chdir("/tmp/repo1")
+subprocess.run(["git", "init", "-q"], check=True)
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("app.py", "w") as f:
+    f.write("print('ola')\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "primeiro commit"], check=True)
+out = subprocess.run(["git", "log", "-1", "--format=%s"], capture_output=True, text=True)
+print(f"ultimo commit: {out.stdout.strip()}")`,
+  },
+  'git-ex2': {
+    explanation:
+      'Depois do commit, reescrever o arquivo deixa o working tree sujo — git status --short mostra " M a.txt" (M = modified).',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/repo2", ignore_errors=True)
+os.makedirs("/tmp/repo2", exist_ok=True)
+os.chdir("/tmp/repo2")
+subprocess.run(["git", "init", "-q"], check=True)
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("a.txt", "w") as f:
+    f.write("v1\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "commit 1"], check=True)
+with open("a.txt", "w") as f:
+    f.write("v2\n")
+out = subprocess.run(["git", "status", "--short"], capture_output=True, text=True)
+print(f"status: {out.stdout.strip()}")`,
+  },
+  'git-projeto': {
+    explanation:
+      'git rev-list --count HEAD conta os commits da branch atual — 2 commits = "2". Sempre limpe o diretório antes (warm pool reutiliza o sandbox).',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/repo5", ignore_errors=True)
+os.makedirs("/tmp/repo5", exist_ok=True)
+os.chdir("/tmp/repo5")
+subprocess.run(["git", "init", "-q"], check=True)
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("a.txt", "w") as f:
+    f.write("1\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "commit 1"], check=True)
+with open("b.txt", "w") as f:
+    f.write("2\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "commit 2"], check=True)
+out = subprocess.run(["git", "rev-list", "--count", "HEAD"], capture_output=True, text=True)
+print(f"commits: {out.stdout.strip()}")`,
+  },
+  'git-b-ex1': {
+    explanation:
+      'git checkout -b feature cria a branch e muda para ela. O branch padrão deste git é "master" (não "main") — importante para os testes.',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/repo3", ignore_errors=True)
+os.makedirs("/tmp/repo3", exist_ok=True)
+os.chdir("/tmp/repo3")
+subprocess.run(["git", "init", "-q"], check=True)
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("app.py", "w") as f:
+    f.write("base\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "base"], check=True)
+subprocess.run(["git", "checkout", "-q", "-b", "feature"], check=True)
+with open("app.py", "a") as f:
+    f.write("feature\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "feature work"], check=True)
+out = subprocess.run(["git", "log", "-1", "--format=%s"], capture_output=True, text=True)
+print(f"HEAD: {out.stdout.strip()}")`,
+  },
+  'git-b-ex2': {
+    explanation:
+      'Merge integra a branch na atual: checkout master + merge feature. O arquivo final tem "base" + "feature". --no-edit evita abrir editor.',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/repo4", ignore_errors=True)
+os.makedirs("/tmp/repo4", exist_ok=True)
+os.chdir("/tmp/repo4")
+subprocess.run(["git", "init", "-q"], check=True)
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("app.py", "w") as f:
+    f.write("base\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "base"], check=True)
+subprocess.run(["git", "checkout", "-q", "-b", "feature"], check=True)
+with open("app.py", "a") as f:
+    f.write("feature\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "feature work"], check=True)
+subprocess.run(["git", "checkout", "-q", "master"], check=True)
+subprocess.run(["git", "merge", "-q", "--no-edit", "feature"], check=True)
+print(open("app.py").read().strip())`,
+  },
+  'git-b-projeto': {
+    explanation:
+      'Workflow completo: base (1 commit) + feature (2 commits) = 3 commits após o merge (fast-forward). rev-list --count confirma.',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/repo6", ignore_errors=True)
+os.makedirs("/tmp/repo6", exist_ok=True)
+os.chdir("/tmp/repo6")
+subprocess.run(["git", "init", "-q"], check=True)
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("app.py", "w") as f:
+    f.write("base\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "base"], check=True)
+subprocess.run(["git", "checkout", "-q", "-b", "feature"], check=True)
+with open("f1.txt", "w") as f:
+    f.write("1\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "feat 1"], check=True)
+with open("f2.txt", "w") as f:
+    f.write("2\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "feat 2"], check=True)
+subprocess.run(["git", "checkout", "-q", "master"], check=True)
+subprocess.run(["git", "merge", "-q", "--no-edit", "feature"], check=True)
+out = subprocess.run(["git", "rev-list", "--count", "HEAD"], capture_output=True, text=True)
+print(f"total: {out.stdout.strip()}")`,
+  },
+  'git-r-ex1': {
+    explanation:
+      'Repo bare (--bare) é o "servidor" sem working tree. Clone → commit → push -u origin HEAD. O HEAD no push evita o problema do branch vazio.',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/origem2", ignore_errors=True)
+os.makedirs("/tmp/origem2", exist_ok=True)
+os.chdir("/tmp/origem2")
+subprocess.run(["git", "init", "-q", "--bare"], check=True)
+os.chdir("/tmp")
+shutil.rmtree("meu_clone2", ignore_errors=True)
+subprocess.run(["git", "clone", "-q", "/tmp/origem2", "meu_clone2"], check=True)
+os.chdir("/tmp/meu_clone2")
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("README.md", "w") as f:
+    f.write("# Projeto\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "readme"], check=True)
+subprocess.run(["git", "push", "-q", "-u", "origin", "HEAD"], check=True)
+out = subprocess.run(["git", "log", "-1", "--format=%s"], capture_output=True, text=True)
+print(f"enviado: {out.stdout.strip()}")`,
+  },
+  'git-r-ex2': {
+    explanation:
+      'git remote -v lista os remotos: "origin  <caminho>  (fetch)". A primeira palavra da primeira linha é o nome — origin.',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/origem3", ignore_errors=True)
+os.makedirs("/tmp/origem3", exist_ok=True)
+os.chdir("/tmp/origem3")
+subprocess.run(["git", "init", "-q", "--bare"], check=True)
+os.chdir("/tmp")
+shutil.rmtree("clone_x", ignore_errors=True)
+subprocess.run(["git", "clone", "-q", "/tmp/origem3", "clone_x"], check=True)
+os.chdir("/tmp/clone_x")
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+with open("README.md", "w") as f:
+    f.write("# Projeto\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "readme"], check=True)
+subprocess.run(["git", "push", "-q", "-u", "origin", "HEAD"], check=True)
+out = subprocess.run(["git", "remote", "-v"], capture_output=True, text=True)
+print(out.stdout.strip().split("\n")[0].split()[0])`,
+  },
+  'git-r-projeto': {
+    explanation:
+      'Trabalho em equipe: dev A push no bare; dev B clona e o arquivo já vem. O pull implícito do clone traz o trabalho do time.',
+    code: `import subprocess, os, shutil
+shutil.rmtree("/tmp/origem4", ignore_errors=True)
+os.makedirs("/tmp/origem4", exist_ok=True)
+os.chdir("/tmp/origem4")
+subprocess.run(["git", "init", "-q", "--bare"], check=True)
+os.chdir("/tmp")
+shutil.rmtree("dev_a", ignore_errors=True)
+subprocess.run(["git", "clone", "-q", "/tmp/origem4", "dev_a"], check=True)
+os.chdir("/tmp/dev_a")
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "DevA"], check=True)
+with open("shared.txt", "w") as f:
+    f.write("codigo do time\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "shared"], check=True)
+subprocess.run(["git", "push", "-q", "-u", "origin", "HEAD"], check=True)
+os.chdir("/tmp")
+shutil.rmtree("dev_b", ignore_errors=True)
+subprocess.run(["git", "clone", "-q", "/tmp/origem4", "dev_b"], check=True)
+os.chdir("/tmp/dev_b")
+print(f"arquivo: {'shared.txt' if os.path.exists('shared.txt') else 'faltando'}")`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

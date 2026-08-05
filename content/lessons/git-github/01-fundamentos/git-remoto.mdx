@@ -1,0 +1,98 @@
+Local não basta — **o valor do git aparece quando você colabora**: subir o código para o GitHub, clonar em outra máquina, receber mudanças. Nesta lição você trabalha com **remotos de verdade** no sandbox: um repositório `bare` faz o papel do GitHub, e você faz clone, push e pull.
+
+> **Por que importa?** GitHub é seu portfólio e sua cola de emprego. O fluxo clone → editar → push é o que você fará TODO dia na indústria.
+
+## O modelo: local + remoto
+
+```
+sua máquina (clone)          "servidor" (remoto/bare)
+   working tree   ──push──▶    histórico
+   histórico      ◀──pull──    histórico
+```
+
+O GitHub (ou GitLab/Bitbucket) é só um **repositório remoto** — um git igual ao seu, acessível pela rede. Um repositório **bare** (`--bare`) é um git sem working tree: só o histórico. Perfeito para o papel de "servidor".
+
+## Clone, push e pull
+
+```python
+import subprocess, os, shutil
+
+# Cria o "servidor" (repo bare)
+os.makedirs("/tmp/origem", exist_ok=True)
+os.chdir("/tmp/origem")
+subprocess.run(["git", "init", "-q", "--bare"], check=True)
+
+# Clona na "máquina do dev"
+os.chdir("/tmp")
+subprocess.run(["rm", "-rf", "meu_clone"], check=True)
+subprocess.run(["git", "clone", "-q", "/tmp/origem", "meu_clone"], check=True)
+os.chdir("/tmp/meu_clone")
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+
+# Trabalha e envia
+with open("README.md", "w") as f:
+    f.write("# Projeto\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "readme"], check=True)
+subprocess.run(["git", "push", "-q", "-u", "origin", "HEAD"], check=True)
+
+# O remoto está configurado
+subprocess.run(["git", "remote", "-v"], check=True)
+```
+
+## O fluxo do dia a dia
+
+```python
+# 1. Baixar as mudanças dos outros
+subprocess.run(["git", "pull", "-q"], check=True)
+
+# 2. Trabalhar localmente
+# 3. Enviar
+subprocess.run(["git", "push", "-q"], check=True)
+```
+
+## Exercício 1: clone + push
+
+Clone o repositório "remoto", crie um commit e envie. Verifique o subject enviado e o status limpo.
+
+<Exercise
+  lessonSlug="git-remoto"
+  codeKey="git-ex1"
+  title="Clone e push"
+  expectedOutput="enviado: readme"
+  hint="git init --bare (servidor) → git clone → commit → git push -u origin HEAD. Verifique com git log -1 --format=%s."
+/>
+
+## Exercício 2: remoto configurado
+
+Depois do clone e push, confirme que o remoto `origin` aponta para o servidor.
+
+<Exercise
+  lessonSlug="git-remoto"
+  codeKey="git-ex2"
+  title="Remoto origin"
+  expectedOutput="origin"
+  hint="git remote -v mostra 'origin  /tmp/...  (fetch)'. A primeira palavra da primeira linha é o nome do remoto."
+/>
+
+## Mini-projeto: pull do trabalho do time
+
+Simule o trabalho em equipe: dev A faz push de um arquivo; dev B (outro clone) faz pull e vê o arquivo aparecer.
+
+<Exercise
+  lessonSlug="git-remoto"
+  codeKey="git-projeto"
+  title="Mini-projeto — pull em equipe"
+  expectedOutput="arquivo: shared.txt"
+  hint="Dois clones do mesmo bare. Clone A commita e faz push; clone B faz pull e lê o arquivo."
+/>
+
+## Resumo
+
+- **git clone**: copia um remoto para a máquina
+- **git push**: envia commits locais → remoto
+- **git pull**: baixa commits do remoto e mescla
+- **git remote -v**: lista os remotos configurados
+- **Repo bare**: git "servidor" sem working tree
+- GitHub = um remoto acessível pela rede

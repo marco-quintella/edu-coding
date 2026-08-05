@@ -7,6 +7,7 @@
  */
 import { PYTHON_CODES } from './python-codes'
 import { SQL_CODES } from './sql-codes'
+import { GIT_CODES } from './git-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1126,6 +1127,7 @@ export function getInitialCode(lessonSlug: string): string {
   return (
     PYTHON_CODES[lessonSlug] ??
     SQL_CODES[lessonSlug] ??
+    GIT_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

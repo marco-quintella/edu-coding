@@ -1,0 +1,103 @@
+Trabalhar direto na `master` é a receita do caos — **branches** permitem desenvolver features em paralelo sem quebrar o que está funcionando. Nesta lição você cria branches, navega entre elas e faz merges, tudo com git real no sandbox.
+
+> **Por que importa?** O fluxo de trabalho da indústria: cada feature/bugfix numa branch própria → review → merge. É assim que times de 5 a 500 devs colaboram sem pisar nos pés.
+
+## O que é uma branch
+
+Uma branch é um **ponteiro para um commit** + o histórico à frente dele. Criar uma branch = "a partir daqui, meu trabalho segue outro caminho".
+
+```python
+import subprocess, os, shutil
+
+shutil.rmtree("/tmp/repo", ignore_errors=True)
+os.makedirs("/tmp/repo", exist_ok=True)
+os.chdir("/tmp/repo")
+subprocess.run(["git", "init", "-q"], check=True)
+subprocess.run(["git", "config", "user.email", "a@b.c"], check=True)
+subprocess.run(["git", "config", "user.name", "Aluno"], check=True)
+
+# Commit base
+with open("app.py", "w") as f:
+    f.write("base\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "base"], check=True)
+
+# Cria a branch feature e muda para ela
+subprocess.run(["git", "checkout", "-q", "-b", "feature"], check=True)
+
+# Trabalho na feature
+with open("app.py", "a") as f:
+    f.write("feature\n")
+subprocess.run(["git", "add", "."], check=True)
+subprocess.run(["git", "commit", "-q", "-m", "feature work"], check=True)
+
+# Ver as branches (o * marca a atual)
+subprocess.run(["git", "branch"], check=True)
+```
+
+## Voltando para a master
+
+```python
+subprocess.run(["git", "checkout", "-q", "master"], check=True)
+# O arquivo "volta" ao estado da master — a feature fica guardada na branch
+```
+
+## Merge: juntando o trabalho
+
+```python
+# Na master, integra a branch feature
+subprocess.run(["git", "checkout", "-q", "master"], check=True)
+subprocess.run(["git", "merge", "-q", "--no-edit", "feature"], check=True)
+
+# Agora a master tem o trabalho da feature
+print(open("app.py").read())   # base + feature
+```
+
+## Conflitos: quando o merge trava
+
+Um conflito acontece quando **duas branches mudaram o mesmo trecho de forma incompatível** — o git não decide por você, marca o conflito com `<<<<<<<` e `>>>>>>>` e pede resolução manual.
+
+## Exercício 1: sua primeira branch
+
+Crie uma branch `feature`, faça um commit nela e verifique as branches existentes.
+
+<Exercise
+  lessonSlug="git-branches"
+  codeKey="git-ex1"
+  title="Branch feature"
+  expectedOutput="feature work"
+  hint="git checkout -b feature → altera → commit. git branch lista (o * marca a atual). git log -1 --format=%s mostra 'feature work'."
+/>
+
+## Exercício 2: merge na prática
+
+Crie a branch feature, trabalhe nela, volte para a master e faça o merge. O arquivo deve ter o conteúdo final.
+
+<Exercise
+  lessonSlug="git-branches"
+  codeKey="git-ex2"
+  title="Merge da feature"
+  expectedOutput="base\nfeature"
+  hint="checkout -b feature → append 'feature' → commit → checkout master → merge --no-edit feature. Leia o arquivo: 'base' + 'feature'."
+/>
+
+## Mini-projeto: workflow completo
+
+Simule o fluxo de produção: branch feature → 2 commits → merge na master → verifique a contagem final.
+
+<Exercise
+  lessonSlug="git-branches"
+  codeKey="git-projeto"
+  title="Mini-projeto — workflow"
+  expectedOutput="total: 3"
+  hint="base (1) + feature com 2 commits = 3 commits na master após merge. git rev-list --count HEAD."
+/>
+
+## Resumo
+
+- **git branch**: lista branches (* = atual)
+- **git checkout -b nome**: cria e muda para a branch
+- **git checkout master**: volta para a master
+- **git merge feature**: integra a feature na branch atual
+- **Conflito**: mesmo trecho mudado de formas incompatíveis → resolve na mão
+- Regra: nunca trabalhar direto na master

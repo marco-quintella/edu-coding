@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { INITIAL_CODES, getInitialCode } from '../initial-codes'
 import { PYTHON_CODES } from '../python-codes'
 import { SQL_CODES } from '../sql-codes'
+import { GIT_CODES } from '../git-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -96,6 +97,19 @@ const EXPECTED_SLUGS = [
   'sql-joins-ex1',
   'sql-joins-ex2',
   'sql-joins-projeto',
+  // Curso Git & GitHub
+  'git-commits',
+  'git-ex1',
+  'git-ex2',
+  'git-projeto',
+  'git-branches',
+  'git-b-ex1',
+  'git-b-ex2',
+  'git-b-projeto',
+  'git-remoto',
+  'git-r-ex1',
+  'git-r-ex2',
+  'git-r-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -131,6 +145,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso SQL começam com import sqlite3
     for (const [slug, code] of Object.entries(SQL_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Git usam subprocess (import no topo)
+    for (const [slug, code] of Object.entries(GIT_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,
