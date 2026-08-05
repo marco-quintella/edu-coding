@@ -2047,6 +2047,246 @@ console.log(primeiro([1, 2, 3]));
 console.log(primeiro(["a", "b", "c"]));
 console.log(primeiro([]));`,
   },
+
+  // ── Curso Backend Node ─────────────────────────────────────
+  'node-ex1': {
+    explanation:
+      'createServer registra o callback; writeHead define status+headers; end envia o corpo. Fetch local valida.',
+    code: `const http = require("http");
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ mensagem: "olá mundo" }));
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/");
+  const d = await r.json();
+  console.log(\`status: \${r.status}\`);
+  console.log(\`mensagem: \${d.mensagem}\`);
+  server.close();
+});`,
+  },
+  'node-ex2': {
+    explanation:
+      'if (req.url === "/") responde 200; senão 404 com JSON. O fetch local testa as duas rotas.',
+    code: `const http = require("http");
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ rota: "raiz" }));
+  } else {
+    res.writeHead(404, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ erro: "nao encontrado" }));
+  }
+});
+
+server.listen(3001, async () => {
+  const ok = await fetch("http://localhost:3001/");
+  const falta = await fetch("http://localhost:3001/x");
+  console.log(\`raiz: \${ok.status}\`);
+  console.log(\`404: \${falta.status}\`);
+  server.close();
+});`,
+  },
+  'node-projeto': {
+    explanation:
+      'Cadeia if/else por req.url — o roteador manual. /saude devolve { status: "ok" }.',
+    code: `const http = require("http");
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  if (req.url === "/") res.end(JSON.stringify({ rota: "raiz" }));
+  else if (req.url === "/saude") res.end(JSON.stringify({ status: "ok" }));
+  else res.end(JSON.stringify({ rota: req.url }));
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/saude");
+  const d = await r.json();
+  console.log(\`status: \${r.status}\`);
+  console.log(\`saude: \${d.status}\`);
+  server.close();
+});`,
+  },
+  'node-a-ex1': {
+    explanation:
+      'GET /usuarios devolve o array com JSON.stringify. O cliente itera e lê dados.length e dados[0].',
+    code: `const http = require("http");
+
+const usuarios = [
+  { id: 1, nome: "Ana" },
+  { id: 2, nome: "Bob" },
+];
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/usuarios" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(usuarios));
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/usuarios");
+  const dados = await r.json();
+  console.log(\`status: \${r.status}\`);
+  console.log(\`usuarios: \${dados.length}\`);
+  console.log(\`primeiro: \${dados[0].nome}\`);
+  server.close();
+});`,
+  },
+  'node-a-ex2': {
+    explanation:
+      'Regex extrai o id da URL; Number converte; find procura. 404 se não existe — o padrão REST.',
+    code: `const http = require("http");
+
+const usuarios = [
+  { id: 1, nome: "Ana" },
+  { id: 2, nome: "Bob" },
+];
+
+const server = http.createServer((req, res) => {
+  const m = req.url.match(/^\/usuarios\/(\d+)$/);
+  if (m) {
+    const id = Number(m[1]);
+    const u = usuarios.find((x) => x.id === id);
+    if (u) {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(u));
+    } else {
+      res.writeHead(404);
+      res.end(JSON.stringify({ erro: "usuario nao existe" }));
+    }
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/usuarios/2");
+  const d = await r.json();
+  console.log(\`status: \${r.status}\`);
+  console.log(\`nome: \${d.nome}\`);
+  server.close();
+});`,
+  },
+  'node-a-projeto': {
+    explanation:
+      'Rotas /produtos (lista) e /produtos/3 (item). O cliente busca as duas e compara.',
+    code: `const http = require("http");
+
+const produtos = [
+  { id: 1, nome: "teclado", preco: 120 },
+  { id: 2, nome: "mouse", preco: 60 },
+  { id: 3, nome: "monitor", preco: 800 },
+];
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  if (req.url === "/produtos") {
+    res.end(JSON.stringify(produtos));
+  } else if (req.url === "/produtos/3") {
+    res.end(JSON.stringify(produtos[2]));
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/produtos");
+  const todos = await r.json();
+  const p = await (await fetch("http://localhost:3001/produtos/3")).json();
+  console.log(\`produtos: \${todos.length}\`);
+  console.log(\`mais caro: \${p.nome}\`);
+  server.close();
+});`,
+  },
+  'node-e-ex1': {
+    explanation:
+      'Erro padronizado: 500 + { erro: "..." }. O cliente lê o JSON de erro sem quebrar.',
+    code: `const http = require("http");
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/ok") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ok: true }));
+  } else {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ erro: "erro interno" }));
+  }
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/erro");
+  const d = await r.json();
+  console.log(\`status: \${r.status}\`);
+  console.log(\`erro: \${d.erro}\`);
+  server.close();
+});`,
+  },
+  'node-e-ex2': {
+    explanation:
+      'O corpo chega em pedaços (data); no end juntamos e parseamos. POST com fetch + body JSON.',
+    code: `const http = require("http");
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/echo" && req.method === "POST") {
+    let corpo = "";
+    req.on("data", (chunk) => (corpo += chunk));
+    req.on("end", () => {
+      const dados = JSON.parse(corpo);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ recebido: dados.nome }));
+    });
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/echo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome: "Ana" }),
+  });
+  const d = await r.json();
+  console.log(\`status: \${r.status}\`);
+  console.log(\`recebido: \${d.recebido}\`);
+  server.close();
+});`,
+  },
+  'node-e-projeto': {
+    explanation:
+      'Query string extraída por regex; Number converte; soma. 400 para uso errado.',
+    code: `const http = require("http");
+
+const server = http.createServer((req, res) => {
+  const m = req.url.match(/^\/soma\?a=(\d+)&b=(\d+)$/);
+  if (m) {
+    const resultado = Number(m[1]) + Number(m[2]);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ resultado }));
+  } else {
+    res.writeHead(400, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ erro: "use /soma?a=1&b=2" }));
+  }
+});
+
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/soma?a=10&b=5");
+  const d = await r.json();
+  console.log(\`status: \${r.status}\`);
+  console.log(\`resultado: \${d.resultado}\`);
+  server.close();
+});`,
+  },
 }
 
 /** Busca a solução de um exercício (retorna null se não houver). */

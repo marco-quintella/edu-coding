@@ -1,0 +1,95 @@
+Uma **API REST** é um servidor que expõe dados via URLs (`/usuarios`, `/produtos`) e métodos HTTP (GET, POST). Nesta lição você constrói uma API de verdade: listas, busca por id e parâmetros de URL.
+
+> **Por que importa?** Backend profissional = API REST. Saber expor dados por URL com os status certos é a habilidade central de qualquer vaga backend.
+
+## GET /usuarios — listar
+
+```js
+const usuarios = [
+  { id: 1, nome: "Ana" },
+  { id: 2, nome: "Bob" },
+];
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/usuarios" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(usuarios));   // a lista inteira
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+```
+
+## GET /usuarios/:id — buscar um
+
+```js
+const m = req.url.match(/^\/usuarios\/(\d+)$/);
+if (m) {
+  const id = Number(m[1]);   // "2" → 2
+  const u = usuarios.find((x) => x.id === id);
+
+  if (u) {
+    res.writeHead(200);
+    res.end(JSON.stringify(u));          // 200 + o usuário
+  } else {
+    res.writeHead(404);
+    res.end(JSON.stringify({ erro: "usuario nao existe" }));
+  }
+}
+```
+
+O `regex` extrai o id da URL; `find` procura no array; 404 se não existe.
+
+## Métodos HTTP
+
+| Método | Ação | Status típico |
+|---|---|---|
+| GET | ler | 200 |
+| POST | criar | 201 |
+| PUT | atualizar | 200 |
+| DELETE | remover | 200/204 |
+
+## Exercício 1: API de usuários
+
+Liste os usuários com status 200.
+
+<Exercise
+  lessonSlug="node-api-rest"
+  codeKey="node-ex1"
+  title="Lista de usuários"
+  expectedOutput="primeiro: Ana"
+  hint="req.url === '/usuarios' → res.end(JSON.stringify(usuarios)). Fetch e itere."
+/>
+
+## Exercício 2: buscar por id
+
+Extraia o id da URL e ache o usuário.
+
+<Exercise
+  lessonSlug="node-api-rest"
+  codeKey="node-ex2"
+  title="Busca por id"
+  expectedOutput="nome: Bob"
+  hint="req.url.match(/^\\/usuarios\\/(\\d+)$/); Number(m[1]); usuarios.find((x) => x.id === id)."
+/>
+
+## Mini-projeto: API de produtos
+
+Exponha /produtos e /produtos/3.
+
+<Exercise
+  lessonSlug="node-api-rest"
+  codeKey="node-projeto"
+  title="Mini-projeto — produtos"
+  expectedOutput="mais caro: monitor"
+  hint="/produtos devolve o array; /produtos/3 devolve produtos[2] (monitor, R$800)."
+/>
+
+## Resumo
+
+- **API REST** = URLs + métodos HTTP + JSON
+- **req.method**: GET/POST/... · **req.url**: caminho
+- **Regex + find**: extrair id e buscar — o padrão REST
+- **404** para recurso inexistente
+- **JSON.stringify** para enviar · **JSON.parse** para receber

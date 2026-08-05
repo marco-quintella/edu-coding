@@ -12,6 +12,7 @@ import { JS_CODES } from '../js-codes'
 import { REGEX_CODES } from '../regex-codes'
 import { OOP_CODES } from '../oop-codes'
 import { TS_CODES } from '../ts-codes'
+import { BACKEND_CODES } from '../backend-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -236,6 +237,19 @@ const EXPECTED_SLUGS = [
   'ts-a-ex1',
   'ts-a-ex2',
   'ts-a-projeto',
+  // Curso Backend Node
+  'node-servidor',
+  'node-ex1',
+  'node-ex2',
+  'node-projeto',
+  'node-api-rest',
+  'node-a-ex1',
+  'node-a-ex2',
+  'node-a-projeto',
+  'node-erros',
+  'node-e-ex1',
+  'node-e-ex2',
+  'node-e-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -356,6 +370,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é comentário/type/const em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|\/\/|type |interface |const |function )/)
+    }
+    // Códigos do curso Backend começam com comentário ou const
+    for (const [slug, code] of Object.entries(BACKEND_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário/const em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|\/\/|const |let )/)
     }
   })
 

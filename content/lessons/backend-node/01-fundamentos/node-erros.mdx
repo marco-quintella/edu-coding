@@ -1,0 +1,88 @@
+Backend real lida com **entrada do cliente**: corpo de POST, query strings e erros. Nesta lição você domina o que falta para uma API completa: ler o corpo, parsear JSON, padronizar erros e usar parâmetros de query.
+
+> **Por que importa?** O frontend manda dados no corpo (POST), filtros na query (`?a=10`) — e o backend precisa responder erros de forma consistente para o app tratar.
+
+## Lendo o corpo (POST)
+
+```js
+const server = http.createServer((req, res) => {
+  if (req.url === "/echo" && req.method === "POST") {
+    let corpo = "";
+    req.on("data", (chunk) => (corpo += chunk));   // pedaços chegam
+    req.on("end", () => {
+      const dados = JSON.parse(corpo);             // string → objeto
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ recebido: dados.nome }));
+    });
+  }
+});
+```
+
+O corpo chega **em pedaços** (eventos `data`); juntamos tudo e só no `end` temos o corpo completo.
+
+## Erros padronizados
+
+```js
+// Sempre JSON, sempre com o campo "erro"
+res.writeHead(404, { "Content-Type": "application/json" });
+res.end(JSON.stringify({ erro: "nao encontrado" }));
+```
+
+**Regra:** frontend trata `{ erro: "..." }` — consistência é o que importa.
+
+## Query strings
+
+```js
+// /soma?a=10&b=5
+const m = req.url.match(/^\/soma\?a=(\d+)&b=(\d+)$/);
+if (m) {
+  const resultado = Number(m[1]) + Number(m[2]);
+  res.end(JSON.stringify({ resultado }));
+}
+```
+
+A query string são **parâmetros extras** depois do `?` — separados por `&`.
+
+## Exercício 1: erro padronizado
+
+Responda 500 com JSON de erro.
+
+<Exercise
+  lessonSlug="node-erros"
+  codeKey="node-ex1"
+  title="Erro 500"
+  expectedOutput="erro: erro interno"
+  hint="res.writeHead(500) + res.end(JSON.stringify({ erro: 'erro interno' }))."
+/>
+
+## Exercício 2: lendo o corpo do POST
+
+Leia o corpo e ecoe o campo nome.
+
+<Exercise
+  lessonSlug="node-erros"
+  codeKey="node-ex2"
+  title="POST echo"
+  expectedOutput="recebido: Ana"
+  hint="req.on('data') acumula; req.on('end') → JSON.parse(corpo).nome."
+/>
+
+## Mini-projeto: calculadora via API
+
+Some os parâmetros da query string.
+
+<Exercise
+  lessonSlug="node-erros"
+  codeKey="node-projeto"
+  title="Mini-projeto — soma"
+  expectedOutput="resultado: 15"
+  hint="match /^\\/soma\\?a=(\\d+)&b=(\\d+)$/; Number(m[1]) + Number(m[2]). 10+5 = 15."
+/>
+
+## Resumo
+
+- **Corpo**: `req.on('data')` acumula · `req.on('end')` processa · `JSON.parse`
+- **Erro padronizado**: `{ erro: "..." }` + status certo
+- **Query string**: parâmetros após `?`, separados por `&`
+- **500** = erro interno · **400** = requisição inválida
+- Consistência de erros = frontend feliz

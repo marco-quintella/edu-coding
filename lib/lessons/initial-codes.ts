@@ -17,6 +17,7 @@ import { JS_CODES } from './js-codes'
 import { REGEX_CODES } from './regex-codes'
 import { OOP_CODES } from './oop-codes'
 import { TS_CODES } from './ts-codes'
+import { BACKEND_CODES } from './backend-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1146,6 +1147,7 @@ export function getInitialCode(lessonSlug: string): string {
     REGEX_CODES[lessonSlug] ??
     OOP_CODES[lessonSlug] ??
     TS_CODES[lessonSlug] ??
+    BACKEND_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

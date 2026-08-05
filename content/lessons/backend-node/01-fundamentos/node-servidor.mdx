@@ -1,0 +1,91 @@
+Todo site que você usa tem um **servidor HTTP** atrás — um programa que escuta requisições e devolve respostas. Nesta lição você cria o seu **de verdade** com o `http` nativo do Node, e testa com um cliente real.
+
+> **Por que importa?** "Como funciona um servidor?" é a pergunta fundacional de backend. E mesmo sem frameworks, o `http` do Node já faz tudo: rotas, status codes e JSON.
+
+## O servidor mínimo
+
+```js
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ mensagem: "olá mundo" }));
+});
+
+server.listen(3001, () => {
+  console.log("servidor rodando em :3001");
+});
+```
+
+O que acontece:
+1. `http.createServer(callback)` — cria o servidor
+2. O **callback roda a cada requisição**: recebe `req` e controla `res`
+3. `res.writeHead(200, headers)` — status + headers
+4. `res.end(dados)` — envia o corpo e encerra
+5. `server.listen(porta)` — começa a escutar
+
+## O ciclo de uma requisição
+
+```
+Cliente (fetch) ──GET /──▶ Servidor
+                           │ callback(req, res)
+Cliente ◀── status 200 + JSON ── res.end(...)
+```
+
+## Testando com fetch
+
+No sandbox, o próprio código faz um fetch local para testar:
+
+```js
+server.listen(3001, async () => {
+  const r = await fetch("http://localhost:3001/");
+  const d = await r.json();
+  console.log(`status: ${r.status}`);      // 200
+  console.log(`mensagem: ${d.mensagem}`);  // olá mundo
+  server.close();   // fecha para o programa terminar
+});
+```
+
+## Exercício 1: primeiro servidor
+
+Crie o servidor e teste com fetch.
+
+<Exercise
+  lessonSlug="node-servidor"
+  codeKey="node-ex1"
+  title="Servidor mínimo"
+  expectedOutput="mensagem: olá mundo"
+  hint="http.createServer((req, res) => ...); res.end(JSON.stringify({ mensagem: 'olá mundo' }))."
+/>
+
+## Exercício 2: rotas com 404
+
+Responda 200 na raiz e 404 em rotas inexistentes.
+
+<Exercise
+  lessonSlug="node-servidor"
+  codeKey="node-ex2"
+  title="Rotas e 404"
+  expectedOutput="404: 404"
+  hint="if (req.url === '/') → 200; else → res.writeHead(404) com JSON de erro."
+/>
+
+## Mini-projeto: servidor com 3 rotas
+
+Crie rotas /, /saude e fallback.
+
+<Exercise
+  lessonSlug="node-servidor"
+  codeKey="node-projeto"
+  title="Mini-projeto — 3 rotas"
+  expectedOutput="saude: ok"
+  hint="Cadeia if/else em req.url. /saude devolve { status: 'ok' }."
+/>
+
+## Resumo
+
+- **http.createServer(callback)**: servidor HTTP puro
+- **req.url**: caminho · **res.writeHead(status)**: código + headers
+- **res.end(dados)**: envia e encerra
+- **server.listen(porta)**: escuta · **server.close()**: encerra
+- Teste com fetch local — sem framework, sem mistério
