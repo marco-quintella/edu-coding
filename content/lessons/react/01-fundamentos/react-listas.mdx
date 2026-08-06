@@ -1,0 +1,89 @@
+Dados reais são **listas** — e renderizar listas é o dia a dia do React: produtos, usuários, posts. Nesta lição você domina `map` + `key` e condicionais dentro de componentes.
+
+> **Por que importa?** Quase todo componente do mundo real renderiza uma lista vinda de uma API. E `key` é a pergunta clássica de entrevista React.
+
+## Renderizando listas
+
+```js
+const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Lista({ itens }) {
+  return React.createElement(
+    "ul",
+    null,
+    itens.map((item) => React.createElement("li", { key: item }, item))
+  );
+}
+
+const html = renderToString(React.createElement(Lista, { itens: ["a", "b", "c"] }));
+console.log(html);   // <ul><li>a</li><li>b</li><li>c</li></ul>
+```
+
+- **itens.map(...)**: transforma cada item em elemento
+- **key**: identificador único — o React usa para reconciliar (achar mudanças)
+
+## Condicionais
+
+```js
+function Status({ ativo }) {
+  if (ativo) {
+    return React.createElement("span", { className: "ok" }, "ativo");
+  }
+  return React.createElement("span", { className: "off" }, "inativo");
+}
+```
+
+O `if` escolhe **o que renderizar** — cada return é um caminho.
+
+## className (não class!)
+
+```js
+React.createElement("span", { className: "ok" }, "ativo")
+```
+
+React usa `className` — `class` é palavra reservada do JS.
+
+## Exercício 1: lista com map
+
+Renderize a lista com key.
+
+<Exercise
+  lessonSlug="react-listas"
+  codeKey="react-ex1"
+  title="Lista com map"
+  expectedOutput="<li>a</li>"
+  hint="itens.map((item) => React.createElement('li', { key: item }, item))."
+/>
+
+## Exercício 2: condicional
+
+Renderize "ativo" quando ativo=true.
+
+<Exercise
+  lessonSlug="react-listas"
+  codeKey="react-ex2"
+  title="Status"
+  expectedOutput="<span class=\"ok\">ativo</span>"
+  hint="if (ativo) return createElement('span', { className: 'ok' }, 'ativo')."
+/>
+
+## Mini-projeto: lista de produtos
+
+Renderize produtos com preço formatado.
+
+<Exercise
+  lessonSlug="react-listas"
+  codeKey="react-projeto"
+  title="Mini-projeto — produtos"
+  expectedOutput="monitor - R$ 800.00"
+  hint="Produto recebe {nome, preco}; map com key={p.nome} na lista."
+/>
+
+## Resumo
+
+- **map + createElement**: lista → elementos
+- **key**: identificador único para reconciliação
+- **if/else**: caminhos de renderização
+- **className**: classe CSS (não `class`)
+- Listas de API = map com key

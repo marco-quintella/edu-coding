@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       checkpointId: lesson.checkpointId,
       env,
       timeoutSec: 30,
-      runtime: (lesson.runtime ?? 'python') as 'python' | 'node',
+      runtime: (lesson.runtime ?? 'python') as 'python' | 'node' | 'ts' | 'react',
     })
 
     // Incrementa contador após execução bem-sucedida

@@ -1,0 +1,102 @@
+Composição é o **superpoder do React**: apps grandes são feitos de componentes pequenos aninhados. E `children` permite passar "conteúdo" para dentro de um componente — a base de layouts e wrappers.
+
+> **Por que importa?** Layout (Header/Main/Footer), Card, Modal — todos usam children. "O que é composição?" é pergunta de entrevista React garantida.
+
+## children — o conteúdo aninhado
+
+```js
+const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Card({ titulo, children }) {
+  return React.createElement(
+    "div",
+    { className: "card" },
+    React.createElement("h3", null, titulo),
+    children          // ← o conteúdo que veio de fora
+  );
+}
+
+const app = React.createElement(
+  Card,
+  { titulo: "Meu card" },
+  React.createElement("p", null, "conteúdo do card")
+);
+```
+
+**children** é a prop mágica: tudo que você passa como filho do componente.
+
+## Composição — pequeno dentro de grande
+
+```
+Pagina
+├── Header (titulo)
+├── Main
+│   └── children (o conteúdo da página)
+└── Footer (ano)
+```
+
+```js
+function Pagina({ titulo, children, ano }) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(Header, { titulo }),
+    React.createElement("main", null, children),
+    React.createElement(Footer, { ano })
+  );
+}
+```
+
+## Props com default
+
+```js
+function Botao({ label, cor }) {
+  const estilo = { backgroundColor: cor || "blue" };   // default
+  return React.createElement("button", { style: estilo }, label);
+}
+```
+
+## Exercício 1: Card com children
+
+Crie o Card com título e conteúdo.
+
+<Exercise
+  lessonSlug="react-composicao"
+  codeKey="react-ex1"
+  title="Card"
+  expectedOutput="<h3>Meu card</h3>"
+  hint="Card({ titulo, children }) → createElement('div', { className: 'card' }, h3, children)."
+/>
+
+## Exercício 2: botão com default
+
+Renderize o botão com cor default.
+
+<Exercise
+  lessonSlug="react-composicao"
+  codeKey="react-ex2"
+  title="Botão"
+  expectedOutput="<button style=\"background-color:blue\">Salvar</button>"
+  hint="cor || 'blue' — se cor não vier, usa azul. style={{ backgroundColor: cor }}."
+/>
+
+## Mini-projeto: layout completo
+
+Monte Pagina com Header, Main e Footer.
+
+<Exercise
+  lessonSlug="react-composicao"
+  codeKey="react-projeto"
+  title="Mini-projeto — layout"
+  expectedOutput="<h1>Edu Coding</h1>"
+  hint="Pagina compõe Header (h1 com titulo), main (children) e Footer (© ano)."
+/>
+
+## Resumo
+
+- **children**: conteúdo aninhado passado de fora
+- **Composição**: componentes pequenos → app grande
+- **Default props**: `cor || "blue"`
+- Layouts = Header/Main/Footer compostos
+- Composição > herança no React

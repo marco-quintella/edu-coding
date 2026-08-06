@@ -12,6 +12,6 @@ export interface SandboxOptions {
   env?: Record<string, string>
   timeoutSec?: number
   pythonPath?: string
-  /** 'python' (padrão), 'node' ou 'ts' — muda o binário e o wrapper */
-  runtime?: 'python' | 'node' | 'ts'
+  /** 'python' (padrão), 'node', 'ts' ou 'react' — muda o binário e o wrapper */
+  runtime?: 'python' | 'node' | 'ts' | 'react'
 }

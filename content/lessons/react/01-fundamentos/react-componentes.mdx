@@ -1,0 +1,83 @@
+React é o **framework frontend #1 do mercado** — e a base do Next.js. O conceito central é o **componente**: uma função que recebe dados (props) e devolve o que será renderizado. Nesta lição você roda React de verdade (renderização server-side) no sandbox.
+
+> **Por que importa?** "React" aparece em ~50% das vagas de frontend. E entender componente + props é a fundação de qualquer app React/Next.
+
+## O elemento — a unidade do React
+
+```js
+const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+// createElement(tipo, props, ...filhos)
+const el = React.createElement("h1", null, "Olá React");
+
+console.log(renderToString(el));   // <h1>Olá React</h1>
+```
+
+- **createElement**: cria um elemento (tipo, props, filhos)
+- **renderToString**: converte em HTML — é assim que o React renderiza no servidor (SSR)
+
+## O componente — função que renderiza
+
+```js
+function Saudacao({ nome }) {
+  return React.createElement("h1", null, `Olá, ${nome}!`);
+}
+
+const html = renderToString(React.createElement(Saudacao, { nome: "Ana" }));
+console.log(html);   // <h1>Olá, Ana!</h1>
+```
+
+**Componente = função que recebe props e retorna elementos.** As props chegam como um objeto (`{ nome }`).
+
+## Renderização no servidor (SSR)
+
+```
+Componente ──renderToString──▶ HTML pronto
+```
+
+O servidor gera o HTML final — rápido e indexável por SEO. É o modelo do Next.js.
+
+## Exercício 1: primeiro componente
+
+Crie o componente Saudacao e renderize.
+
+<Exercise
+  lessonSlug="react-componentes"
+  codeKey="react-ex1"
+  title="Saudação"
+  expectedOutput="<h1>Olá, Ana!</h1>"
+  hint="function Saudacao({ nome }) { return React.createElement('h1', null, `Olá, ${nome}!`); } + renderToString."
+/>
+
+## Exercício 2: dois componentes
+
+Componha Titulo + Paragrafo.
+
+<Exercise
+  lessonSlug="react-componentes"
+  codeKey="react-ex2"
+  title="Composição"
+  expectedOutput="<h1>Catálogo</h1>"
+  hint="createElement('div', null, createElement(Titulo), createElement(Paragrafo, { texto }))."
+/>
+
+## Mini-projeto: perfil com avatar
+
+Crie Avatar (iniciais) + Perfil (nome, cargo).
+
+<Exercise
+  lessonSlug="react-componentes"
+  codeKey="react-projeto"
+  title="Mini-projeto — perfil"
+  expectedOutput="<h2>Ana Silva</h2>"
+  hint="Avatar recebe nome e mostra nome.slice(0,2).toUpperCase(); Perfil compõe Avatar + h2 + p."
+/>
+
+## Resumo
+
+- **createElement(tipo, props, filhos)**: cria elemento
+- **Componente**: função que recebe props e retorna elementos
+- **renderToString**: React → HTML (SSR)
+- **Props**: dados de entrada do componente
+- Componentes pequenos + composição = app React

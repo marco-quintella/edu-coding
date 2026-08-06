@@ -55,14 +55,23 @@ export async function execOnSandbox(
   const start = Date.now()
 
   try {
-    if (runtime === 'node' || runtime === 'ts') {
-      // Node/TS: sem wrapper de plots — executa o JS direto.
+    if (runtime === 'node' || runtime === 'ts' || runtime === 'react') {
+      // Node/TS/React: sem wrapper de plots — executa o JS direto.
       // TS usa type-stripping nativo do Node 24 (--experimental-strip-types).
-      const bin = runtime === 'ts' ? '/opt/node/bin/node --experimental-strip-types' : '/opt/node/bin/node'
-      const { stdout, stderr } = await execAsync(
-        `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- ${bin} -e ${shellQuote(code)}`,
-        { maxBuffer: 1024 * 1024 }
-      )
+      // React usa NODE_PATH para achar react/react-dom em /opt/react.
+      const bin =
+        runtime === 'ts'
+          ? '/opt/node/bin/node --experimental-strip-types'
+          : runtime === 'react'
+            ? 'bash -c "NODE_PATH=/opt/react/node_modules /opt/node/bin/node -e'
+            : '/opt/node/bin/node'
+      const cmd =
+        runtime === 'react'
+          ? `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- ${bin} ${shellQuote(code)}"`
+          : `railway sandbox exec --id ${sandboxId} --timeout ${timeoutSec} -- ${bin} -e ${shellQuote(code)}`
+      const { stdout, stderr } = await execAsync(cmd, {
+        maxBuffer: 1024 * 1024,
+      })
       return {
         stdout,
         stderr,

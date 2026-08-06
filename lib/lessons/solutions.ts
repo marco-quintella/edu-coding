@@ -2391,7 +2391,207 @@ print(f"saida: {r2.stdout.strip()}")`,
 
 /** Busca a solução de um exercício (retorna null se não houver). */
 export function getSolution(codeKey: string): Solution | null {
-  return SOLUTIONS[codeKey] ?? FASTAPI_SOLUTIONS[codeKey] ?? null
+  return SOLUTIONS[codeKey] ?? FASTAPI_SOLUTIONS[codeKey] ?? REACT_SOLUTIONS[codeKey] ?? null
+}
+
+// ── Curso React ───────────────────────────────────────────────
+export const REACT_SOLUTIONS: Record<string, Solution> = {
+  'react-ex1': {
+    explanation:
+      'Componente = função com props; createElement monta o elemento; renderToString vira HTML.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Saudacao({ nome }) {
+  return React.createElement("h1", null, \`Olá, \${nome}!\`);
+}
+
+const html = renderToString(React.createElement(Saudacao, { nome: "Ana" }));
+console.log(html);`,
+  },
+  'react-ex2': {
+    explanation:
+      'Composição: createElement("div", null, filho1, filho2) — componentes aninhados.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Titulo() {
+  return React.createElement("h1", null, "Catálogo");
+}
+
+function Paragrafo({ texto }) {
+  return React.createElement("p", null, texto);
+}
+
+const app = React.createElement(
+  "div",
+  null,
+  React.createElement(Titulo),
+  React.createElement(Paragrafo, { texto: "bem-vindo" })
+);
+const html = renderToString(app);
+console.log(html);`,
+  },
+  'react-projeto': {
+    explanation:
+      'Perfil compõe Avatar (iniciais) + h2 + p. Props fluem do pai para o filho.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Avatar({ nome }) {
+  return React.createElement(
+    "div",
+    { className: "avatar" },
+    nome.slice(0, 2).toUpperCase()
+  );
+}
+
+function Perfil({ nome, cargo }) {
+  return React.createElement(
+    "div",
+    { className: "perfil" },
+    React.createElement(Avatar, { nome }),
+    React.createElement("h2", null, nome),
+    React.createElement("p", null, cargo)
+  );
+}
+
+const html = renderToString(React.createElement(Perfil, { nome: "Ana Silva", cargo: "Dev" }));
+console.log(html);`,
+  },
+  'react-l-ex1': {
+    explanation:
+      'map transforma cada item em elemento; key identifica o item para a reconciliação do React.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Lista({ itens }) {
+  return React.createElement(
+    "ul",
+    null,
+    itens.map((item) => React.createElement("li", { key: item }, item))
+  );
+}
+
+const html = renderToString(React.createElement(Lista, { itens: ["a", "b", "c"] }));
+console.log(html);`,
+  },
+  'react-l-ex2': {
+    explanation:
+      'if/else escolhe o caminho de render. className (não class!) define a classe CSS.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Status({ ativo }) {
+  if (ativo) {
+    return React.createElement("span", { className: "ok" }, "ativo");
+  }
+  return React.createElement("span", { className: "off" }, "inativo");
+}
+
+const html = renderToString(React.createElement(Status, { ativo: true }));
+console.log(html);`,
+  },
+  'react-l-projeto': {
+    explanation:
+      'Produto (componente) recebe {nome, preco} por props; map + key renderiza a lista.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Produto({ nome, preco }) {
+  return React.createElement(
+    "li",
+    null,
+    \`\${nome} - R\$ \${preco.toFixed(2)}\`
+  );
+}
+
+function ListaProdutos({ produtos }) {
+  return React.createElement(
+    "ul",
+    null,
+    produtos.map((p) => React.createElement(Produto, { key: p.nome, nome: p.nome, preco: p.preco }))
+  );
+}
+
+const produtos = [
+  { nome: "teclado", preco: 120 },
+  { nome: "mouse", preco: 60 },
+  { nome: "monitor", preco: 800 },
+];
+
+const html = renderToString(React.createElement(ListaProdutos, { produtos }));
+console.log(html);`,
+  },
+  'react-c-ex1': {
+    explanation:
+      'children é a prop mágica: o conteúdo aninhado chega pronto para renderizar dentro do Card.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Card({ titulo, children }) {
+  return React.createElement(
+    "div",
+    { className: "card" },
+    React.createElement("h3", null, titulo),
+    children
+  );
+}
+
+const app = React.createElement(
+  Card,
+  { titulo: "Meu card" },
+  React.createElement("p", null, "conteúdo do card")
+);
+const html = renderToString(app);
+console.log(html);`,
+  },
+  'react-c-ex2': {
+    explanation:
+      'cor || "blue" dá o default. O style do elemento é um objeto com backgroundColor.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Botao({ label, cor }) {
+  const estilo = { backgroundColor: cor || "blue" };
+  return React.createElement("button", { style: estilo }, label);
+}
+
+const html = renderToString(React.createElement(Botao, { label: "Salvar" }));
+console.log(html);`,
+  },
+  'react-c-projeto': {
+    explanation:
+      'Layout composto: Pagina usa Header/Main/Footer — o padrão de todo app React/Next.',
+    code: `const React = require("react");
+const { renderToString } = require("react-dom/server");
+
+function Header({ titulo }) {
+  return React.createElement("header", null, React.createElement("h1", null, titulo));
+}
+
+function Footer({ ano }) {
+  return React.createElement("footer", null, \`© \${ano}\`);
+}
+
+function Pagina({ titulo, children, ano }) {
+  return React.createElement(
+    "div",
+    { className: "pagina" },
+    React.createElement(Header, { titulo }),
+    React.createElement("main", null, children),
+    React.createElement(Footer, { ano })
+  );
+}
+
+const app = React.createElement(
+  Pagina,
+  { titulo: "Edu Coding", ano: 2026 },
+  React.createElement("p", null, "aprenda a programar")
+);
+const html = renderToString(app);
+console.log(html);`,
+  },
 }
 
 // ── Curso FastAPI ─────────────────────────────────────────────
