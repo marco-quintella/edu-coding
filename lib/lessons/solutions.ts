@@ -2396,8 +2396,150 @@ export function getSolution(codeKey: string): Solution | null {
     FASTAPI_SOLUTIONS[codeKey] ??
     REACT_SOLUTIONS[codeKey] ??
     LINUX_SOLUTIONS[codeKey] ??
+    SCRAPING_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Web Scraping ────────────────────────────────────────
+export const SCRAPING_SOLUTIONS: Record<string, Solution> = {
+  'scraping-ex1': {
+    explanation:
+      'findall + grupo ([^<]+) captura o texto de cada div.produto. 3 produtos no HTML.',
+    code: `import re
+
+html = """<html><body>
+<h1>Loja</h1>
+<div class="produto">teclado - R$ 120</div>
+<div class="produto">mouse - R$ 60</div>
+<div class="produto">monitor - R$ 800</div>
+</body></html>"""
+
+produtos = re.findall(r'class="produto">([^<]+)<', html)
+print(f"produtos: {len(produtos)}")
+print(f"primeiro: {produtos[0]}")`,
+  },
+  'scraping-ex2': {
+    explanation:
+      'findall de href pega os 3 links; startswith("/produto") filtra os 2 de produto.',
+    code: `import re
+
+html = """<html><body>
+<a href="/produto/1">Teclado</a>
+<a href="/produto/2">Mouse</a>
+<a href="/contato">Contato</a>
+</body></html>"""
+
+links = re.findall(r'href="([^"]+)"', html)
+produtos = [l for l in links if l.startswith("/produto")]
+print(f"links: {len(links)}")
+print(f"produtos: {produtos}")`,
+  },
+  'scraping-projeto': {
+    explanation:
+      'Regex com 2 grupos captura (nome, preco); sum dos ints. 120+60+800 = 980.',
+    code: `import re
+
+html = """<html><body>
+<table>
+<tr><td>teclado</td><td>120</td></tr>
+<tr><td>mouse</td><td>60</td></tr>
+<tr><td>monitor</td><td>800</td></tr>
+</table>
+</body></html>"""
+
+linhas = re.findall(r"<tr><td>([^<]+)</td><td>(\\d+)</td></tr>", html)
+total = sum(int(preco) for _, preco in linhas)
+print(f"itens: {len(linhas)}")
+print(f"total: R\${total}")`,
+  },
+  'scraping-a-ex1': {
+    explanation:
+      'urlopen + json.loads transforma a API em lista de dicts; comprehension extrai os nomes. 10 usuários.',
+    code: `import urllib.request
+import json
+
+url = "https://jsonplaceholder.typicode.com/users"
+with urllib.request.urlopen(url, timeout=10) as resp:
+    usuarios = json.loads(resp.read())
+
+nomes = [u["name"] for u in usuarios]
+print(f"usuarios: {len(nomes)}")
+print(f"primeiro: {nomes[0]}")`,
+  },
+  'scraping-a-ex2': {
+    explanation:
+      'Mesma coleta; [u["email"] for u in usuarios] extrai os emails. O domínio tem @ (True).',
+    code: `import urllib.request
+import json
+
+url = "https://jsonplaceholder.typicode.com/users"
+with urllib.request.urlopen(url, timeout=10) as resp:
+    usuarios = json.loads(resp.read())
+
+emails = [u["email"] for u in usuarios]
+print(f"emails: {len(emails)}")
+print(f"dominio comum: {'@' in emails[0]}")`,
+  },
+  'scraping-a-projeto': {
+    explanation:
+      'Filtro por endswith(".biz") — 3 usuários com email .biz no dataset. API estruturada = filtro simples.',
+    code: `import urllib.request
+import json
+
+url = "https://jsonplaceholder.typicode.com/users"
+with urllib.request.urlopen(url, timeout=10) as resp:
+    usuarios = json.loads(resp.read())
+
+biz = [u for u in usuarios if u["email"].endswith(".biz")]
+print(f"biz: {len(biz)}")
+print(f"primeiro: {biz[0]['name']}")`,
+  },
+  'scraping-p-ex1': {
+    explanation:
+      'Dict acumulador com .get(userId, 0) + 1. 100 posts, 10 por usuário (100/10).',
+    code: `import urllib.request
+import json
+
+url = "https://jsonplaceholder.typicode.com/posts"
+with urllib.request.urlopen(url, timeout=10) as resp:
+    posts = json.loads(resp.read())
+
+por_usuario = {}
+for p in posts:
+    por_usuario[p["userId"]] = por_usuario.get(p["userId"], 0) + 1
+
+print(f"posts: {len(posts)}")
+print(f"usuario 1: {por_usuario[1]}")`,
+  },
+  'scraping-p-ex2': {
+    explanation:
+      'min com key=lambda p: len(p["body"]) acha o post de body mais curto (102 chars).',
+    code: `import urllib.request
+import json
+
+url = "https://jsonplaceholder.typicode.com/posts"
+with urllib.request.urlopen(url, timeout=10) as resp:
+    posts = json.loads(resp.read())
+
+mais_curto = min(posts, key=lambda p: len(p["body"]))
+print(f"posts: {len(posts)}")
+print(f"mais curto: {len(mais_curto['body'])} chars")`,
+  },
+  'scraping-p-projeto': {
+    explanation:
+      'Comprehension com if filtra os concluídos — 90 de 200 todos. O pipeline completo: coleta + filtro + contagem.',
+    code: `import urllib.request
+import json
+
+url = "https://jsonplaceholder.typicode.com/todos"
+with urllib.request.urlopen(url, timeout=10) as resp:
+    todos = json.loads(resp.read())
+
+concluidos = [t for t in todos if t["completed"]]
+print(f"todos: {len(todos)}")
+print(f"concluidos: {len(concluidos)}")`,
+  },
 }
 
 // ── Curso Linux & Terminal ────────────────────────────────────

@@ -17,6 +17,7 @@ import { DOCKER_CODES } from '../docker-codes'
 import { FASTAPI_CODES } from '../fastapi-codes'
 import { REACT_CODES } from '../react-codes'
 import { LINUX_CODES } from '../linux-codes'
+import { SCRAPING_CODES } from '../scraping-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -306,6 +307,19 @@ const EXPECTED_SLUGS = [
   'linux-p-ex1',
   'linux-p-ex2',
   'linux-p-projeto',
+  // Curso Web Scraping
+  'scraping-html',
+  'scraping-ex1',
+  'scraping-ex2',
+  'scraping-projeto',
+  'scraping-api',
+  'scraping-a-ex1',
+  'scraping-a-ex2',
+  'scraping-a-projeto',
+  'scraping-pipeline',
+  'scraping-p-ex1',
+  'scraping-p-ex2',
+  'scraping-p-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -461,6 +475,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso Linux começam com import
     for (const [slug, code] of Object.entries(LINUX_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Scraping começam com import
+    for (const [slug, code] of Object.entries(SCRAPING_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,

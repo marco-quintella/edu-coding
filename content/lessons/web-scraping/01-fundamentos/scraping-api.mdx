@@ -1,0 +1,81 @@
+A forma **profissional** de coletar dados é via API: JSON estruturado, sem regex, sem quebrar. Nesta lição você consome APIs reais (no sandbox!) e transforma a resposta em dados úteis.
+
+> **Por que importa?** O scraping de verdade no mercado é 80% API + 20% HTML. E coletar de API com urllib é o padrão que você usará em qualquer integração.
+
+## Coletando de uma API
+
+```python
+import urllib.request
+import json
+
+url = "https://jsonplaceholder.typicode.com/users"
+with urllib.request.urlopen(url, timeout=10) as resp:
+    usuarios = json.loads(resp.read())
+
+nomes = [u["name"] for u in usuarios]
+print(len(nomes))       # 10
+```
+
+- **urlopen(url, timeout=10)**: busca a API (timeout evita travar)
+- **json.loads(resp.read())**: JSON → objetos Python
+- **List comprehension**: extrai o campo que interessa
+
+## Por que API > HTML?
+
+| | API | HTML scraping |
+|---|---|---|
+| Formato | JSON estruturado | Texto livre |
+| Extração | `u["name"]` | Regex frágil |
+| Estabilidade | Estável | Quebra com layout |
+| Velocidade | Leve | Peso da página |
+
+## Filtrando os dados
+
+```python
+# Usuários com email .biz
+biz = [u for u in usuarios if u["email"].endswith(".biz")]
+```
+
+## Exercício 1: nomes da API
+
+Colete os usuários e liste os nomes.
+
+<Exercise
+  lessonSlug="scraping-api"
+  codeKey="scraping-ex1"
+  title="Nomes da API"
+  expectedOutput="primeiro: Leanne Graham"
+  hint="urlopen + json.loads; [u['name'] for u in usuarios]. O primeiro usuário é Leanne Graham."
+/>
+
+## Exercício 2: emails
+
+Extraia os emails dos usuários.
+
+<Exercise
+  lessonSlug="scraping-api"
+  codeKey="scraping-ex2"
+  title="Emails"
+  expectedOutput="emails: 10"
+  hint="[u['email'] for u in usuarios] — 10 usuários, cada um com email."
+/>
+
+## Mini-projeto: filtro por domínio
+
+Ache os usuários com email .biz.
+
+<Exercise
+  lessonSlug="scraping-api"
+  codeKey="scraping-projeto"
+  title="Mini-projeto — .biz"
+  expectedOutput="biz: 3"
+  hint="[u for u in usuarios if u['email'].endswith('.biz')] — 3 usuários .biz."
+/>
+
+## Resumo
+
+- **API = JSON estruturado** — sem regex, sem quebrar
+- **urlopen(url, timeout=10) + json.loads()**: coleta padrão
+- **Comprehension**: extrai campos · **if**: filtra
+- API > HTML sempre que existir
+- Coleta profissional = 80% API

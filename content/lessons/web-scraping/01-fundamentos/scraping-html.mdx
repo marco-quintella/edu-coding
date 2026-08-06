@@ -1,0 +1,82 @@
+Web scraping é **extrair dados de páginas web** de forma automatizada — quando não existe API, o HTML é a fonte. Nesta lição você extrai dados de HTML com regex e entende por que isso é frágil (e quando usar).
+
+> **Por que importa?** Coleta de dados (preços, produtos, notícias) é demanda real de mercado. E a lição mais importante: **se existe API, use API** — HTML quebra.
+
+## O problema: HTML é texto
+
+```html
+<div class="produto">teclado - R$ 120</div>
+<div class="produto">mouse - R$ 60</div>
+```
+
+Extrair "os produtos" = achar o padrão repetido.
+
+## Regex para extração
+
+```python
+import re
+
+html = """<div class="produto">teclado - R$ 120</div>
+<div class="produto">mouse - R$ 60</div>"""
+
+produtos = re.findall(r'class="produto">([^<]+)<', html)
+# ['teclado - R$ 120', 'mouse - R$ 60']
+```
+
+- `([^<]+)` captura o texto até a próxima tag
+- `findall` pega TODAS as ocorrências
+
+## Extraindo links
+
+```python
+links = re.findall(r'href="([^"]+)"', html)
+produtos = [l for l in links if l.startswith("/produto")]
+```
+
+## A regra de ouro
+
+> **API > HTML.** Se o site tem API, use a API (JSON estruturado). HTML scraping é o último recurso — qualquer mudança de layout quebra o scraper.
+
+## Exercício 1: extraindo produtos
+
+Extraia os produtos do HTML com regex.
+
+<Exercise
+  lessonSlug="scraping-html"
+  codeKey="scraping-ex1"
+  title="Produtos do HTML"
+  expectedOutput="produtos: 3"
+  hint="re.findall(r'class=\"produto\">([^<]+)<', html) — 3 divs de produto."
+/>
+
+## Exercício 2: filtrando links
+
+Extraia só os links de produto.
+
+<Exercise
+  lessonSlug="scraping-html"
+  codeKey="scraping-ex2"
+  title="Links de produto"
+  expectedOutput="produtos: ['/produto/1', '/produto/2']"
+  hint="findall de href + filter startswith('/produto'). O link /contato fica de fora."
+/>
+
+## Mini-projeto: tabela de preços
+
+Extraia a tabela e some os preços.
+
+<Exercise
+  lessonSlug="scraping-html"
+  codeKey="scraping-projeto"
+  title="Mini-projeto — tabela"
+  expectedOutput="total: R$980"
+  hint="re.findall(r'<tr><td>([^<]+)</td><td>(\\d+)</td></tr>', html) → (nome, preco); 120+60+800 = 980."
+/>
+
+## Resumo
+
+- **Scraping** = extrair dados do HTML (regex, grupos)
+- **findall + grupos**: pega todas as ocorrências
+- **Filtro**: startswith/endswith para selecionar
+- **Regra**: API > HTML — HTML quebra com layout
+- Regex: `([^<]+)` captura texto até a próxima tag

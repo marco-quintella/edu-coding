@@ -1,0 +1,79 @@
+Coleta de dados no mercado é um **pipeline**: coletar → transformar → analisar. Nesta lição você monta pipelines completos com APIs reais — contagens, filtros e a análise final que gera o valor.
+
+> **Por que importa?** O scraping sozinho não vale nada — o VALOR está em transformar dados brutos em resposta: "quantos posts por usuário?", "quantos concluídos?", "qual o menor?".
+
+## O pipeline
+
+```
+Coletar (urlopen) → Transformar (comprehension/dict) → Analisar (min/sum/len)
+```
+
+## Contando por categoria
+
+```python
+# Quantos posts cada usuário tem?
+por_usuario = {}
+for p in posts:
+    por_usuario[p["userId"]] = por_usuario.get(p["userId"], 0) + 1
+```
+
+O **dict acumulador** (`get` com default 0) é o padrão de contagem.
+
+## Achando o extremo
+
+```python
+# O post com o menor body
+mais_curto = min(posts, key=lambda p: len(p["body"]))
+```
+
+`min/max` com `key=` acha o item extremo por um critério.
+
+## Filtrando por condição
+
+```python
+concluidos = [t for t in todos if t["completed"]]
+```
+
+## Exercício 1: posts por usuário
+
+Conte os posts de cada usuário.
+
+<Exercise
+  lessonSlug="scraping-pipeline"
+  codeKey="scraping-ex1"
+  title="Posts por usuário"
+  expectedOutput="usuario 1: 10"
+  hint="Dict acumulador com .get(userId, 0) + 1. Usuário 1 tem 10 posts (100 totais / 10 usuários)."
+/>
+
+## Exercício 2: post mais curto
+
+Ache o post com o menor body.
+
+<Exercise
+  lessonSlug="scraping-pipeline"
+  codeKey="scraping-ex2"
+  title="Post mais curto"
+  expectedOutput="mais curto: 102 chars"
+  hint="min(posts, key=lambda p: len(p['body'])) → o body mais curto tem 102 caracteres."
+/>
+
+## Mini-projeto: taxa de conclusão
+
+Conte os todos concluídos.
+
+<Exercise
+  lessonSlug="scraping-pipeline"
+  codeKey="scraping-projeto"
+  title="Mini-projeto — todos"
+  expectedOutput="concluidos: 90"
+  hint="[t for t in todos if t['completed']] — 90 de 200 todos estão concluídos."
+/>
+
+## Resumo
+
+- **Pipeline**: coletar → transformar → analisar
+- **Dict acumulador**: `.get(chave, 0) + 1` conta por categoria
+- **min/max com key=**: acha o extremo por critério
+- **Comprehension com if**: filtra
+- O valor está na análise, não na coleta
