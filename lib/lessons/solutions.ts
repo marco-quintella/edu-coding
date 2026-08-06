@@ -2391,7 +2391,120 @@ print(f"saida: {r2.stdout.strip()}")`,
 
 /** Busca a solução de um exercício (retorna null se não houver). */
 export function getSolution(codeKey: string): Solution | null {
-  return SOLUTIONS[codeKey] ?? FASTAPI_SOLUTIONS[codeKey] ?? REACT_SOLUTIONS[codeKey] ?? null
+  return (
+    SOLUTIONS[codeKey] ??
+    FASTAPI_SOLUTIONS[codeKey] ??
+    REACT_SOLUTIONS[codeKey] ??
+    LINUX_SOLUTIONS[codeKey] ??
+    null
+  )
+}
+
+// ── Curso Linux & Terminal ────────────────────────────────────
+export const LINUX_SOLUTIONS: Record<string, Solution> = {
+  'linux-ex1': {
+    explanation:
+      'pwd mostra o diretório atual. No sandbox o cwd é a raiz /. Determinístico.',
+    code: `import subprocess
+
+r = subprocess.run(["pwd"], capture_output=True, text=True)
+print(f"pwd: {r.stdout.strip()}")`,
+  },
+  'linux-ex2': {
+    explanation:
+      'ls lista o diretório; o filtro remove linhas vazias. a.txt e b.txt — determinístico.',
+    code: `import subprocess, os
+
+os.makedirs("/tmp/linux-lab", exist_ok=True)
+os.chdir("/tmp/linux-lab")
+open("a.txt", "w").close()
+open("b.txt", "w").close()
+
+r = subprocess.run(["ls"], capture_output=True, text=True)
+arquivos = [l for l in r.stdout.split("\\n") if l.strip()]
+print(f"arquivos: {sorted(arquivos)}")`,
+  },
+  'linux-projeto': {
+    explanation:
+      'find -type d acha as pastas: /tmp/proj, /tmp/proj/src, /tmp/proj/docs = 3.',
+    code: `import subprocess, os
+
+os.makedirs("/tmp/proj/src", exist_ok=True)
+os.makedirs("/tmp/proj/docs", exist_ok=True)
+
+r = subprocess.run(["find", "/tmp/proj", "-type", "d"], capture_output=True, text=True)
+pastas = [l for l in r.stdout.split("\\n") if l.strip()]
+print(f"pastas: {len(pastas)}")`,
+  },
+  'linux-g-ex1': {
+    explanation:
+      'grep filtra as linhas com "erro" — 2 no log de exemplo. Troubleshooting real.',
+    code: `import subprocess
+
+with open("/tmp/log.txt", "w") as f:
+    f.write("info: inicio\\nerro: falhou\\ninfo: ok\\nerro: timeout\\n")
+
+r2 = subprocess.run(["grep", "erro", "/tmp/log.txt"], capture_output=True, text=True)
+linhas = [l for l in r2.stdout.split("\\n") if l.strip()]
+print(f"erros: {len(linhas)}")
+print(f"primeiro: {linhas[0]}")`,
+  },
+  'linux-g-ex2': {
+    explanation:
+      'wc -l conta as linhas: "5 /tmp/dados.txt" — split()[0] pega o número.',
+    code: `import subprocess
+
+with open("/tmp/dados.txt", "w") as f:
+    f.write("a\\nb\\nc\\nd\\ne\\n")
+
+r = subprocess.run(["wc", "-l", "/tmp/dados.txt"], capture_output=True, text=True)
+print(f"linhas: {r.stdout.strip().split()[0]}")`,
+  },
+  'linux-g-projeto': {
+    explanation:
+      'find -name "*.py" acha só os Python: a.py e c.py = 2 (b.js e d.txt ficam de fora).',
+    code: `import subprocess, os
+
+os.makedirs("/tmp/mix", exist_ok=True)
+for n in ["a.py", "b.js", "c.py", "d.txt"]:
+    open(f"/tmp/mix/{n}", "w").close()
+
+r = subprocess.run(["find", "/tmp/mix", "-name", "*.py"], capture_output=True, text=True)
+pys = [l for l in r.stdout.split("\\n") if l.strip()]
+print(f"pythons: {len(pys)}")`,
+  },
+  'linux-p-ex1': {
+    explanation:
+      'sort ordena (banana, banana, banana, maça, uva); uniq -c conta as consecutivas: 3 banana.',
+    code: `import subprocess
+
+with open("/tmp/lista.txt", "w") as f:
+    f.write("banana\\nmaça\\nbanana\\nuva\\nbanana\\n")
+
+r = subprocess.run(["sort", "/tmp/lista.txt"], capture_output=True, text=True)
+r2 = subprocess.run(["uniq", "-c"], input=r.stdout, capture_output=True, text=True)
+print(r2.stdout.strip())`,
+  },
+  'linux-p-ex2': {
+    explanation:
+      'chmod +x adiciona execução ao dono; ls -l mostra -rwxr-xr-x (dono rwx). No Linux não há o @ do macOS.',
+    code: `import subprocess
+
+with open("/tmp/script.sh", "w") as f:
+    f.write("#!/bin/bash\\necho olá\\n")
+
+r = subprocess.run(["chmod", "+x", "/tmp/script.sh"], capture_output=True, text=True)
+r2 = subprocess.run(["ls", "-l", "/tmp/script.sh"], capture_output=True, text=True)
+print(r2.stdout.strip().split()[0])`,
+  },
+  'linux-p-projeto': {
+    explanation:
+      'which bash devolve o caminho do executável — /usr/bin/bash no sandbox (distro Debian).',
+    code: `import subprocess
+
+r = subprocess.run(["which", "bash"], capture_output=True, text=True)
+print(f"bash: {r.stdout.strip()}")`,
+  },
 }
 
 // ── Curso React ───────────────────────────────────────────────

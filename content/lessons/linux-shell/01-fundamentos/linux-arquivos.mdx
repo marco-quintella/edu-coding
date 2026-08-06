@@ -1,0 +1,78 @@
+O **terminal** é o ambiente de trabalho do dev — e Linux roda em ~95% dos servidores do mundo. Nesta lição você roda comandos **reais** no sandbox: navegação, criação de arquivos e a estrutura do sistema.
+
+> **Por que importa?** "Você sabe usar o terminal?" é a base de qualquer vaga backend/DevOps. E os comandos desta lição (pwd, ls, mkdir, find) aparecem TODOS os dias.
+
+## O essencial
+
+```bash
+pwd          # onde estou (print working directory)
+ls           # o que tem aqui (list)
+mkdir -p a/b # cria pasta(s) — -p cria as intermediárias
+cd pasta     # entra na pasta
+find . -type d   # acha pastas a partir de .
+```
+
+## No sandbox (via Python + subprocess)
+
+```python
+import subprocess
+
+r = subprocess.run(["pwd"], capture_output=True, text=True)
+print(r.stdout.strip())   # / (a raiz do sandbox)
+```
+
+O padrão: `subprocess.run([comando, arg1, arg2], ...)` — cada comando é uma lista.
+
+## A estrutura do Linux
+
+```
+/          ← raiz (tudo começa daqui)
+/bin       ← programas essenciais (bash, ls)
+/usr       ← programas de usuário
+/home      ← pastas dos usuários
+/tmp       ← arquivos temporários
+```
+
+## Exercício 1: onde estou
+
+Mostre o diretório atual.
+
+<Exercise
+  lessonSlug="linux-arquivos"
+  codeKey="linux-ex1"
+  title="pwd"
+  expectedOutput="pwd: /"
+  hint="subprocess.run(['pwd'], capture_output=True, text=True). No sandbox o cwd é a raiz /."
+/>
+
+## Exercício 2: criando e listando
+
+Crie arquivos e liste.
+
+<Exercise
+  lessonSlug="linux-arquivos"
+  codeKey="linux-ex2"
+  title="ls"
+  expectedOutput="arquivos: ['a.txt', 'b.txt']"
+  hint="os.makedirs + open() criam; subprocess ls lista; filtre linhas vazias."
+/>
+
+## Mini-projeto: estrutura de projeto
+
+Crie a estrutura src/docs e conte as pastas.
+
+<Exercise
+  lessonSlug="linux-arquivos"
+  codeKey="linux-projeto"
+  title="Mini-projeto — pastas"
+  expectedOutput="pastas: 3"
+  hint="os.makedirs cria /tmp/proj/src e /tmp/proj/docs; find /tmp/proj -type d conta 3 (proj + 2)."
+/>
+
+## Resumo
+
+- **pwd**: diretório atual · **ls**: listar · **mkdir -p**: criar pastas
+- **find -type d**: achar pastas
+- **/**: raiz · **~**: home · **/tmp**: temporários
+- Comandos = programa + argumentos
+- ~95% dos servidores são Linux

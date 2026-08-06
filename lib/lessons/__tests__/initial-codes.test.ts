@@ -16,6 +16,7 @@ import { BACKEND_CODES } from '../backend-codes'
 import { DOCKER_CODES } from '../docker-codes'
 import { FASTAPI_CODES } from '../fastapi-codes'
 import { REACT_CODES } from '../react-codes'
+import { LINUX_CODES } from '../linux-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -292,6 +293,19 @@ const EXPECTED_SLUGS = [
   'react-c-ex1',
   'react-c-ex2',
   'react-c-projeto',
+  // Curso Linux & Terminal
+  'linux-arquivos',
+  'linux-ex1',
+  'linux-ex2',
+  'linux-projeto',
+  'linux-grep',
+  'linux-g-ex1',
+  'linux-g-ex2',
+  'linux-g-projeto',
+  'linux-pipes',
+  'linux-p-ex1',
+  'linux-p-ex2',
+  'linux-p-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -444,6 +458,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é const em ${slug}: ${firstLine}`,
       ).toMatch(/^(const |\/\/|#)/)
+    }
+    // Códigos do curso Linux começam com import
+    for (const [slug, code] of Object.entries(LINUX_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
     }
   })
 

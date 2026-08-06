@@ -1,0 +1,90 @@
+O **pipe (`|`)** é o superpoder do Unix: encadear comandos — a saída de um vira a entrada do outro. Com sort/uniq você analisa dados; com chmod você controla permissões. É a filosofia que transforma o terminal numa linguagem.
+
+> **Por que importa?** "Quais erros mais comuns?", "top 10 palavras", "este script é executável?" — pipes + permissões respondem. É o que separa quem "usa" o terminal de quem "pensa" nele.
+
+## Pipes — encadeando
+
+```bash
+# Ordenar e contar duplicados
+sort lista.txt | uniq -c
+
+# Filtrar e contar
+grep erro app.log | wc -l
+
+# Achar e ordenar
+find /tmp -name "*.py" | sort
+```
+
+**`|`** envia a saída do comando à esquerda como entrada do da direita.
+
+## sort + uniq — análise rápida
+
+```bash
+sort lista.txt | uniq -c
+# 3 banana
+# 1 maça
+# 1 uva
+```
+
+`sort` ordena; `uniq -c` conta as **consecutivas iguais** (por isso precisa do sort antes).
+
+## Permissões (chmod)
+
+```bash
+chmod +x script.sh   # torna executável
+ls -l script.sh      # -rwxr-xr-x
+```
+
+```
+-rwxr-xr-x
+ │└┬┘└┬┘└┬┘
+ │ │  │  └── outros: r-x (ler/executar)
+ │ │  └───── grupo: r-x
+ │ └──────── dono: rwx (ler/escrever/executar)
+ └────────── é um arquivo (-) ou pasta (d)
+```
+
+## Exercício 1: sort + uniq
+
+Conte as ocorrências duplicadas.
+
+<Exercise
+  lessonSlug="linux-pipes"
+  codeKey="linux-ex1"
+  title="Pipes e uniq"
+  expectedOutput="3 banana"
+  hint="sort /tmp/lista.txt | uniq -c — banana aparece 3x (sort junta as iguais primeiro)."
+/>
+
+## Exercício 2: tornando executável
+
+Crie um script e dê permissão de execução.
+
+<Exercise
+  lessonSlug="linux-pipes"
+  codeKey="linux-ex2"
+  title="chmod +x"
+  expectedOutput="-rwxr-xr-x"
+  hint="Escreva o script com shebang; chmod +x; ls -l mostra -rwxr-xr-x (dono rwx)."
+/>
+
+## Mini-projeto: localizando o bash
+
+Descubra onde o bash está instalado.
+
+<Exercise
+  lessonSlug="linux-pipes"
+  codeKey="linux-projeto"
+  title="Mini-projeto — which"
+  expectedOutput="bash: /usr/bin/bash"
+  hint="which bash devolve o caminho do executável. No sandbox: /usr/bin/bash."
+/>
+
+## Resumo
+
+- **|**: saída de um → entrada do outro
+- **sort | uniq -c**: ordena e conta duplicados
+- **chmod +x**: torna executável · **ls -l**: mostra permissões
+- **rwx**: dono/grupo/outros — ler/escrever/executar
+- **which comando**: onde está o executável
+- Pipes = filosofia Unix: ferramentas pequenas encadeadas

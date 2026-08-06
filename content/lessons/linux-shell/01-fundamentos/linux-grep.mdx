@@ -1,0 +1,84 @@
+Logs têm **milhares de linhas** — e achar o que importa é o trabalho diário. `grep` filtra por padrão, `wc -l` conta, `find -name` acha arquivos. Nesta lição você domina os filtros do terminal.
+
+> **Por que importa?** "Ache o erro no log", "quantas requisições falharam", "onde está esse arquivo" — grep/wc/find respondem tudo em uma linha. É a skill mais usada em troubleshooting.
+
+## grep — filtrar linhas
+
+```bash
+grep erro app.log      # só as linhas com "erro"
+grep -i erro app.log   # -i ignora maiúsculas/minúsculas
+grep -c erro app.log   # -c conta (sem mostrar as linhas)
+```
+
+## wc — contar
+
+```bash
+wc -l arquivo.txt      # nº de linhas
+wc -w arquivo.txt      # nº de palavras
+```
+
+## find — achar arquivos
+
+```bash
+find /tmp -name "*.py"     # arquivos .py em /tmp
+find /tmp -type d          # só pastas
+find /tmp -name "*.log"    # por extensão
+```
+
+## No sandbox
+
+```python
+import subprocess
+
+# Criar um log de teste
+with open("/tmp/log.txt", "w") as f:
+    f.write("info: inicio\nerro: falhou\n")
+
+# Filtrar os erros
+r = subprocess.run(["grep", "erro", "/tmp/log.txt"], capture_output=True, text=True)
+print(r.stdout)   # erro: falhou
+```
+
+## Exercício 1: contando erros no log
+
+Crie o log e conte as linhas com "erro".
+
+<Exercise
+  lessonSlug="linux-grep"
+  codeKey="linux-ex1"
+  title="grep no log"
+  expectedOutput="erros: 2"
+  hint="Log com 2 linhas 'erro'; grep erro /tmp/log.txt → 2 linhas. O primeiro é 'erro: falhou'."
+/>
+
+## Exercício 2: contando linhas
+
+Conte as linhas de um arquivo.
+
+<Exercise
+  lessonSlug="linux-grep"
+  codeKey="linux-ex2"
+  title="wc -l"
+  expectedOutput="linhas: 5"
+  hint="wc -l /tmp/dados.txt → '5 /tmp/dados.txt'; pegue o primeiro campo com split()[0]."
+/>
+
+## Mini-projeto: filtrando por extensão
+
+Conte os arquivos .py de uma pasta.
+
+<Exercise
+  lessonSlug="linux-grep"
+  codeKey="linux-projeto"
+  title="Mini-projeto — .py"
+  expectedOutput="pythons: 2"
+  hint="find /tmp/mix -name '*.py' → a.py e c.py = 2 (b.js e d.txt ficam de fora)."
+/>
+
+## Resumo
+
+- **grep padrão arquivo**: filtra linhas · **-c** conta · **-i** ignora caixa
+- **wc -l**: conta linhas
+- **find -name "*.py"**: acha por padrão · **-type d** pastas
+- Troubleshooting = grep nos logs
+- Filtros transformam milhares de linhas em 1 resposta
