@@ -2397,8 +2397,152 @@ export function getSolution(codeKey: string): Solution | null {
     REACT_SOLUTIONS[codeKey] ??
     LINUX_SOLUTIONS[codeKey] ??
     SCRAPING_SOLUTIONS[codeKey] ??
+    SECURITY_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Cibersegurança ──────────────────────────────────────
+export const SECURITY_SOLUTIONS: Record<string, Solution> = {
+  'security-ex1': {
+    explanation:
+      'sha256(senha.encode()).hexdigest() gera 64 caracteres hex — a impressão digital da senha.',
+    code: `import hashlib
+
+senha = "minha-senha-secreta"
+hash_senha = hashlib.sha256(senha.encode()).hexdigest()
+
+print(f"hash: {hash_senha[:16]}...")
+print(f"len: {len(hash_senha)}")`,
+  },
+  'security-ex2': {
+    explanation:
+      'Verificação = hashear a digitada e comparar com o armazenado. Senha errada → hash diferente → False.',
+    code: `import hashlib
+
+def verificar(senha, hash_armazenado):
+    return hashlib.sha256(senha.encode()).hexdigest() == hash_armazenado
+
+senha = "segredo123"
+armazenado = hashlib.sha256(senha.encode()).hexdigest()
+
+print(f"correta: {verificar('segredo123', armazenado)}")
+print(f"errada: {verificar('senha-errada', armazenado)}")`,
+  },
+  'security-projeto': {
+    explanation:
+      'O banco guarda só o hash. Login compara sha256(senha) com o hash — a senha pura nunca é armazenada.',
+    code: `import hashlib
+
+usuarios = {}
+
+def registrar(nome, senha):
+    usuarios[nome] = hashlib.sha256(senha.encode()).hexdigest()
+
+def login(nome, senha):
+    if nome not in usuarios:
+        return False
+    return usuarios[nome] == hashlib.sha256(senha.encode()).hexdigest()
+
+registrar("ana", "segredo123")
+print(f"login certo: {login('ana', 'segredo123')}")
+print(f"login errado: {login('ana', 'outra')}")`,
+  },
+  'security-a-ex1': {
+    explanation:
+      "A concatenação vira 'bob' OR '1'='1 → sempre verdadeiro → vaza 2. O parâmetro ? trata o input como dado → 0.",
+    code: `import sqlite3
+
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE usuarios (id INTEGER, nome TEXT)")
+cur.executemany("INSERT INTO usuarios VALUES (?, ?)", [(1, "ana"), (2, "bob")])
+con.commit()
+
+entrada = "bob' OR '1'='1"
+query = f"SELECT * FROM usuarios WHERE nome = '{entrada}'"
+cur.execute(query)
+print(f"vazou: {len(cur.fetchall())} usuarios")
+
+cur.execute("SELECT * FROM usuarios WHERE nome = ?", (entrada,))
+print(f"segura: {len(cur.fetchall())} usuario")`,
+  },
+  'security-a-ex2': {
+    explanation:
+      'html.escape transforma < > e aspas em entidades — o script vira texto inofensivo no navegador.',
+    code: `import html
+
+comentario = "<script>alert('xss')</script>"
+sanitizado = html.escape(comentario)
+
+print(f"original: {comentario}")
+print(f"sanitizado: {sanitizado}")`,
+  },
+  'security-a-projeto': {
+    explanation:
+      'Parâmetro ? no execute — o input malicioso vira DADO, não SQL. Resultado 0 (não vaza).',
+    code: `import sqlite3
+
+def buscar_usuario(con, nome):
+    cur = con.cursor()
+    cur.execute("SELECT * FROM usuarios WHERE nome = ?", (nome,))
+    return cur.fetchall()
+
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("CREATE TABLE usuarios (id INTEGER, nome TEXT)")
+cur.executemany("INSERT INTO usuarios VALUES (?, ?)", [(1, "ana"), (2, "bob")])
+con.commit()
+
+malicioso = "bob' OR '1'='1"
+print(f"resultado: {len(buscar_usuario(con, malicioso))}")`,
+  },
+  'security-p-ex1': {
+    explanation:
+      '3 regras: 8+ chars, maiúscula (re.search [A-Z]), número (\\d). Só "SenhaForte1" passa.',
+    code: `import re
+
+def validar_senha(senha):
+    if len(senha) < 8:
+        return False
+    if not re.search(r"[A-Z]", senha):
+        return False
+    if not re.search(r"\\d", senha):
+        return False
+    return True
+
+for s in ["fraco", "SenhaForte1", "semnumero"]:
+    print(f"{s}: {validar_senha(s)}")`,
+  },
+  'security-p-ex2': {
+    explanation:
+      'hmac.compare_digest compara em tempo constante — o timing attack não consegue medir diferenças.',
+    code: `import hmac, hashlib
+
+def comparar_seguro(a, b):
+    return hmac.compare_digest(a, b)
+
+hash1 = hashlib.sha256(b"segredo").hexdigest()
+hash2 = hashlib.sha256(b"segredo").hexdigest()
+hash3 = hashlib.sha256(b"outro").hexdigest()
+
+print(f"iguais: {comparar_seguro(hash1, hash2)}")
+print(f"diferentes: {comparar_seguro(hash1, hash3)}")`,
+  },
+  'security-p-projeto': {
+    explanation:
+      'os.urandom(16) gera 16 bytes criptograficamente aleatórios — salt único por chamada, hash diferente mesmo com senha igual.',
+    code: `import hashlib, os
+
+def hash_com_salt(senha):
+    salt = os.urandom(16).hex()
+    return salt, hashlib.sha256((salt + senha).encode()).hexdigest()
+
+s1, h1 = hash_com_salt("mesma")
+s2, h2 = hash_com_salt("mesma")
+print(f"salts diferentes: {s1 != s2}")
+print(f"hashes diferentes: {h1 != h2}")`,
+  },
 }
 
 // ── Curso Web Scraping ────────────────────────────────────────

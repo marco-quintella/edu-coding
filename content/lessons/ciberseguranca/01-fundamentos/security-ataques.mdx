@@ -1,0 +1,87 @@
+**SQL injection** e **XSS** são os dois ataques mais comuns do mundo — e ambos nascem de um erro: **confiar no input do usuário**. Nesta lição você VÊ os ataques funcionando no sandbox e aprende a defesa.
+
+> **Por que importa?** OWASP lista injeção como o risco #1 há anos. Saber demonstrar e prevenir é diferencial real — e pergunta garantida de entrevista.
+
+## SQL injection — o ataque
+
+```python
+import sqlite3
+
+# Input do usuário (campo de login)
+entrada = "bob' OR '1'='1"
+
+# CÓDIGO VULNERÁVEL: concatenação
+query = f"SELECT * FROM usuarios WHERE nome = '{entrada}'"
+# SELECT * FROM usuarios WHERE nome = 'bob' OR '1'='1'
+#                      ↑ sempre verdadeiro! → Vaza TODOS os usuários
+```
+
+A concatenação transforma a query em **outra query** — a condição vira sempre verdadeira.
+
+## A defesa: parâmetros preparados
+
+```python
+# SEGURO: parâmetro com ?
+cur.execute("SELECT * FROM usuarios WHERE nome = ?", (entrada,))
+# O SQL trata o input como DADO, não como código
+```
+
+**Regra de ouro: nunca concatene SQL com input do usuário.**
+
+## XSS — script no navegador
+
+```python
+import html
+
+comentario = "<script>alert('xss')</script>"
+
+# VULNERÁVEL: renderiza o script cru → roda no navegador da vítima
+# SEGURO: escapa o HTML
+sanitizado = html.escape(comentario)
+# &lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;
+# ↑ vira texto, não roda
+```
+
+## Exercício 1: vendo a injeção
+
+Rode a demo: injeção vaza, parâmetro seguro não.
+
+<Exercise
+  lessonSlug="security-ataques"
+  codeKey="security-ex1"
+  title="SQL injection demo"
+  expectedOutput="vazou: 2 usuarios"
+  hint="Concatenação com ' OR '1'='1 vaza TODOS os usuários. O parâmetro ? retorna 0."
+/>
+
+## Exercício 2: sanitizando XSS
+
+Escape o script malicioso.
+
+<Exercise
+  lessonSlug="security-ataques"
+  codeKey="security-ex2"
+  title="XSS escapado"
+  expectedOutput="sanitizado: &lt;script&gt;alert"
+  hint="html.escape(comentario) transforma < > ' em entidades — vira texto seguro."
+/>
+
+## Mini-projeto: API segura
+
+Busque usuário com parâmetros preparados.
+
+<Exercise
+  lessonSlug="security-ataques"
+  codeKey="security-projeto"
+  title="Mini-projeto — query segura"
+  expectedOutput="resultado: 0"
+  hint="cur.execute('SELECT * FROM usuarios WHERE nome = ?', (nome,)) — input malicioso não vaza."
+/>
+
+## Resumo
+
+- **SQL injection**: input vira SQL — concatenação é o erro
+- **Defesa**: parâmetros preparados (`?`) — input é DADO, não código
+- **XSS**: script injetado roda no navegador da vítima
+- **Defesa XSS**: `html.escape` antes de renderizar
+- **Regra**: nunca confie no input do usuário

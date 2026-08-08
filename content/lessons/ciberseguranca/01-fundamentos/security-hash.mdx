@@ -1,0 +1,91 @@
+Senhas são o **alvo #1 dos ataques** — e a primeira regra é: **nunca armazene em texto puro**. Nesta lição você aprende hashing com SHA-256, verificação de senhas e salt — o mínimo que todo dev precisa saber sobre segurança.
+
+> **Por que importa?** "Como armazenar senha com segurança?" é pergunta clássica de entrevista. E vazamentos acontecem — a pergunta é: o que o atacante vê?
+
+## O problema
+
+```python
+# NUNCA faça isso:
+usuarios = {"ana": "segredo123"}   # texto puro no banco!
+```
+
+Se o banco vazar, o atacante vê **todas as senhas**.
+
+## Hash — a impressão digital
+
+```python
+import hashlib
+
+senha = "minha-senha-secreta"
+hash_senha = hashlib.sha256(senha.encode()).hexdigest()
+# 057be071c01aceae... (64 caracteres hex)
+
+# Mesma entrada → MESMO hash (determinístico)
+# Hash é UMA VIA: não dá para "decriptar"
+```
+
+O hash guarda a **verificação**, não a senha. O atacante que roubar o hash não consegue reverter.
+
+## Verificação
+
+```python
+def verificar(senha, hash_armazenado):
+    return hashlib.sha256(senha.encode()).hexdigest() == hash_armazenado
+```
+
+Hasheia a senha digitada e **compara com o hash guardado**.
+
+## Salt — o problema dos hashes iguais
+
+```python
+import hashlib, os
+
+salt = os.urandom(16).hex()   # aleatório por usuário
+hash_final = hashlib.sha256((salt + senha).encode()).hexdigest()
+```
+
+Sem salt: senhas iguais → hashes iguais (atacante percebe). Com salt: **cada usuário tem hash único**.
+
+## Exercício 1: seu primeiro hash
+
+Hasheie uma senha e observe o formato.
+
+<Exercise
+  lessonSlug="security-hash"
+  codeKey="security-ex1"
+  title="Hash SHA-256"
+  expectedOutput="len: 64"
+  hint="hashlib.sha256(senha.encode()).hexdigest() — sempre 64 caracteres hex."
+/>
+
+## Exercício 2: verificação
+
+Verifique senhas corretas e erradas.
+
+<Exercise
+  lessonSlug="security-hash"
+  codeKey="security-ex2"
+  title="Verificação"
+  expectedOutput="errada: False"
+  hint="Comparar sha256(senha) com o armazenado. Senha errada → hash diferente → False."
+/>
+
+## Mini-projeto: sistema de login
+
+Registre e faça login com hash.
+
+<Exercise
+  lessonSlug="security-hash"
+  codeKey="security-projeto"
+  title="Mini-projeto — login"
+  expectedOutput="login errado: False"
+  hint="Dict usuarios[nome] = sha256(senha). Login compara o hash. Senha errada → False."
+/>
+
+## Resumo
+
+- **NUNCA** senha em texto puro
+- **Hash** (SHA-256): impressão digital — 64 hex, uma via
+- **Verificação**: hashear e comparar
+- **Salt**: aleatório por usuário — hashes únicos
+- Vazamento acontece — a pergunta é o que o atacante vê

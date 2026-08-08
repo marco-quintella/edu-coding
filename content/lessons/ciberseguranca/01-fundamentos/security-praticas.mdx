@@ -1,0 +1,95 @@
+Segurança é **prática diária**, não feature. Nesta lição você fecha o pacote: validação forte de senhas, comparação segura de hashes (contra timing attack) e o padrão correto de salt.
+
+> **Por que importa?** Os detalhes separam o código seguro do inseguro: comparar hashes com `==` vaza informação por tempo; senha fraca é convite; salt ausente fragiliza tudo.
+
+## Validação forte de senha
+
+```python
+import re
+
+def validar_senha(senha):
+    if len(senha) < 8:
+        return False
+    if not re.search(r"[A-Z]", senha):
+        return False
+    if not re.search(r"\d", senha):
+        return False
+    return True
+```
+
+Mínimo: **8+ chars, maiúscula, número**.
+
+## Timing attack — o ataque invisível
+
+```python
+# VULNERÁVEL: == compara byte a byte e PARA no primeiro diferente
+# → o atacante mede o tempo e adivinha o hash caractere por caractere
+if hash_a == hash_b: ...
+
+# SEGURO: comparação em tempo CONSTANTE
+import hmac
+hmac.compare_digest(a, b)   # mesmo tempo, certo ou errado
+```
+
+## Salt com os.urandom
+
+```python
+import hashlib, os
+
+salt = os.urandom(16).hex()          # 16 bytes aleatórios seguros
+hash_final = hashlib.sha256((salt + senha).encode()).hexdigest()
+```
+
+`os.urandom` é **criptograficamente seguro** (não é `random`).
+
+## A mentalidade
+
+1. **Nunca confie no input**
+2. **Hash + salt** para senhas
+3. **Parâmetros** para SQL · **escape** para HTML
+4. **Comparação em tempo constante** para hashes
+5. **Valide** entradas na borda do sistema
+
+## Exercício 1: validação de senha
+
+Valide senhas fortes.
+
+<Exercise
+  lessonSlug="security-praticas"
+  codeKey="security-ex1"
+  title="Senha forte"
+  expectedOutput="SenhaForte1: True"
+  hint="8+ chars + maiúscula + número. 'SenhaForte1' passa; 'fraco' e 'semnumero' falham."
+/>
+
+## Exercício 2: comparação segura
+
+Compare hashes com hmac.compare_digest.
+
+<Exercise
+  lessonSlug="security-praticas"
+  codeKey="security-ex2"
+  title="Comparação constante"
+  expectedOutput="diferentes: False"
+  hint="hmac.compare_digest(hash1, hash3) — hashes diferentes → False. Tempo constante."
+/>
+
+## Mini-projeto: salt único
+
+Gere salts diferentes para a mesma senha.
+
+<Exercise
+  lessonSlug="security-praticas"
+  codeKey="security-projeto"
+  title="Mini-projeto — salt"
+  expectedOutput="hashes diferentes: True"
+  hint="os.urandom(16).hex() por chamada — salts (e hashes) sempre diferentes, mesmo com senha igual."
+/>
+
+## Resumo
+
+- **Senha forte**: 8+ chars, maiúscula, número (re.search)
+- **Timing attack**: `==` vaza por tempo → `hmac.compare_digest`
+- **Salt**: `os.urandom(16)` — aleatório criptograficamente seguro
+- Valide na borda, parâmetros no SQL, escape no HTML
+- Segurança é mentalidade, não feature

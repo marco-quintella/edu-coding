@@ -23,6 +23,7 @@ import { FASTAPI_CODES } from './fastapi-codes'
 import { REACT_CODES } from './react-codes'
 import { LINUX_CODES } from './linux-codes'
 import { SCRAPING_CODES } from './scraping-codes'
+import { SECURITY_CODES } from './security-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1158,6 +1159,7 @@ export function getInitialCode(lessonSlug: string): string {
     REACT_CODES[lessonSlug] ??
     LINUX_CODES[lessonSlug] ??
     SCRAPING_CODES[lessonSlug] ??
+    SECURITY_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

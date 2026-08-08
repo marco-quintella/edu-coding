@@ -18,6 +18,7 @@ import { FASTAPI_CODES } from '../fastapi-codes'
 import { REACT_CODES } from '../react-codes'
 import { LINUX_CODES } from '../linux-codes'
 import { SCRAPING_CODES } from '../scraping-codes'
+import { SECURITY_CODES } from '../security-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -320,6 +321,19 @@ const EXPECTED_SLUGS = [
   'scraping-p-ex1',
   'scraping-p-ex2',
   'scraping-p-projeto',
+  // Curso Cibersegurança
+  'security-hash',
+  'security-ex1',
+  'security-ex2',
+  'security-projeto',
+  'security-ataques',
+  'security-a-ex1',
+  'security-a-ex2',
+  'security-a-projeto',
+  'security-praticas',
+  'security-p-ex1',
+  'security-p-ex2',
+  'security-p-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -483,6 +497,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso Scraping começam com import
     for (const [slug, code] of Object.entries(SCRAPING_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Segurança começam com import
+    for (const [slug, code] of Object.entries(SECURITY_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,
