@@ -1,0 +1,81 @@
+**Cherry-pick** copia UM commit específico para a branch atual — sem trazer a branch inteira. **Squash** junta vários commits em um. São as ferramentas de cirurgia fina do git.
+
+> **Por que importa?** Hotfix de produção sem trazer a feature inteira? Cherry-pick. PR com 15 commits "fix typo"? Squash. O dia a dia de times maduros.
+
+## Cherry-pick
+
+```python
+# Branch feature com 2 commits (f1, f2) sobre base
+git checkout -b feature
+# ... 2 commits ...
+
+# Volta para a principal e copia SÓ o f1
+git checkout main
+git cherry-pick <hash-do-f1>
+```
+
+O commit f1 é **copiado** para a branch atual — o f2 fica na feature.
+
+## Squash — juntar commits
+
+```python
+# 3 commits (c0, c1, c2) — queremos 2 (c0 + squashed)
+git reset --soft HEAD~2   # desfaz c1 e c2, mantendo as mudanças staged
+git commit -m "squashed"  # um commit único
+```
+
+- `reset --soft HEAD~N`: desfaz os últimos N commits **mantendo** as mudanças
+- `git commit`: cria um commit único com tudo
+
+## Por que squash?
+
+```
+Antes: c0 → c1 ("wip") → c2 ("fix typo") → c3 ("final")
+Depois: c0 → c1 ("feature pronta")     ← 1 feature = 1 commit
+```
+
+Histórico limpo = revisão de PR mais rápida e git bisect mais fácil.
+
+## Exercício 1: cherry-pick
+
+Copie o f1 para a branch principal.
+
+<Exercise
+  lessonSlug="gitav-cherrypick"
+  codeKey="gitav-ex1"
+  title="Cherry-pick"
+  expectedOutput="arquivo: feature1"
+  hint="git log --oneline feature → f1 é o penúltimo hash; git cherry-pick <hash>; a.txt contém 'feature1'."
+/>
+
+## Exercício 2: squash
+
+Junte os 2 últimos commits em um.
+
+<Exercise
+  lessonSlug="gitav-cherrypick"
+  codeKey="gitav-ex2"
+  title="Squash"
+  expectedOutput="ultima msg: squashed"
+  hint="git reset --soft HEAD~2 + git commit -m 'squashed' → 2 commits: c0 e squashed."
+/>
+
+## Mini-projeto: histórico limpo
+
+Crie 3 commits na master com add explícito.
+
+<Exercise
+  lessonSlug="gitav-cherrypick"
+  codeKey="gitav-projeto"
+  title="Mini-projeto — commits"
+  expectedOutput="commits: 4"
+  hint="base + m1 + m2 + m3 = 4 commits no log --oneline."
+/>
+
+## Resumo
+
+- **cherry-pick**: copia UM commit para a branch atual
+- **squash**: `reset --soft HEAD~N` + `commit` novo = 1 commit
+- Hotfix sem trazer a branch inteira
+- 1 feature = 1 commit (histórico limpo)
+- Cirurgia fina do git

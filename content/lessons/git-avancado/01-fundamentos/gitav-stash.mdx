@@ -1,0 +1,67 @@
+**Stash** guarda trabalho em progresso sem commit — você troca de branch, faz outra coisa e volta depois. É o comando que salva o dev que começou uma mudança e precisou parar no meio.
+
+> **Por que importa?** "Preciso trocar de branch mas não quero commitar WIP" — stash resolve em 1 comando. E `git stash` é pergunta comum de entrevista.
+
+## O fluxo
+
+```python
+# 1. Trabalho em progresso (sem commit)
+with open("a.txt", "w") as f:
+    f.write("wip")
+
+# 2. Guarda no stash
+git stash
+
+# 3. Faz outra coisa (commita normalmente)
+# 4. Restaura o WIP
+git stash pop
+```
+
+- `git stash` — guarda as mudanças e limpa o working tree
+- `git stash list` — mostra os stashes
+- `git stash pop` — restaura e remove do stash
+
+## O stash na prática
+
+```python
+# Modificou a.txt sem commit
+r = git status --short       # 1 arquivo modificado
+git stash                     # limpa o working tree
+r2 = git status --short      # 0 arquivos — WIP guardado
+```
+
+## Conflito no pop
+
+`stash pop` conflita se o arquivo do stash **também mudou** no branch atual. Trabalhar em arquivos diferentes evita o problema.
+
+## Exercício 1: salvando o WIP
+
+Confirme que o stash limpa o working tree.
+
+<Exercise
+  lessonSlug="gitav-stash"
+  codeKey="gitav-ex1"
+  title="Stash"
+  expectedOutput="apos stash: 0"
+  hint="status mostra 1 modificado antes; stash guarda; status mostra 0 depois."
+/>
+
+## Exercício 2: o fluxo completo
+
+Guarde, trabalhe e restaure.
+
+<Exercise
+  lessonSlug="gitav-stash"
+  codeKey="gitav-projeto"
+  title="Mini-projeto — stash completo"
+  expectedOutput="a.txt: wip"
+  hint="stash do WIP → commit de outro arquivo → stash pop → a.txt volta com 'wip'."
+/>
+
+## Resumo
+
+- **git stash**: guarda WIP sem commit
+- **git stash list**: mostra os guardados
+- **git stash pop**: restaura + remove
+- Use quando precisar trocar de branch no meio do trabalho
+- Conflito no pop se o mesmo arquivo mudou no branch

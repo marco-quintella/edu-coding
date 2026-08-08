@@ -1,0 +1,79 @@
+Saber ler o **estado do repositório** é a skill silenciosa do git: `log --oneline` (histórico compacto), `status --short` (o que está staged/modificado) e `diff --stat` (o tamanho da mudança). Nesta lição você diagnostica um repositório real no sandbox.
+
+> **Por que importa?** Antes de resolver qualquer problema de git, você precisa LER o estado. Esses 3 comandos são 80% do diagnóstico diário.
+
+## git log --oneline
+
+```python
+git log --oneline
+# 9ceaca4 f2
+# 28ea7f3 f1
+# 6ff22bc base
+```
+
+Um commit por linha: **hash abreviado + mensagem**. O mais novo primeiro.
+
+## git status --short
+
+```python
+git status --short
+# A  novo.txt    → staged (adicionado)
+# M  a.txt       → modificado
+# ?? novo2.txt   → novo (untracked)
+```
+
+Compacto e legível por scripts: `A` (added), `M` (modified), `??` (untracked).
+
+## git diff --stat
+
+```python
+git diff --stat
+# a.txt | 2 +-
+#  1 file changed, 1 insertion(+), 1 deletion(-)
+```
+
+O **resumo** da mudança: arquivo, linhas adicionadas (+) e removidas (-).
+
+## Exercício 1: contando commits
+
+Crie 5 commits e confirme no log.
+
+<Exercise
+  lessonSlug="gitav-diagnostico"
+  codeKey="gitav-ex1"
+  title="Log avançado"
+  expectedOutput="mais antigo: 0"
+  hint="5 arquivos → 5 commits. log --oneline: o último (mais antigo) é 'commit 0'."
+/>
+
+## Exercício 2: diff --stat
+
+Confirme o resumo da mudança.
+
+<Exercise
+  lessonSlug="gitav-diagnostico"
+  codeKey="gitav-ex2"
+  title="Diff resumido"
+  expectedOutput="diff: a.txt | 2 +-"
+  hint="Modifique 1 linha de a.txt e rode git diff --stat → '1 insertion, 1 deletion'."
+/>
+
+## Mini-projeto: lendo o status
+
+Confirme que o arquivo novo está staged.
+
+<Exercise
+  lessonSlug="gitav-diagnostico"
+  codeKey="gitav-projeto"
+  title="Mini-projeto — status"
+  expectedOutput="tipo: A"
+  hint="git add novo.txt → status --short mostra 'A novo.txt'. staged: 1."
+/>
+
+## Resumo
+
+- **log --oneline**: hash + mensagem, um por linha
+- **status --short**: A (staged), M (modificado), ?? (novo)
+- **diff --stat**: resumo — arquivo + +/- linhas
+- Diagnóstico: leia o estado antes de agir
+- 3 comandos = 80% do diagnóstico diário

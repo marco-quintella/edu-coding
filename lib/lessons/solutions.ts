@@ -2402,8 +2402,221 @@ export function getSolution(codeKey: string): Solution | null {
     SQLAV_SOLUTIONS[codeKey] ??
     JWT_SOLUTIONS[codeKey] ??
     ESTAT_SOLUTIONS[codeKey] ??
+    GITAV_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Git Avançado ────────────────────────────────────────
+export const GITAV_SOLUTIONS: Record<string, Solution> = {
+  'gitav-ex1': {
+    explanation:
+      'git log --oneline mostra 1 commit: hash + mensagem. O split()[-1] pega a mensagem "primeiro".',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav1", ignore_errors=True)
+os.makedirs("/tmp/gitav1")
+os.chdir("/tmp/gitav1")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+with open("a.txt", "w") as f:
+    f.write("conteudo\\n")
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "primeiro", "-q"])
+
+r = subprocess.run(["git", "log", "--oneline"], capture_output=True, text=True)
+linhas = [l for l in r.stdout.split("\\n") if l.strip()]
+print(f"commits: {len(linhas)}")
+print(f"msg: {linhas[0].split()[-1]}")`,
+  },
+  'gitav-projeto': {
+    explanation:
+      'WIP em a.txt vai pro stash; commit de b.txt; pop restaura a.txt com "wip". Arquivos diferentes → sem conflito.',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav7", ignore_errors=True)
+os.makedirs("/tmp/gitav7")
+os.chdir("/tmp/gitav7")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+with open("a.txt", "w") as f:
+    f.write("v1\\n")
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "v1", "-q"])
+
+with open("a.txt", "w") as f:
+    f.write("wip\\n")
+subprocess.run(["git", "stash", "-q"])
+
+with open("b.txt", "w") as f:
+    f.write("novo arquivo\\n")
+subprocess.run(["git", "add", "b.txt"])
+subprocess.run(["git", "commit", "-m", "v2", "-q"])
+
+r = subprocess.run(["git", "stash", "list"], capture_output=True, text=True)
+print(f"stash: {len([l for l in r.stdout.split('\\n') if l.strip()])}")
+subprocess.run(["git", "stash", "pop", "-q"])
+r2 = subprocess.run(["git", "status", "--short"], capture_output=True, text=True)
+print(f"wip de volta: {len([l for l in r2.stdout.split('\\n') if l.strip()])}")
+print(f"a.txt: {open('a.txt').read().strip()}")`,
+  },
+  'gitav-c-ex1': {
+    explanation:
+      'log --oneline vai do mais novo ao mais antigo: [f2, f1, base]. O penúltimo ([-2]) é o f1 → cherry-pick copia só ele.',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav3", ignore_errors=True)
+os.makedirs("/tmp/gitav3")
+os.chdir("/tmp/gitav3")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+with open("a.txt", "w") as f:
+    f.write("base\\n")
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "base", "-q"])
+
+branch_principal = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True).stdout.strip()
+
+subprocess.run(["git", "checkout", "-q", "-b", "feature"])
+with open("a.txt", "w") as f:
+    f.write("feature1\\n")
+subprocess.run(["git", "commit", "-am", "f1", "-q"])
+with open("a.txt", "w") as f:
+    f.write("feature2\\n")
+subprocess.run(["git", "commit", "-am", "f2", "-q"])
+
+subprocess.run(["git", "checkout", "-q", branch_principal])
+r = subprocess.run(["git", "log", "--oneline", "feature"], capture_output=True, text=True)
+linhas = [l for l in r.stdout.split("\\n") if l.strip()]
+f1_hash = linhas[-2].split()[0]
+subprocess.run(["git", "cherry-pick", f1_hash], capture_output=True, text=True)
+
+r2 = subprocess.run(["git", "log", "--oneline"], capture_output=True, text=True)
+print(f"commits no principal: {len([l for l in r2.stdout.split('\\n') if l.strip()])}")
+print(f"arquivo: {open('a.txt').read().strip()}")`,
+  },
+  'gitav-c-ex2': {
+    explanation:
+      'reset --soft HEAD~2 desfaz c1+c2 mantendo as mudanças staged; commit novo cria "squashed". Resultado: c0 + squashed.',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav4", ignore_errors=True)
+os.makedirs("/tmp/gitav4")
+os.chdir("/tmp/gitav4")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+for i in range(3):
+    with open("a.txt", "w") as f:
+        f.write(f"commit {i}\\n")
+    subprocess.run(["git", "add", "."])
+    subprocess.run(["git", "commit", "-m", f"c{i}", "-q"])
+
+subprocess.run(["git", "reset", "--soft", "HEAD~2"])
+subprocess.run(["git", "commit", "-m", "squashed", "-q"])
+
+r2 = subprocess.run(["git", "log", "--oneline"], capture_output=True, text=True)
+print(f"commits: {len([l for l in r2.stdout.split('\\n') if l.strip()])}")
+print(f"ultima msg: {r2.stdout.strip().split('\\n')[0].split()[-1]}")`,
+  },
+  'gitav-c-projeto': {
+    explanation:
+      'base + m1 + m2 + m3 = 4 commits. add explícito garante que cada mudança é commitada.',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav8", ignore_errors=True)
+os.makedirs("/tmp/gitav8")
+os.chdir("/tmp/gitav8")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+with open("a.txt", "w") as f:
+    f.write("base\\n")
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "base", "-q"])
+
+for i in range(1, 4):
+    with open("a.txt", "w") as f:
+        f.write(f"master {i}\\n")
+    subprocess.run(["git", "add", "a.txt"])
+    subprocess.run(["git", "commit", "-m", f"m{i}", "-q"])
+
+r = subprocess.run(["git", "log", "--oneline"], capture_output=True, text=True)
+print(f"commits: {len([l for l in r.stdout.split('\\n') if l.strip()])}")`,
+  },
+  'gitav-d-ex1': {
+    explanation:
+      '5 arquivos → 5 commits. log --oneline do mais novo ao mais antigo: o último ([-1]) é "commit 0".',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav5", ignore_errors=True)
+os.makedirs("/tmp/gitav5")
+os.chdir("/tmp/gitav5")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+for i in range(5):
+    with open(f"f{i}.txt", "w") as f:
+        f.write(str(i))
+    subprocess.run(["git", "add", "."])
+    subprocess.run(["git", "commit", "-m", f"commit {i}", "-q"])
+
+r = subprocess.run(["git", "log", "--oneline"], capture_output=True, text=True)
+commits = [l for l in r.stdout.split("\\n") if l.strip()]
+print(f"commits: {len(commits)}")
+print(f"mais antigo: {commits[-1].split()[-1]}")`,
+  },
+  'gitav-d-ex2': {
+    explanation:
+      'git diff --stat resume: a.txt com 1 inserção (+) e 1 remoção (-) — "a.txt | 2 +-".',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav6", ignore_errors=True)
+os.makedirs("/tmp/gitav6")
+os.chdir("/tmp/gitav6")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+with open("a.txt", "w") as f:
+    f.write("linha1\\nlinha2\\nlinha3\\n")
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "base", "-q"])
+
+with open("a.txt", "w") as f:
+    f.write("linha1\\nlinha2 MODIFICADA\\nlinha3\\n")
+r = subprocess.run(["git", "diff", "--stat"], capture_output=True, text=True)
+print(f"diff: {r.stdout.strip()}")`,
+  },
+  'gitav-d-projeto': {
+    explanation:
+      'git add novo.txt → status --short mostra "A novo.txt" — A = added (staged).',
+    code: `import subprocess, os, shutil
+
+shutil.rmtree("/tmp/gitav9", ignore_errors=True)
+os.makedirs("/tmp/gitav9")
+os.chdir("/tmp/gitav9")
+subprocess.run(["git", "init", "-q"])
+subprocess.run(["git", "config", "user.email", "a@b.com"])
+subprocess.run(["git", "config", "user.name", "Teste"])
+
+with open("novo.txt", "w") as f:
+    f.write("novo")
+subprocess.run(["git", "add", "novo.txt"])
+r = subprocess.run(["git", "status", "--short"], capture_output=True, text=True)
+linhas = [l for l in r.stdout.split("\\n") if l.strip()]
+print(f"staged: {len(linhas)}")
+print(f"tipo: {linhas[0][:2]}")`,
+  },
 }
 
 // ── Curso Estatística com Python ──────────────────────────────
