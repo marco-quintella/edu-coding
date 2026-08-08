@@ -24,6 +24,7 @@ import { SQLAV_CODES } from '../sqlav-codes'
 import { JWT_CODES } from '../jwt-codes'
 import { ESTAT_CODES } from '../estat-codes'
 import { GITAV_CODES } from '../gitav-codes'
+import { ML_CODES } from '../ml-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -403,6 +404,19 @@ const EXPECTED_SLUGS = [
   'gitav-d-ex1',
   'gitav-d-ex2',
   'gitav-d-projeto',
+  // Curso Machine Learning
+  'ml-regressao',
+  'ml-ex1',
+  'ml-ex2',
+  'ml-projeto',
+  'ml-classificacao',
+  'ml-c-ex1',
+  'ml-c-ex2',
+  'ml-c-projeto',
+  'ml-clustering',
+  'ml-k-ex1',
+  'ml-k-ex2',
+  'ml-k-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -614,6 +628,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso Git Avançado começam com import
     for (const [slug, code] of Object.entries(GITAV_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso ML começam com import
+    for (const [slug, code] of Object.entries(ML_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,

@@ -1,0 +1,77 @@
+**Regressão linear** é o modelo mais simples e mais usado: encontrar a **reta** que melhor explica os dados e usar essa reta para prever. Preço × área, salário × anos de estudo — tudo começa aqui.
+
+> **Por que importa?** É a porta de entrada do ML e a base de previsões de negócio. E roda em 3 linhas com scikit-learn.
+
+## O modelo
+
+```python
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+X = np.array([[30], [40], [50], [60], [70]])   # área (m²)
+y = np.array([150, 200, 250, 300, 350])         # preço (R$ mil)
+
+modelo = LinearRegression()
+modelo.fit(X, y)          # APRENDE a reta
+```
+
+## Lendo o modelo
+
+```python
+modelo.coef_[0]       # 5.0 — cada m² a mais = +R$5 mil
+modelo.intercept_     # 0.0 — preço com 0 m²
+modelo.predict([[80]])  # 400.0 — previsão para 80 m²
+```
+
+**coef** = quanto y muda quando x sobe 1. **intercept** = y quando x é 0. **predict** = usa a reta aprendida.
+
+## A reta aprendida
+
+```
+preço = coef × área + intercept
+preço = 5 × 80 + 0 = 400
+```
+
+## Exercício 1: preço pela área
+
+Treine e preveja o preço de 80 m².
+
+<Exercise
+  lessonSlug="ml-regressao"
+  codeKey="ml-ex1"
+  title="Regressão"
+  expectedOutput="previsao 80m2: 400.0"
+  hint="fit(X, y); predict([[80]]). coef 5.0 × 80 + 0 = 400."
+/>
+
+## Exercício 2: salário por anos de estudo
+
+Preveja o salário com 10 anos de estudo.
+
+<Exercise
+  lessonSlug="ml-regressao"
+  codeKey="ml-ex2"
+  title="Previsão de salário"
+  expectedOutput="previsao 0 anos: 2.0"
+  hint="Cada ano = +R$0.5 mil. 10 anos → 7.0; 0 anos → intercept 2.0."
+/>
+
+## Mini-projeto: preço do carro
+
+Preveja o preço do carro pela km rodada.
+
+<Exercise
+  lessonSlug="ml-regressao"
+  codeKey="ml-projeto"
+  title="Mini-projeto — carro"
+  expectedOutput="previsao 100k km: 0.0"
+  hint="coef = -1 (cada 1k km = -R$1 mil). 25k → 75; 100k → 0."
+/>
+
+## Resumo
+
+- **Regressão linear**: reta que explica os dados
+- **fit(X, y)**: aprende · **predict(X)**: prevê
+- **coef**: inclinação · **intercept**: y quando x=0
+- **preço = coef × x + intercept**
+- O ponto de partida do ML

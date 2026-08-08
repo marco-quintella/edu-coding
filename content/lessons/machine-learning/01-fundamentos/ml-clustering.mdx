@@ -1,0 +1,82 @@
+**Clustering** agrupa dados **sem rótulos** (aprendizado não supervisionado): o KMeans encontra k grupos naturais minimizando a distância dos pontos ao centro. Segmentação de clientes é o caso clássico.
+
+> **Por que importa?** Sem ninguém dizer as categorias, o KMeans encontra os grupos sozinho — segmentação, anomalias e redução de complexidade.
+
+## O KMeans
+
+```python
+from sklearn.cluster import KMeans
+import numpy as np
+
+X = np.array([
+    [100, 200], [120, 180], [110, 210],   # cluster 1 (gasto baixo)
+    [900, 800], [850, 950], [950, 850],   # cluster 2 (gasto alto)
+])
+
+kmeans = KMeans(n_clusters=2, n_init=10, random_state=42)
+kmeans.fit(X)
+```
+
+## Lendo o resultado
+
+```python
+kmeans.cluster_centers_   # coordenadas do centro de cada grupo
+kmeans.labels_            # qual grupo cada ponto pertence
+kmeans.inertia_           # soma das distâncias ao centro (coesão)
+```
+
+## Escolhendo k: o método do cotovelo
+
+```python
+for k in range(1, 5):
+    km = KMeans(n_clusters=k, n_init=10, random_state=42)
+    km.fit(X)
+    print(k, km.inertia_)
+```
+
+A inércia cai muito até o k certo, depois estabiliza — o "cotovelo" do gráfico.
+
+## Exercício 1: segmentando clientes
+
+Agrupe em 2 clusters.
+
+<Exercise
+  lessonSlug="ml-clustering"
+  codeKey="ml-ex1"
+  title="KMeans"
+  expectedOutput="rotulos: [0, 0, 0, 1, 1, 1]"
+  hint="n_clusters=2; fit; os 3 de gasto baixo → grupo 0, os 3 altos → grupo 1."
+/>
+
+## Exercício 2: o cotovelo
+
+Calcule a inércia por k.
+
+<Exercise
+  lessonSlug="ml-clustering"
+  codeKey="ml-ex2"
+  title="Elbow"
+  expectedOutput="k3: 9.3"
+  hint="3 grupos naturais (A, B, C) → k3 tem inércia muito baixa (9.3)."
+/>
+
+## Mini-projeto: 3 segmentos
+
+Segmente clientes em 3 grupos.
+
+<Exercise
+  lessonSlug="ml-clustering"
+  codeKey="ml-projeto"
+  title="Mini-projeto — segmentos"
+  expectedOutput="gasto medio do centro 0: 500"
+  hint="3 clusters (baixo/médio/alto). Centro 0 é o médio: ~500."
+/>
+
+## Resumo
+
+- **Clustering**: agrupa SEM rótulos (não supervisionado)
+- **KMeans**: k centros minimizando distância dos pontos
+- **cluster_centers_**: centro de cada grupo
+- **labels_**: grupo de cada ponto · **inertia_**: coesão
+- **Elbow**: inércia cai até o k certo
+- Segmentação de clientes é o uso clássico

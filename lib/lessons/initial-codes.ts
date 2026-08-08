@@ -29,6 +29,7 @@ import { SQLAV_CODES } from './sqlav-codes'
 import { JWT_CODES } from './jwt-codes'
 import { ESTAT_CODES } from './estat-codes'
 import { GITAV_CODES } from './gitav-codes'
+import { ML_CODES } from './ml-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1170,6 +1171,7 @@ export function getInitialCode(lessonSlug: string): string {
     JWT_CODES[lessonSlug] ??
     ESTAT_CODES[lessonSlug] ??
     GITAV_CODES[lessonSlug] ??
+    ML_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

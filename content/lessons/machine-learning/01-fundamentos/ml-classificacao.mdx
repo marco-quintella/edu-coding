@@ -1,0 +1,77 @@
+**Classificação** decide a qual **categoria** um dado pertence: passou/não, comprou/não, aprovado/negado. Árvores de decisão aprendem regras de divisão — e Random Forest combina centenas delas para acertar mais.
+
+> **Por que importa?** É o tipo de ML mais comum em produção: fraude, churn, aprovação de crédito. E `random_state` torna tudo reproduzível.
+
+## Árvore de decisão
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+import numpy as np
+
+X = np.array([[18], [25], [30], [40], [60], [70]])  # idade
+y = np.array([0, 1, 1, 1, 0, 0])                     # compra?
+
+modelo = DecisionTreeClassifier(random_state=42)
+modelo.fit(X, y)
+modelo.predict([[28]])   # 1 — compra
+```
+
+A árvore aprende regras: `idade > 35?` → não compra. O `random_state` garante o mesmo resultado toda vez.
+
+## Random Forest — muitas árvores
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+
+modelo = RandomForestClassifier(n_estimators=50, random_state=42)
+modelo.fit(X, y)
+modelo.score(X, y)   # 1.00 — acurácia (fração de acertos)
+```
+
+- **n_estimators**: quantas árvores (50 = 50 árvores votando)
+- **score**: acurácia — previsões corretas / total
+- Ensemble = cada árvore vê um pedaço, a maioria decide
+
+## Exercício 1: random forest
+
+Classifique quem passa com horas de estudo + sono.
+
+<Exercise
+  lessonSlug="ml-classificacao"
+  codeKey="ml-ex1"
+  title="Random Forest"
+  expectedOutput="previsao [8, 8]: 1"
+  hint="fit(X, y); predict([[8, 8]]). 8h estudo + 8h sono → passa (1)."
+/>
+
+## Exercício 2: árvore de decisão
+
+Classifique por idade.
+
+<Exercise
+  lessonSlug="ml-classificacao"
+  codeKey="ml-ex2"
+  title="Árvore"
+  expectedOutput="previsao 65: 0"
+  hint="fit; predict([[28]]) → 1 (compra); predict([[65]]) → 0 (não compra)."
+/>
+
+## Mini-projeto: aprovação de empréstimo
+
+Classifique o empréstimo por renda + score.
+
+<Exercise
+  lessonSlug="ml-classificacao"
+  codeKey="ml-projeto"
+  title="Mini-projeto — crédito"
+  expectedOutput="previsao: 1"
+  hint="fit(X, y); predict([[4000, 650]]) → 1 (aprovado)."
+/>
+
+## Resumo
+
+- **Classificação**: prevê categoria (0/1, sim/não)
+- **DecisionTree**: regras de divisão aprendidas
+- **RandomForest**: muitas árvores votando (ensemble)
+- **score**: acurácia · **random_state**: reproduzível
+- Fraude, churn e crédito usam classificação

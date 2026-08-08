@@ -2403,8 +2403,160 @@ export function getSolution(codeKey: string): Solution | null {
     JWT_SOLUTIONS[codeKey] ??
     ESTAT_SOLUTIONS[codeKey] ??
     GITAV_SOLUTIONS[codeKey] ??
+    ML_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Machine Learning ─────────────────────────────────────
+export const ML_SOLUTIONS: Record<string, Solution> = {
+  'ml-ex1': {
+    explanation:
+      'fit aprende a reta (coef 5.0, intercept 0.0). predict([[80]]) = 5×80 + 0 = 400.0.',
+    code: `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+X = np.array([[30], [40], [50], [60], [70]])
+y = np.array([150, 200, 250, 300, 350])
+
+modelo = LinearRegression()
+modelo.fit(X, y)
+
+print(f"coef: {modelo.coef_[0]:.1f}")
+print(f"intercept: {modelo.intercept_:.1f}")
+print(f"previsao 80m2: {modelo.predict([[80]])[0]:.1f}")`,
+  },
+  'ml-ex2': {
+    explanation:
+      'Cada ano de estudo = +R$0.5 mil. 10 anos → 7.0; 0 anos → intercept 2.0 (salário base).',
+    code: `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+X = np.array([[0], [2], [4], [6], [8]])
+y = np.array([2, 3, 4, 5, 6])
+
+modelo = LinearRegression()
+modelo.fit(X, y)
+
+print(f"previsao 10 anos: {modelo.predict([[10]])[0]:.1f}")
+print(f"previsao 0 anos: {modelo.predict([[0]])[0]:.1f}")`,
+  },
+  'ml-projeto': {
+    explanation:
+      'coef = -1 (cada 1k km desvaloriza R$1 mil). 25k → 75.0; 100k → 0.0 (depreciação total).',
+    code: `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+X = np.array([[10], [20], [30], [40], [50]])
+y = np.array([90, 80, 70, 60, 50])
+
+modelo = LinearRegression()
+modelo.fit(X, y)
+
+print(f"previsao 25k km: {modelo.predict([[25]])[0]:.1f}")
+print(f"previsao 100k km: {modelo.predict([[100]])[0]:.1f}")`,
+  },
+  'ml-c-ex1': {
+    explanation:
+      'RandomForest com 50 árvores classifica perfeitamente (acurácia 1.00). [8h estudo, 8h sono] → passa (1).',
+    code: `from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+
+X = np.array([[5, 6], [8, 8], [2, 5], [9, 7], [3, 4], [7, 9]])
+y = np.array([0, 1, 0, 1, 0, 1])
+
+modelo = RandomForestClassifier(n_estimators=50, random_state=42)
+modelo.fit(X, y)
+
+print(f"acurcia: {modelo.score(X, y):.2f}")
+print(f"previsao [8, 8]: {modelo.predict([[8, 8]])[0]}")`,
+  },
+  'ml-c-ex2': {
+    explanation:
+      'A árvore aprende as regras de idade: 28 → compra (1); 65 → não compra (0).',
+    code: `from sklearn.tree import DecisionTreeClassifier
+import numpy as np
+
+X = np.array([[18], [25], [30], [40], [60], [70]])
+y = np.array([0, 1, 1, 1, 0, 0])
+
+modelo = DecisionTreeClassifier(random_state=42)
+modelo.fit(X, y)
+
+print(f"previsao 28: {modelo.predict([[28]])[0]}")
+print(f"previsao 65: {modelo.predict([[65]])[0]}")`,
+  },
+  'ml-c-projeto': {
+    explanation:
+      'RandomForest aprende o padrão de aprovação. [R$4000, score 650] → 1 (aprovado).',
+    code: `from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+
+X = np.array([[3000, 700], [5000, 800], [2000, 400], [8000, 900], [1500, 300], [6000, 750]])
+y = np.array([1, 1, 0, 1, 0, 1])
+
+modelo = RandomForestClassifier(n_estimators=50, random_state=42)
+modelo.fit(X, y)
+
+novo = modelo.predict([[4000, 650]])
+print(f"previsao: {novo[0]}")`,
+  },
+  'ml-k-ex1': {
+    explanation:
+      'KMeans agrupa por proximidade: 3 de gasto baixo → grupo 0; 3 de gasto alto → grupo 1.',
+    code: `from sklearn.cluster import KMeans
+import numpy as np
+
+X = np.array([
+    [100, 200], [120, 180], [110, 210],  # cluster 1
+    [900, 800], [850, 950], [950, 850],  # cluster 2
+])
+
+kmeans = KMeans(n_clusters=2, n_init=10, random_state=42)
+kmeans.fit(X)
+
+print(f"centros: {len(kmeans.cluster_centers_)}")
+print(f"rotulos: {sorted(kmeans.labels_.tolist())}")`,
+  },
+  'ml-k-ex2': {
+    explanation:
+      'Elbow: k1 inércia enorme (8096.4), k3 mínima (9.3) — 3 grupos naturais (A, B, C).',
+    code: `from sklearn.cluster import KMeans
+import numpy as np
+
+X = np.array([
+    [1, 1], [2, 1], [1, 2],       # grupo A
+    [10, 10], [11, 9], [9, 11],   # grupo B
+    [50, 50], [51, 49], [49, 51], # grupo C
+])
+
+inercias = []
+for k in range(1, 5):
+    km = KMeans(n_clusters=k, n_init=10, random_state=42)
+    km.fit(X)
+    inercias.append(round(km.inertia_, 1))
+
+print(f"k1: {inercias[0]}")
+print(f"k3: {inercias[2]}")`,
+  },
+  'ml-k-projeto': {
+    explanation:
+      '3 segmentos naturais (baixo/médio/alto). O centro 0 é o médio (~500 de gasto).',
+    code: `from sklearn.cluster import KMeans
+import numpy as np
+
+X = np.array([
+    [50, 5], [60, 6], [55, 4],       # baixo gasto
+    [500, 50], [480, 45], [520, 55], # médio
+    [5000, 500], [4800, 480], [5100, 520],  # alto
+])
+
+kmeans = KMeans(n_clusters=3, n_init=10, random_state=42)
+kmeans.fit(X)
+
+print(f"centros: {len(kmeans.cluster_centers_)}")
+print(f"gasto medio do centro 0: {kmeans.cluster_centers_[0][0]:.0f}")`,
+  },
 }
 
 // ── Curso Git Avançado ────────────────────────────────────────
