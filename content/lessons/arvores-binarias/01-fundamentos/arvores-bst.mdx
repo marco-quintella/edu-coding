@@ -1,0 +1,94 @@
+**BST (Árvore Binária de Busca)** é a estrutura de dados de entrevista #1: cada nó tem esquerda **menor** e direita **maior** — o que torna a busca **O(log n)** no balanceado. É como o índice de um banco funciona por baixo.
+
+> **Por que importa?** "Implemente uma busca binária em árvore" é pergunta clássica. E entender BST é entender índices de banco (B-tree é a evolução).
+
+## A regra de ouro
+
+```
+       50
+      /  \
+    30    70
+   /  \   / \
+  20  40 60  80
+
+esquerda < raiz < direita   (sempre, para todo nó)
+```
+
+## Inserção e busca
+
+```python
+class No:
+    def __init__(self, valor):
+        self.valor = valor
+        self.esq = None
+        self.dir = None
+
+def inserir(raiz, valor):
+    if raiz is None:
+        return No(valor)
+    if valor < raiz.valor:
+        raiz.esq = inserir(raiz.esq, valor)
+    else:
+        raiz.dir = inserir(raiz.dir, valor)
+    return raiz
+```
+
+A busca **descarta metade** a cada passo: menor → esquerda, maior → direita.
+
+## Mínimo e máximo
+
+```python
+def minimo(raiz):      # sempre à ESQUERDA até o fim
+    while raiz.esq:
+        raiz = raiz.esq
+    return raiz.valor
+
+def maximo(raiz):      # sempre à DIREITA até o fim
+    while raiz.dir:
+        raiz = raiz.dir
+    return raiz.valor
+```
+
+## Exercício 1: busca no BST
+
+Busque 40 e 99.
+
+<Exercise
+  lessonSlug="arvores-bst"
+  codeKey="arvores-ex1"
+  title="Busca BST"
+  expectedOutput="busca 99: False"
+  hint="40 existe (True); 99 não foi inserido (False). Busca descarta metade por passo."
+/>
+
+## Exercício 2: mínimo e máximo
+
+Ache o menor e o maior valor.
+
+<Exercise
+  lessonSlug="arvores-bst"
+  codeKey="arvores-ex2"
+  title="Min e max"
+  expectedOutput="max: 80"
+  hint="Mínimo = sempre à esquerda (20). Máximo = sempre à direita (80)."
+/>
+
+## Mini-projeto: validação
+
+Confirme que a árvore é um BST válido.
+
+<Exercise
+  lessonSlug="arvores-bst"
+  codeKey="arvores-projeto"
+  title="Mini-projeto — validação"
+  expectedOutput="valida: True"
+  hint="Cada nó: min < valor < max (intervalo herdado). Inserções respeitam a regra → True."
+/>
+
+## Resumo
+
+- **BST**: esquerda < raiz < direita (sempre)
+- **Busca O(log n)** no balanceado — descarta metade por passo
+- **Mínimo**: sempre à esquerda · **Máximo**: sempre à direita
+- Inserção em ordem crescente → desbalanceia (vira lista)
+- Base dos índices de banco (B-tree)

@@ -32,6 +32,7 @@ import { GITAV_CODES } from './gitav-codes'
 import { ML_CODES } from './ml-codes'
 import { GRAFOS_CODES } from './grafos-codes'
 import { PATTERNS_CODES } from './patterns-codes'
+import { ARVORES_CODES } from './arvores-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1176,6 +1177,7 @@ export function getInitialCode(lessonSlug: string): string {
     ML_CODES[lessonSlug] ??
     GRAFOS_CODES[lessonSlug] ??
     PATTERNS_CODES[lessonSlug] ??
+    ARVORES_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

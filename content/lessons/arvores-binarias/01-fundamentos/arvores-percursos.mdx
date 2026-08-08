@@ -1,0 +1,80 @@
+**Percursos** definem a ordem de visita dos nós — e cada um serve a um propósito: **em-ordem** sai ordenado, **pré-ordem** reproduz a estrutura, **pós-ordem** processa filhos antes da raiz. Três linhas de recursão cada.
+
+> **Por que importa?** "Qual percurso devolve ordenado?", "qual percurso copia a árvore?" — perguntas clássicas. E os três são a base de serialização e destruição de árvores.
+
+## Os três percursos
+
+```python
+def em_ordem(raiz):        # esq → raiz → dir
+    if raiz is None:
+        return []
+    return em_ordem(raiz.esq) + [raiz.valor] + em_ordem(raiz.dir)
+
+def pre_ordem(raiz):       # raiz → esq → dir
+    if raiz is None:
+        return []
+    return [raiz.valor] + pre_ordem(raiz.esq) + pre_ordem(raiz.dir)
+
+def pos_ordem(raiz):       # esq → dir → raiz
+    if raiz is None:
+        return []
+    return pos_ordem(raiz.esq) + pos_ordem(raiz.dir) + [raiz.valor]
+```
+
+## O que cada um devolve
+
+```
+Árvore: 50(30(20,40), 70(60,80))
+
+em-ordem:  [20, 30, 40, 50, 60, 70, 80]  ← ORDENADO!
+pré-ordem: [50, 30, 20, 40, 70, 60, 80]  ← raiz primeiro
+pós-ordem: [20, 40, 30, 60, 80, 70, 50]  ← filhos primeiro
+```
+
+- **em-ordem**: no BST, sai crescente — a razão de existir do BST
+- **pré-ordem**: raiz primeiro — usado para serializar/copiar
+- **pós-ordem**: filhos primeiro — usado para deletar (precisa dos filhos)
+
+## Exercício 1: em-ordem
+
+Percorra em-ordem.
+
+<Exercise
+  lessonSlug="arvores-percursos"
+  codeKey="arvores-ex1"
+  title="Em-ordem"
+  expectedOutput="[20, 30, 40, 50, 60, 70, 80]"
+  hint="esq → raiz → dir. No BST o resultado sai ORDENADO."
+/>
+
+## Exercício 2: pré-ordem
+
+Percorra em pré-ordem.
+
+<Exercise
+  lessonSlug="arvores-percursos"
+  codeKey="arvores-ex2"
+  title="Pré-ordem"
+  expectedOutput="[50, 30, 20, 40, 70]"
+  hint="raiz → esq → dir. 50, depois subárvore esquerda (30, 20, 40), depois direita (70)."
+/>
+
+## Mini-projeto: pós-ordem
+
+Percorra em pós-ordem.
+
+<Exercise
+  lessonSlug="arvores-percursos"
+  codeKey="arvores-projeto"
+  title="Mini-projeto — pós-ordem"
+  expectedOutput="[20, 40, 30, 70, 50]"
+  hint="esq → dir → raiz. Folhas primeiro, raiz por último (50 no fim)."
+/>
+
+## Resumo
+
+- **em-ordem** (esq-raiz-dir): sai ORDENADO no BST
+- **pré-ordem** (raiz-esq-dir): raiz primeiro — serializar/copiar
+- **pós-ordem** (esq-dir-raiz): filhos primeiro — deletar
+- 3 linhas de recursão cada
+- O percurso certo depende do objetivo

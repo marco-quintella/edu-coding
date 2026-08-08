@@ -1,0 +1,97 @@
+**Operações de árvore** fecham o pacote: **altura** (equilíbrio), **contagem** (tamanho), **espelho** (inverter) e **validação** (é BST?). Todas recursivas — e todas caem em entrevista.
+
+> **Por que importa?** Altura define a performance (O(log n) vs O(n)), espelho testa compreensão de recursão, validação é a pegadinha clássica de entrevista.
+
+## Altura — o maior caminho
+
+```python
+def altura(raiz):
+    if raiz is None:
+        return 0
+    return 1 + max(altura(raiz.esq), altura(raiz.dir))
+```
+
+**1 + maior filho** — recursivamente. Árvore com 7 nós balanceada → altura 3 (log₂(8)).
+
+## Contagem — tamanho
+
+```python
+def contar(raiz):
+    if raiz is None:
+        return 0
+    return 1 + contar(raiz.esq) + contar(raiz.dir)
+```
+
+**1 + esquerda + direita** — cada nó conta a si mesmo.
+
+## Espelho — inverter
+
+```python
+def espelhar(raiz):
+    if raiz is None:
+        return None
+    raiz.esq, raiz.dir = raiz.dir, raiz.esq   # troca os filhos
+    espelhar(raiz.esq)
+    espelhar(raiz.dir)
+    return raiz
+```
+
+Troca esq/dir em **cada** nó — recursivamente.
+
+## Validação — a pegadinha
+
+```python
+def validar(raiz, minimo=float("-inf"), maximo=float("inf")):
+    if raiz is None:
+        return True
+    if not (minimo < raiz.valor < maximo):
+        return False
+    return validar(raiz.esq, minimo, raiz.valor) and \
+           validar(raiz.dir, raiz.valor, maximo)
+```
+
+**Não basta** comparar com o pai — é preciso o **intervalo herdado dos ancestrais** (a pegadinha clássica).
+
+## Exercício 1: altura
+
+Calcule a altura da árvore.
+
+<Exercise
+  lessonSlug="arvores-operacoes"
+  codeKey="arvores-ex1"
+  title="Altura"
+  expectedOutput="altura: 3"
+  hint="1 + max(esq, dir). 7 nós balanceados → altura 3."
+/>
+
+## Exercício 2: contagem
+
+Conte os nós.
+
+<Exercise
+  lessonSlug="arvores-operacoes"
+  codeKey="arvores-ex2"
+  title="Contagem"
+  expectedOutput="nos: 7"
+  hint="1 + contar(esq) + contar(dir). 50, 30, 70, 20, 40, 60, 80 = 7 nós."
+/>
+
+## Mini-projeto: espelho
+
+Espelhe a árvore.
+
+<Exercise
+  lessonSlug="arvores-operacoes"
+  codeKey="arvores-projeto"
+  title="Mini-projeto — espelho"
+  expectedOutput="[70, 50, 40, 30, 20]"
+  hint="Troca esq/dir em cada nó. Em-ordem do espelho: 70, 50, 40, 30, 20 (invertido)."
+/>
+
+## Resumo
+
+- **altura** = 1 + max(esq, dir) — equilibrada = O(log n)
+- **contar** = 1 + esq + dir
+- **espelhar** = troca esq/dir recursivamente
+- **validar**: intervalo herdado dos ancestrais (não só o pai!)
+- Todas recursivas — o padrão das árvores

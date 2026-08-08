@@ -27,6 +27,7 @@ import { GITAV_CODES } from '../gitav-codes'
 import { ML_CODES } from '../ml-codes'
 import { GRAFOS_CODES } from '../grafos-codes'
 import { PATTERNS_CODES } from '../patterns-codes'
+import { ARVORES_CODES } from '../arvores-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -445,6 +446,19 @@ const EXPECTED_SLUGS = [
   'patterns-e-ex1',
   'patterns-e-ex2',
   'patterns-e-projeto',
+  // Curso Árvores Binárias
+  'arvores-bst',
+  'arvores-ex1',
+  'arvores-ex2',
+  'arvores-projeto',
+  'arvores-percursos',
+  'arvores-p-ex1',
+  'arvores-p-ex2',
+  'arvores-p-projeto',
+  'arvores-operacoes',
+  'arvores-o-ex1',
+  'arvores-o-ex2',
+  'arvores-o-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -680,6 +694,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso Patterns começam com comentário
     for (const [slug, code] of Object.entries(PATTERNS_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|[a-zA-Z_])/)
+    }
+    // Códigos do curso Árvores começam com comentário
+    for (const [slug, code] of Object.entries(ARVORES_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,
