@@ -1,0 +1,86 @@
+**CTEs** (`WITH`) nomeiam consultas intermediárias — transformando SQL complexo em blocos legíveis. Em vez de subquery aninhada ilegível, você cria `WITH totais AS (...)` e usa `totais` como se fosse tabela.
+
+> **Por que importa?** Consultas de produção têm 5+ passos. CTE é como times profissionais organizam SQL — e a pergunta "WITH vs subquery" aparece em entrevistas de dados.
+
+## A estrutura
+
+```sql
+WITH totais AS (
+    SELECT cliente, SUM(total) AS soma
+    FROM pedidos
+    GROUP BY cliente
+)
+SELECT cliente FROM totais WHERE soma > 300
+```
+
+1. `WITH totais AS (...)` — **nomeia** a consulta intermediária
+2. A query principal usa `totais` como tabela
+3. A CTE **não é tabela física** — existe só durante a query
+
+## Por que CTE?
+
+```sql
+-- SEM CTE: subquery aninhada (fica ilegível com mais passos)
+SELECT cliente FROM (
+    SELECT cliente, SUM(total) AS soma FROM pedidos GROUP BY cliente
+) WHERE soma > 300
+
+-- COM CTE: blocos nomeados (legível e reutilizável)
+WITH totais AS (
+    SELECT cliente, SUM(total) AS soma FROM pedidos GROUP BY cliente
+)
+SELECT cliente FROM totais WHERE soma > 300
+```
+
+## Contagem com CTE
+
+```sql
+WITH contagem AS (
+    SELECT cliente, COUNT(*) AS qtd FROM pedidos GROUP BY cliente
+)
+SELECT cliente, qtd FROM contagem ORDER BY qtd DESC
+```
+
+## Exercício 1: clientes acima de 300
+
+Use CTE para achar quem soma mais de 300.
+
+<Exercise
+  lessonSlug="sqlav-cte"
+  codeKey="sqlav-ex1"
+  title="CTE com filtro"
+  expectedOutput="clientes: ['carol']"
+  hint="WITH totais AS (SELECT cliente, SUM(total) AS soma ... GROUP BY cliente) WHERE soma > 300. Carol soma 400."
+/>
+
+## Exercício 2: pedidos por cliente
+
+Conte pedidos com CTE.
+
+<Exercise
+  lessonSlug="sqlav-cte"
+  codeKey="sqlav-ex2"
+  title="CTE com COUNT"
+  expectedOutput="[('ana', 2), ('bob', 1), ('carol', 1)]"
+  hint="COUNT(*) AS qtd GROUP BY cliente; ORDER BY qtd DESC. Ana tem 2 pedidos."
+/>
+
+## Mini-projeto: ranking de clientes
+
+Ordene os clientes pelo total gasto.
+
+<Exercise
+  lessonSlug="sqlav-cte"
+  codeKey="sqlav-projeto"
+  title="Mini-projeto — ranking"
+  expectedOutput="[('carol', 300.0), ('ana', 250.0), ('bob', 200.0)]"
+  hint="CTE com SUM(total); SELECT cliente, soma ORDER BY soma DESC. Carol 300 > ana 250 > bob 200."
+/>
+
+## Resumo
+
+- **CTE**: `WITH nome AS (SELECT ...)` — bloco nomeado reutilizável
+- **Não é tabela física** — existe só durante a query
+- Legibilidade: blocos em vez de subqueries aninhadas
+- **COUNT/SUM/AVG** dentro da CTE + filtro fora
+- CTE = SQL profissional legível

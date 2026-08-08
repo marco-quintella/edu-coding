@@ -1,0 +1,73 @@
+**Subqueries** são consultas dentro de consultas — a forma de usar o resultado de um cálculo como filtro de outro. É o que transforma "quem vende acima da média?" de pergunta em SQL.
+
+> **Por que importa?** Subquery é o passo entre SELECT básico e análise real. "Quem está acima da média?", "maior venda de cada vendedor" — o banco resolve tudo com índices, sem mover dados.
+
+## O problema
+
+```sql
+-- Quem vende acima da média?
+SELECT DISTINCT vendedor FROM vendas
+WHERE valor > (SELECT AVG(valor) FROM vendas)
+```
+
+A subquery `(SELECT AVG(valor)...)` roda **primeiro** e devolve UM valor — que vira o filtro.
+
+## Como funciona
+
+```
+1. (SELECT AVG(valor) FROM vendas) → 2000   ← subquery roda primeiro
+2. SELECT vendedor FROM vendas WHERE valor > 2000
+3. → ana (3000, 2500)
+```
+
+## Máximo por grupo
+
+```sql
+SELECT vendedor, MAX(valor) FROM vendas GROUP BY vendedor
+```
+
+Agrupa por vendedor e calcula o máximo de cada um.
+
+## Exercício 1: acima da média
+
+Ache os vendedores com venda acima da média.
+
+<Exercise
+  lessonSlug="sqlav-subqueries"
+  codeKey="sqlav-ex1"
+  title="Acima da média"
+  expectedOutput="acima da media: ['ana']"
+  hint="WHERE valor > (SELECT AVG(valor) FROM vendas). Média = 2000; só ana (3000, 2500) passa."
+/>
+
+## Exercício 2: top por vendedor
+
+A maior venda de cada vendedor.
+
+<Exercise
+  lessonSlug="sqlav-subqueries"
+  codeKey="sqlav-ex2"
+  title="MAX por grupo"
+  expectedOutput="top: [('ana', 3000.0), ('bob', 1500.0), ('carol', 2000.0)]"
+  hint="GROUP BY vendedor + MAX(valor). Ana 3000, bob 1500, carol 2000."
+/>
+
+## Mini-projeto: vendas acima de 2500
+
+Quem tem venda acima de 2500?
+
+<Exercise
+  lessonSlug="sqlav-subqueries"
+  codeKey="sqlav-projeto"
+  title="Mini-projeto — filtro"
+  expectedOutput="top: ['ana']"
+  hint="WHERE valor > 2500 → ana (3000). bob (1500), carol (2000) ficam de fora."
+/>
+
+## Resumo
+
+- **Subquery**: SELECT dentro de WHERE — roda primeiro
+- `WHERE valor > (SELECT AVG(valor)...)`: acima da média
+- **GROUP BY + MAX**: maior por grupo
+- O banco calcula com índices — sem mover dados
+- Subquery = consulta que usa o resultado de outra

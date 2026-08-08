@@ -1,0 +1,87 @@
+**Window functions** são o superpoder do SQL moderno: calculam sobre uma **janela de linhas** SEM agrupar — cada linha mantém sua identidade com o cálculo ao lado. RANK, running totals e comparações ficam triviais.
+
+> **Por que importa?** "Top 3 por categoria", "ranking de vendas", "total acumulado" — window functions resolvem em 1 query o que GROUP BY não consegue. É o que diferencia devs de dados juniors de seniors.
+
+## A diferença crucial
+
+```sql
+-- GROUP BY: REDUZ as linhas (1 por grupo)
+SELECT vendedor, MAX(valor) FROM vendas GROUP BY vendedor
+-- 3 linhas
+
+-- Window: MANTÉM cada linha com o cálculo ao lado
+SELECT vendedor, valor, RANK() OVER (ORDER BY valor DESC) AS pos FROM vendas
+-- 5 linhas, cada uma com sua posição
+```
+
+## RANK — ranking
+
+```sql
+SELECT vendedor, valor,
+       RANK() OVER (ORDER BY valor DESC) AS pos
+FROM vendas
+-- ana 3000 → pos 1, ana 2500 → pos 2, carol 2000 → pos 3...
+```
+
+## PARTITION BY — reiniciar por grupo
+
+```sql
+-- Running total por vendedor (acumula na ordem dos ids)
+SELECT vendedor, valor,
+       SUM(valor) OVER (PARTITION BY vendedor ORDER BY id) AS acumulado
+FROM vendas
+```
+
+O `PARTITION BY` **reinicia o cálculo para cada vendedor**.
+
+## Top N com window
+
+```sql
+SELECT vendedor, valor FROM (
+    SELECT vendedor, valor, RANK() OVER (ORDER BY valor DESC) AS pos FROM vendas
+) WHERE pos <= 2
+```
+
+## Exercício 1: ranking das vendas
+
+Numere as vendas por valor.
+
+<Exercise
+  lessonSlug="sqlav-window"
+  codeKey="sqlav-ex1"
+  title="RANK"
+  expectedOutput="primeira: ('ana', 3000.0, 1)"
+  hint="RANK() OVER (ORDER BY valor DESC) — ana 3000 é posição 1."
+/>
+
+## Exercício 2: total acumulado
+
+Calcule o running total da ana.
+
+<Exercise
+  lessonSlug="sqlav-window"
+  codeKey="sqlav-ex2"
+  title="Running total"
+  expectedOutput="ana total: 5500.0"
+  hint="SUM(valor) OVER (PARTITION BY vendedor ORDER BY id) WHERE vendedor='ana'. 3000 + 2500 = 5500."
+/>
+
+## Mini-projeto: top 2 vendas
+
+Ache as 2 maiores vendas com RANK.
+
+<Exercise
+  lessonSlug="sqlav-window"
+  codeKey="sqlav-projeto"
+  title="Mini-projeto — top 2"
+  expectedOutput="[('ana', 2500.0), ('ana', 3000.0)]"
+  hint="Subquery com RANK + WHERE pos <= 2. Ana tem as 2 maiores: 3000 e 2500."
+/>
+
+## Resumo
+
+- **Window function**: calcula sobre janela SEM agrupar — mantém linhas
+- **RANK() OVER (ORDER BY ...)**: posição no ranking
+- **PARTITION BY**: reinicia o cálculo por grupo
+- **Running total**: SUM() OVER (PARTITION BY ... ORDER BY ...)
+- Top N: window + subquery com WHERE pos <= N

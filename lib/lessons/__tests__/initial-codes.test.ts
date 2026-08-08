@@ -20,6 +20,7 @@ import { LINUX_CODES } from '../linux-codes'
 import { SCRAPING_CODES } from '../scraping-codes'
 import { SECURITY_CODES } from '../security-codes'
 import { ALG_CODES } from '../alg-codes'
+import { SQLAV_CODES } from '../sqlav-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -348,6 +349,19 @@ const EXPECTED_SLUGS = [
   'alg-r-ex1',
   'alg-r-ex2',
   'alg-r-projeto',
+  // Curso SQL Avançado
+  'sqlav-subqueries',
+  'sqlav-ex1',
+  'sqlav-ex2',
+  'sqlav-projeto',
+  'sqlav-cte',
+  'sqlav-c-ex1',
+  'sqlav-c-ex2',
+  'sqlav-c-projeto',
+  'sqlav-window',
+  'sqlav-w-ex1',
+  'sqlav-w-ex2',
+  'sqlav-w-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -532,6 +546,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é comentário/def em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|def |[a-zA-Z_])/)
+    }
+    // Códigos do curso SQL Avançado começam com import
+    for (const [slug, code] of Object.entries(SQLAV_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
     }
   })
 
