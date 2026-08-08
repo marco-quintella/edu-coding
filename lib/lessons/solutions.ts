@@ -2401,8 +2401,126 @@ export function getSolution(codeKey: string): Solution | null {
     ALG_SOLUTIONS[codeKey] ??
     SQLAV_SOLUTIONS[codeKey] ??
     JWT_SOLUTIONS[codeKey] ??
+    ESTAT_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Estatística com Python ──────────────────────────────
+export const ESTAT_SOLUTIONS: Record<string, Solution> = {
+  'estat-ex1': {
+    explanation:
+      'mean = 38/5 = 7.6; median: ordenado [6.5, 7, 7.5, 8, 9] → 7.5 (valor do meio).',
+    code: `import statistics
+
+notas = [7.5, 8.0, 6.5, 9.0, 7.0]
+
+media = statistics.mean(notas)
+mediana = statistics.median(notas)
+
+print(f"media: {media:.2f}")
+print(f"mediana: {mediana:.2f}")`,
+  },
+  'estat-ex2': {
+    explanation:
+      'O outlier 50000 puxa a média para 12440; a mediana fica em 3100 — a realidade. Média > mediana.',
+    code: `import statistics
+
+salarios = [3000, 3200, 3100, 2900, 50000]
+
+media = statistics.mean(salarios)
+mediana = statistics.median(salarios)
+
+print(f"media: {media:.0f}")
+print(f"mediana: {mediana:.0f}")
+print(f"outlier distorce: {media > mediana}")`,
+  },
+  'estat-projeto': {
+    explanation:
+      'Vendas ordenadas: [150, 165, 175, 180, 190, 200, 210] → mediana 180 (4º valor).',
+    code: `import statistics
+
+vendas = [150, 200, 175, 190, 210, 180, 165]
+
+media = statistics.mean(vendas)
+mediana = statistics.median(vendas)
+print(f"media: {media:.0f}")
+print(f"mediana: {mediana:.0f}")`,
+  },
+  'estat-d-ex1': {
+    explanation:
+      'stdev = 7.91 — os gastos são consistentes (todos perto de 110). < 10 → baixa dispersão.',
+    code: `import statistics
+
+gastos = [100, 120, 110, 105, 115]
+
+desvio = statistics.stdev(gastos)
+print(f"desvio: {desvio:.2f}")
+print(f"baixa dispersao: {desvio < 10}")`,
+  },
+  'estat-d-ex2': {
+    explanation:
+      'variance = 177870 (desvio²); amplitude = max(1000) - min(10) = 990 — a faixa total.',
+    code: `import statistics
+
+precos = [10, 50, 100, 500, 1000]
+
+variancia = statistics.variance(precos)
+amplitude = max(precos) - min(precos)
+
+print(f"variancia: {variancia:.0f}")
+print(f"amplitude: {amplitude}")`,
+  },
+  'estat-d-projeto': {
+    explanation:
+      'Mesma média aproximada, consistência oposta: ana stdev 79 vs bob 1823. Menor desvio = mais consistente.',
+    code: `import statistics
+
+ana = [5000, 5100, 4900, 5050, 4950]
+bob = [4000, 6500, 3000, 7000, 3500]
+
+desvio_ana = statistics.stdev(ana)
+desvio_bob = statistics.stdev(bob)
+print(f"ana desvio: {desvio_ana:.0f}")
+print(f"bob desvio: {desvio_bob:.0f}")
+print(f"mais consistente: {'ana' if desvio_ana < desvio_bob else 'bob'}")`,
+  },
+  'estat-a-ex1': {
+    explanation:
+      'mode = 25 (aparece 3x); Counter conta as frequências. A moda é o valor mais comum.',
+    code: `import statistics
+from collections import Counter
+
+idades = [25, 30, 25, 35, 25, 40, 30]
+
+moda = statistics.mode(idades)
+print(f"moda: {moda}")
+
+freq = Counter(idades)
+print(f"25 aparece: {freq[25]}x")`,
+  },
+  'estat-a-ex2': {
+    explanation:
+      'quantiles(n=10) divide em 10 partes; o índice 8 é o 90º percentil = 10 (90% das notas ≤ 10).',
+    code: `import statistics
+
+notas = [5, 6, 7, 8, 9, 10, 4, 3, 8, 7]
+
+p90 = statistics.quantiles(notas, n=10)[8]
+print(f"p90: {p90:.0f}")`,
+  },
+  'estat-a-projeto': {
+    explanation:
+      'Relatório completo: média 22.4, mediana 20, moda 15 (2x), desvio 10.1. O padrão de toda análise.',
+    code: `import statistics
+
+dados = [12, 15, 15, 18, 20, 22, 25, 30, 45]
+
+print(f"media: {statistics.mean(dados):.1f}")
+print(f"mediana: {statistics.median(dados)}")
+print(f"moda: {statistics.mode(dados)}")
+print(f"desvio: {statistics.stdev(dados):.1f}")`,
+  },
 }
 
 // ── Curso Autenticação & JWT ──────────────────────────────────

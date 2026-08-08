@@ -1,0 +1,84 @@
+O relatório completo usa **moda** (o mais comum), **percentis** (onde o dado está) e **Counter** (frequências). Nesta lição você fecha o pacote da estatística descritiva — o que todo analista roda antes de qualquer modelo.
+
+> **Por que importa?** p90 é como times de SRE medem latência, moda é como varejo decide o produto mais vendido, e o relatório descritivo é o primeiro passo de qualquer análise.
+
+## Moda — o mais comum
+
+```python
+import statistics
+
+idades = [25, 30, 25, 35, 25, 40, 30]
+statistics.mode(idades)   # 25 — aparece 3x
+```
+
+## Frequência com Counter
+
+```python
+from collections import Counter
+
+freq = Counter(idades)
+freq[25]   # 3 — quantas vezes o 25 aparece
+```
+
+## Percentis — onde o dado está
+
+```python
+statistics.quantiles(notas, n=10)[8]   # 90º percentil
+```
+
+**p90** = 90% dos dados estão abaixo dele. Latência p95/p99 é o padrão de monitoramento.
+
+## O relatório descritivo
+
+```python
+dados = [12, 15, 15, 18, 20, 22, 25, 30, 45]
+
+statistics.mean(dados)     # 22.4
+statistics.median(dados)   # 20
+statistics.mode(dados)     # 15
+statistics.stdev(dados)    # 10.1
+```
+
+## Exercício 1: moda e frequência
+
+Ache o valor mais comum.
+
+<Exercise
+  lessonSlug="estat-avancado"
+  codeKey="estat-ex1"
+  title="Moda"
+  expectedOutput="25 aparece: 3x"
+  hint="statistics.mode(idades) = 25; Counter(idades)[25] = 3."
+/>
+
+## Exercício 2: percentil 90
+
+Ache o p90 das notas.
+
+<Exercise
+  lessonSlug="estat-avancado"
+  codeKey="estat-ex2"
+  title="Percentil 90"
+  expectedOutput="p90: 10"
+  hint="statistics.quantiles(notas, n=10)[8] — o 9º limite = 10. 90% das notas ≤ 10."
+/>
+
+## Mini-projeto: relatório completo
+
+Gere o relatório descritivo do dataset.
+
+<Exercise
+  lessonSlug="estat-avancado"
+  codeKey="estat-projeto"
+  title="Mini-projeto — relatório"
+  expectedOutput="moda: 15"
+  hint="mean 22.4, median 20, mode 15 (aparece 2x), stdev 10.1."
+/>
+
+## Resumo
+
+- **Moda**: valor mais comum · **Counter**: frequências
+- **Percentil**: p90 = 90% abaixo (latência usa p95/p99)
+- **Relatório**: média + mediana + moda + desvio
+- `statistics.quantiles(dados, n=10)[8]` = percentil 90
+- Descritiva primeiro, modelo depois

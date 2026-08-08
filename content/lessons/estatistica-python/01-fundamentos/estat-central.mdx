@@ -1,0 +1,77 @@
+**Estatística descritiva** responde "como são meus dados?" — e a primeira decisão é qual medida usar: **média** (soma/n, sensível a outliers) ou **mediana** (valor do meio, imune a eles). Nesta lição você domina as duas com o módulo `statistics`.
+
+> **Por que importa?** "Qual o salário médio?" com um CEO de R$50k no dataset vira uma mentira estatística. Saber quando média engana é a skill #1 de análise.
+
+## Média e mediana
+
+```python
+import statistics
+
+notas = [7.5, 8.0, 6.5, 9.0, 7.0]
+
+media = statistics.mean(notas)       # 7.6 — soma / quantidade
+mediana = statistics.median(notas)   # 7.5 — valor do meio ordenado
+```
+
+## O problema da média: outliers
+
+```python
+salarios = [3000, 3200, 3100, 2900, 50000]
+
+statistics.mean(salarios)     # 12440 ← mentira! (outlier puxa tudo)
+statistics.median(salarios)   # 3100  ← a realidade
+```
+
+Um único outlier (50000) **distorce a média** mas não toca a mediana. Por isso salários e preços de imóveis reportam **mediana**.
+
+## Quando usar cada uma?
+
+| Situação | Use |
+|---|---|
+| Dados normais, sem extremos | média |
+| Com outliers (salário, imóvel) | mediana |
+| Quer o "típico" | mediana |
+
+## Exercício 1: notas da turma
+
+Calcule média e mediana.
+
+<Exercise
+  lessonSlug="estat-central"
+  codeKey="estat-ex1"
+  title="Média e mediana"
+  expectedOutput="mediana: 7.50"
+  hint="statistics.mean e statistics.median. Notas ordenadas: 6.5, 7, 7.5, 8, 9 → mediana 7.5."
+/>
+
+## Exercício 2: o outlier
+
+Compare média e mediana com o salário de R$50k.
+
+<Exercise
+  lessonSlug="estat-central"
+  codeKey="estat-ex2"
+  title="Outlier"
+  expectedOutput="outlier distorce: True"
+  hint="Média 12440 vs mediana 3100 — o 50000 puxa a média. media > mediana → True."
+/>
+
+## Mini-projeto: vendas diárias
+
+Analise as vendas da semana.
+
+<Exercise
+  lessonSlug="estat-central"
+  codeKey="estat-projeto"
+  title="Mini-projeto — vendas"
+  expectedOutput="mediana: 180"
+  hint="Vendas ordenadas: 150, 165, 175, 180, 190, 200, 210 → mediana 180."
+/>
+
+## Resumo
+
+- **Média**: soma / n — sensível a outliers
+- **Mediana**: valor do meio ordenado — imune a outliers
+- **Outlier distorce a média** — salários usam mediana
+- `statistics.mean()` e `statistics.median()`
+- Escolha a medida certa para a história certa

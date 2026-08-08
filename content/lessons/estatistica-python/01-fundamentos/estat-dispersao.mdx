@@ -1,0 +1,80 @@
+Tendência central conta metade da história — a outra metade é **dispersão**: os dados estão todos juntos ou espalhados? O **desvio padrão** responde, e é a base de controle de qualidade, risco e comparação de consistência.
+
+> **Por que importa?** Dois vendedores com a mesma média podem ter performances opostas: um consistente, outro imprevisível. O desvio padrão revela isso — e é usado em finanças, indústria e análise.
+
+## O desvio padrão
+
+```python
+import statistics
+
+gastos = [100, 120, 110, 105, 115]
+statistics.stdev(gastos)   # 7.91 — baixa dispersão (dados juntos)
+```
+
+**Desvio baixo** = dados próximos da média (consistente).
+**Desvio alto** = dados espalhados (imprevisível).
+
+## Variância e amplitude
+
+```python
+statistics.variance(precos)   # desvio ao quadrado
+max(precos) - min(precos)     # amplitude (faixa total)
+```
+
+A **variância** é o desvio² — mesma informação, escala diferente. A **amplitude** é simples, mas sensível a outlier.
+
+## Comparando consistência
+
+```python
+ana = [5000, 5100, 4900, 5050, 4950]
+bob = [4000, 6500, 3000, 7000, 3500]
+
+statistics.stdev(ana)   # 79   — consistente
+statistics.stdev(bob)   # 1823 — imprevisível
+```
+
+Mesma média aproximada, mundos diferentes — **menor desvio = mais consistente**.
+
+## Exercício 1: gastos consistentes
+
+Calcule o desvio padrão dos gastos.
+
+<Exercise
+  lessonSlug="estat-dispersao"
+  codeKey="estat-ex1"
+  title="Desvio padrão"
+  expectedOutput="baixa dispersao: True"
+  hint="statistics.stdev(gastos) = 7.91 < 10 → baixa dispersão."
+/>
+
+## Exercício 2: variância e amplitude
+
+Calcule a dispersão dos preços.
+
+<Exercise
+  lessonSlug="estat-dispersao"
+  codeKey="estat-ex2"
+  title="Variância"
+  expectedOutput="amplitude: 990"
+  hint="variance(precos) = 177870; amplitude = max - min = 1000 - 10 = 990."
+/>
+
+## Mini-projeto: quem é consistente?
+
+Compare os dois vendedores pelo desvio padrão.
+
+<Exercise
+  lessonSlug="estat-dispersao"
+  codeKey="estat-projeto"
+  title="Mini-projeto — consistência"
+  expectedOutput="mais consistente: ana"
+  hint="stdev(ana) = 79 < stdev(bob) = 1823 → ana é mais consistente."
+/>
+
+## Resumo
+
+- **Desvio padrão (stdev)**: dispersão em torno da média
+- **Baixo** = consistente · **Alto** = imprevisível
+- **Variância**: desvio² · **Amplitude**: max - min
+- Comparação: menor desvio = mais consistente
+- Controle de qualidade e risco usam desvio padrão

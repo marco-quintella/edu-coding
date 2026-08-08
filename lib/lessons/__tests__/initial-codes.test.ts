@@ -22,6 +22,7 @@ import { SECURITY_CODES } from '../security-codes'
 import { ALG_CODES } from '../alg-codes'
 import { SQLAV_CODES } from '../sqlav-codes'
 import { JWT_CODES } from '../jwt-codes'
+import { ESTAT_CODES } from '../estat-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -376,6 +377,19 @@ const EXPECTED_SLUGS = [
   'jwt-p-ex1',
   'jwt-p-ex2',
   'jwt-p-projeto',
+  // Curso Estatística com Python
+  'estat-central',
+  'estat-ex1',
+  'estat-ex2',
+  'estat-projeto',
+  'estat-dispersao',
+  'estat-d-ex1',
+  'estat-d-ex2',
+  'estat-d-projeto',
+  'estat-avancado',
+  'estat-a-ex1',
+  'estat-a-ex2',
+  'estat-a-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -571,6 +585,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso JWT começam com import
     for (const [slug, code] of Object.entries(JWT_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Estatística começam com import
+    for (const [slug, code] of Object.entries(ESTAT_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,
