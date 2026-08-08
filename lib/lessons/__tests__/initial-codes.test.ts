@@ -25,6 +25,7 @@ import { JWT_CODES } from '../jwt-codes'
 import { ESTAT_CODES } from '../estat-codes'
 import { GITAV_CODES } from '../gitav-codes'
 import { ML_CODES } from '../ml-codes'
+import { GRAFOS_CODES } from '../grafos-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -417,6 +418,19 @@ const EXPECTED_SLUGS = [
   'ml-k-ex1',
   'ml-k-ex2',
   'ml-k-projeto',
+  // Curso Grafos
+  'grafos-bfs',
+  'grafos-ex1',
+  'grafos-ex2',
+  'grafos-projeto',
+  'grafos-dfs',
+  'grafos-d-ex1',
+  'grafos-d-ex2',
+  'grafos-d-projeto',
+  'grafos-avancado',
+  'grafos-a-ex1',
+  'grafos-a-ex2',
+  'grafos-a-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -641,6 +655,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é import em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Grafos começam com import ou comentário
+    for (const [slug, code] of Object.entries(GRAFOS_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|[a-zA-Z_])/)
     }
   })
 

@@ -1,0 +1,93 @@
+**BFS (busca em largura)** percorre o grafo **por níveis**: primeiro os vizinhos, depois os vizinhos dos vizinhos. Com uma fila (FIFO), ele encontra o **caminho mais curto em número de arestas** — o algoritmo de redes sociais e mapas.
+
+> **Por que importa?** "Menor caminho entre dois usuários", "recomendações em níveis" — BFS é a resposta. E é o algoritmo #1 de entrevista com grafos.
+
+## O algoritmo
+
+```python
+from collections import deque
+
+def bfs(grafo, inicio):
+    visitados = set()
+    fila = deque([inicio])      # FIFO — primeiro que entra, primeiro que sai
+    ordem = []
+    while fila:
+        no = fila.popleft()
+        if no in visitados:
+            continue
+        visitados.add(no)
+        ordem.append(no)
+        for vizinho in grafo.get(no, []):
+            if vizinho not in visitados:
+                fila.append(vizinho)
+    return ordem
+```
+
+1. **Fila** começa com o nó inicial
+2. Tira do início, marca como visitado
+3. Adiciona os vizinhos **não visitados** no fim
+4. `visitados` evita loops (grafo pode ter ciclos!)
+
+## Grafo como dicionário
+
+```python
+grafo = {
+    "A": ["B", "C"],   # A conecta com B e C
+    "B": ["A", "D"],
+    "C": ["A", "D"],
+    "D": ["B", "C"],
+}
+```
+
+## Distância (caminho mais curto)
+
+```python
+fila = deque([(inicio, 0)])   # (nó, distância)
+# cada vizinho → dist + 1
+```
+
+A primeira vez que achamos o alvo é a distância MÍNIMA (BFS explora por níveis).
+
+## Exercício 1: percurso BFS
+
+Percorra o grafo a partir de A.
+
+<Exercise
+  lessonSlug="grafos-bfs"
+  codeKey="grafos-ex1"
+  title="BFS"
+  expectedOutput="['A', 'B', 'C', 'D']"
+  hint="Fila FIFO: A → vizinhos B, C → vizinhos de B (D). Ordem: A, B, C, D."
+/>
+
+## Exercício 2: distância mínima
+
+Distância de A até E.
+
+<Exercise
+  lessonSlug="grafos-bfs"
+  codeKey="grafos-ex2"
+  title="Distância"
+  expectedOutput="A ate E: 3"
+  hint="A→C (1) → D (2) → E (3). BFS garante o mínimo."
+/>
+
+## Mini-projeto: recomendações
+
+Ache quem está a 2 níveis de Ana.
+
+<Exercise
+  lessonSlug="grafos-bfs"
+  codeKey="grafos-projeto"
+  title="Mini-projeto — recomendação"
+  expectedOutput="nivel 2: ['duda']"
+  hint="Ana → bob/carol (nível 1) → duda (nível 2)."
+/>
+
+## Resumo
+
+- **BFS**: percorre por níveis (fila FIFO)
+- **visitados**: evita loops em ciclos
+- **Caminho mais curto**: primeira visita ao alvo é o mínimo
+- `deque` do collections — popleft O(1)
+- Redes sociais, mapas e recomendações

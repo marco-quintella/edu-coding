@@ -1,0 +1,94 @@
+**Dijkstra** acha o caminho mais BARATO (menor soma de pesos) e a **ordenação topológica** resolve dependências (tarefas que precisam de outras antes). São os dois algoritmos de grafo que fecham o pacote de entrevistas.
+
+> **Por que importa?** Rotas de GPS (Dijkstra com pesos) e gerenciamento de dependências (pip, npm, make) — você usa os dois toda semana sem saber.
+
+## Dijkstra — caminho mais barato
+
+```python
+import heapq
+
+def dijkstra(grafo, inicio):
+    dist = {no: float("inf") for no in grafo}
+    dist[inicio] = 0
+    fila = [(0, inicio)]          # heap: (distância, nó)
+    while fila:
+        d, no = heapq.heappop(fila)   # sempre o MENOR
+        if d > dist[no]:
+            continue
+        for vizinho, peso in grafo[no]:
+            novo = d + peso
+            if novo < dist[vizinho]:   # achou caminho melhor?
+                dist[vizinho] = novo
+                heapq.heappush(fila, (novo, vizinho))
+    return dist
+```
+
+O **heap** garante que sempre expandimos o nó com menor distância conhecida.
+
+## Ordenação topológica (Kahn)
+
+```python
+from collections import deque
+
+def ordem_topologica(grafo):
+    grau = {no: 0 for no in grafo}       # grau de entrada
+    for no in grafo:
+        for vizinho in grafo[no]:
+            grau[vizinho] += 1
+    fila = deque([no for no in grafo if grau[no] == 0])
+    ordem = []
+    while fila:
+        no = fila.popleft()
+        ordem.append(no)
+        for vizinho in grafo[no]:
+            grau[vizinho] -= 1
+            if grau[vizinho] == 0:       # dependências resolvidas
+                fila.append(vizinho)
+    return ordem
+```
+
+**Aresta u→v = "u antes de v"**. Começa pelos nós sem dependências (grau 0).
+
+## Exercício 1: ordem topológica
+
+Ordene as tarefas de instalação.
+
+<Exercise
+  lessonSlug="grafos-avancado"
+  codeKey="grafos-ex1"
+  title="Topológica"
+  expectedOutput="['python', 'pip', 'pandas', 'app']"
+  hint="Aresta = 'antes de': python → pip → pandas → app. Nós com grau 0 primeiro."
+/>
+
+## Exercício 2: Dijkstra
+
+Distância mínima de A até D.
+
+<Exercise
+  lessonSlug="grafos-avancado"
+  codeKey="grafos-ex2"
+  title="Dijkstra"
+  expectedOutput="A->D: 4"
+  hint="A→B→C→D = 1+2+1 = 4. O caminho direto A→C→D = 4+1 = 5 é pior!"
+/>
+
+## Mini-projeto: rotas entre cidades
+
+Menor distância SP até ES.
+
+<Exercise
+  lessonSlug="grafos-avancado"
+  codeKey="grafos-projeto"
+  title="Mini-projeto — rotas"
+  expectedOutput="SP->ES: 800"
+  hint="SP→MG→ES = 500+300 = 800. SP→RJ→ES = 400+500 = 900 é pior."
+/>
+
+## Resumo
+
+- **Dijkstra**: caminho mais barato — heap de prioridade
+- `dist[vizinho] = novo` só se `novo < dist[vizinho]`
+- **Topológica (Kahn)**: começa por grau de entrada 0
+- Aresta u→v = "u antes de v" (dependências)
+- GPS usa Dijkstra; pip/npm usam topológica

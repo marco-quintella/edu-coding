@@ -1,0 +1,104 @@
+**DFS (busca em profundidade)** vai fundo em um caminho antes de voltar — como explorar um labirinto sempre à direita. Com pilha (ou recursão), ele detecta caminhos, componentes conexos e é a base de muitas soluções.
+
+> **Por que importa?** "Existe caminho entre A e F?", "quantos grupos de amigos existem?" — DFS responde. E a versão recursiva é 5 linhas.
+
+## O algoritmo (recursivo)
+
+```python
+def dfs(grafo, no, visitados=None):
+    if visitados is None:
+        visitados = set()
+    visitados.add(no)
+    ordem = [no]
+    for vizinho in grafo.get(no, []):
+        if vizinho not in visitados:
+            ordem.extend(dfs(grafo, vizinho, visitados))
+    return ordem
+```
+
+1. Marca o nó como visitado
+2. Para CADA vizinho não visitado, desce recursivamente
+3. A recursão usa a **pilha de chamadas** (por isso DFS = pilha)
+
+## Existe caminho?
+
+```python
+def existe_caminho(grafo, inicio, alvo, visitados=None):
+    if visitados is None:
+        visitados = set()
+    if inicio == alvo:
+        return True            # chegou!
+    visitados.add(inicio)
+    for vizinho in grafo.get(inicio, []):
+        if vizinho not in visitados:
+            if existe_caminho(grafo, vizinho, alvo, visitados):
+                return True
+    return False               # esgotou sem achar
+```
+
+## Componentes conexos
+
+```python
+def componentes(grafo):
+    visitados = set()
+    total = 0
+    for no in grafo:
+        if no not in visitados:
+            total += 1                      # novo componente
+            pilha = [no]                    # DFS iterativo
+            while pilha:
+                atual = pilha.pop()
+                if atual in visitados:
+                    continue
+                visitados.add(atual)
+                for vizinho in grafo[atual]:
+                    if vizinho not in visitados:
+                        pilha.append(vizinho)
+    return total
+```
+
+Cada vez que o loop externo acha um nó não visitado, é um **novo componente**.
+
+## Exercício 1: percurso DFS
+
+Percorra o grafo com DFS.
+
+<Exercise
+  lessonSlug="grafos-dfs"
+  codeKey="grafos-ex1"
+  title="DFS"
+  expectedOutput="['A', 'B', 'D', 'C']"
+  hint="A → primeiro vizinho B → D → volta para C. Profundidade primeiro!"
+/>
+
+## Exercício 2: existe caminho?
+
+Verifique caminhos entre nós.
+
+<Exercise
+  lessonSlug="grafos-dfs"
+  codeKey="grafos-ex2"
+  title="Caminhos"
+  expectedOutput="F->A: False"
+  hint="F é isolado — DFS de F não alcança nada. A→E existe (True)."
+/>
+
+## Mini-projeto: componentes
+
+Conte os grupos de amigos.
+
+<Exercise
+  lessonSlug="grafos-dfs"
+  codeKey="grafos-projeto"
+  title="Mini-projeto — componentes"
+  expectedOutput="componentes: 3"
+  hint="A-B-C é 1 componente, D-E outro, F isolado é o 3º."
+/>
+
+## Resumo
+
+- **DFS**: vai fundo antes de voltar (pilha/recursão)
+- **Recursivo**: 5 linhas — caso base = todos visitados
+- **existe_caminho**: True se achar o alvo
+- **Componentes conexos**: grupos de nós alcançáveis entre si
+- DFS iterativo usa pilha explícita (.pop())
