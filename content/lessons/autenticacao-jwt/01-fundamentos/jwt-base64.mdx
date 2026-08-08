@@ -1,0 +1,85 @@
+**JWT (JSON Web Token)** é o padrão de autenticação de APIs modernas: um token com **header.payload.assinatura** que o servidor emite no login e valida em cada requisição. Nesta lição você constrói a estrutura do zero — começando pelo base64.
+
+> **Por que importa?** "Como funciona autenticação por token?" é pergunta obrigatória de backend. E entender que base64 **não é criptografia** é o erro clássico de quem começa.
+
+## O token: 3 partes
+
+```
+header.payload.assinatura
+```
+
+```
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEyMyJ9.DvRQSA_vqU...
+```
+
+- **header**: algoritmo (`HS256`) e tipo (`JWT`)
+- **payload**: as claims — quem é (sub), nome, role
+- **assinatura**: prova de integridade (próxima lição)
+
+## Base64 — codifica, não esconde
+
+```python
+import base64, json
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+payload = {"sub": "user-123", "nome": "Ana", "role": "dev"}
+codificado = b64url(json.dumps(payload).encode())
+
+# Qualquer um pode DECODIFICAR (base64 é reversível!)
+decodificado = json.loads(base64.urlsafe_b64decode(codificado + "=="))
+print(decodificado["nome"])   # Ana
+```
+
+**Ponto crítico:** o payload do JWT é **visível** — nunca ponha senha ou segredo nele. A segurança vem da **assinatura** (integridade), não do segredo do conteúdo.
+
+## Por que 3 partes?
+
+1. `header` — como foi assinado
+2. `payload` — os dados (visíveis!)
+3. `assinatura` — prova de que ninguém mexeu em 1 e 2
+
+## Exercício 1: codificando o payload
+
+Codifique e decodifique o payload do usuário.
+
+<Exercise
+  lessonSlug="jwt-base64"
+  codeKey="jwt-ex1"
+  title="Base64 ida e volta"
+  expectedOutput="nome: Ana"
+  hint="b64url(json.dumps(payload)) codifica; urlsafe_b64decode + json.loads decodifica."
+/>
+
+## Exercício 2: o header
+
+Codifique o header do JWT.
+
+<Exercise
+  lessonSlug="jwt-base64"
+  codeKey="jwt-ex2"
+  title="Header JWT"
+  expectedOutput="partes: 3 (header.payload.assinatura)"
+  hint="header = {'alg': 'HS256', 'typ': 'JWT'} codificado em base64."
+/>
+
+## Mini-projeto: sessão codificada
+
+Codifique a sessão do usuário e verifique que decodifica.
+
+<Exercise
+  lessonSlug="jwt-base64"
+  codeKey="jwt-projeto"
+  title="Mini-projeto — sessão"
+  expectedOutput="decodifica: True"
+  hint="b64url do dict do usuário; decode + 'admin' in texto. Base64 é reversível — o payload é visível!"
+/>
+
+## Resumo
+
+- **JWT** = header.payload.assinatura
+- **Base64**: codifica em texto seguro — **NÃO criptografa** (reversível)
+- **Payload visível**: nunca ponha senha/segredo nele
+- **header**: alg + typ · **payload**: claims do usuário
+- A segurança vem da assinatura (próxima lição)

@@ -1,0 +1,90 @@
+A **assinatura** é o que torna o JWT seguro: um HMAC-SHA256 calculado com o **segredo do servidor** sobre `header.payload`. Se alguém adulterar o payload, a assinatura não bate — e o servidor rejeita. Nesta lição você cria e verifica tokens.
+
+> **Por que importa?** A assinatura é a diferença entre "codificar dados" e "autenticação de verdade". Quem não entende HMAC não deveria implementar auth.
+
+## Assinando com HMAC
+
+```python
+import base64, json, hmac, hashlib
+
+SECRETO = b"meu-segredo-super-secreto"   # só o servidor conhece
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+def assinar(dados):
+    return hmac.new(SECRETO, dados.encode(), hashlib.sha256).digest()
+
+def criar_token(payload):
+    header = b64url(json.dumps({"alg": "HS256"}).encode())
+    corpo = b64url(json.dumps(payload).encode())
+    assinatura = b64url(assinar(f"{header}.{corpo}"))
+    return f"{header}.{corpo}.{assinatura}"
+```
+
+- **HMAC-SHA256**: hash com chave — só quem tem o segredo produz a mesma assinatura
+- Assinatura cobre `header.corpo` — qualquer mudança invalida
+
+## Verificando
+
+```python
+def verificar_token(token):
+    header, corpo, sig = token.split(".")
+    esperado = b64url(assinar(f"{header}.{corpo}"))
+    return hmac.compare_digest(sig, esperado)   # tempo constante!
+```
+
+1. Recalcula a assinatura esperada de `header.corpo`
+2. Compara com a do token
+3. `hmac.compare_digest`: tempo constante (anti timing attack)
+
+## O fluxo completo
+
+```
+Login:  usuário + senha → servidor valida → emite token assinado
+Request: cliente manda "Bearer <token>" → servidor verifica assinatura
+```
+
+## Exercício 1: criando o token
+
+Crie um token com 3 partes.
+
+<Exercise
+  lessonSlug="jwt-assinatura"
+  codeKey="jwt-ex1"
+  title="Criando token"
+  expectedOutput="partes: 3"
+  hint="f'{header}.{corpo}.{assinatura}' — assinatura = b64url(hmac...). split('.') dá 3."
+/>
+
+## Exercício 2: verificando e detectando adulteração
+
+Verifique um token válido e um adulterado.
+
+<Exercise
+  lessonSlug="jwt-assinatura"
+  codeKey="jwt-ex2"
+  title="Verificação"
+  expectedOutput="adulterado: False"
+  hint="Reassinar header.corpo e comparar com compare_digest. Token adulterado → assinatura não bate → False."
+/>
+
+## Mini-projeto: determinismo do HMAC
+
+Confirme que o mesmo payload gera o mesmo token.
+
+<Exercise
+  lessonSlug="jwt-assinatura"
+  codeKey="jwt-projeto"
+  title="Mini-projeto — determinismo"
+  expectedOutput="deterministico: True"
+  hint="HMAC com mesmo segredo e mesmo payload → mesma assinatura. t1 == t2."
+/>
+
+## Resumo
+
+- **HMAC-SHA256**: hash com segredo do servidor
+- **Assinatura cobre header.corpo** — adulterar qualquer parte invalida
+- **Verificação**: reassinar + `hmac.compare_digest` (tempo constante)
+- **Segredo nunca vaza** — quem o tem forja tokens
+- Token = dados visíveis + prova de integridade

@@ -2400,8 +2400,249 @@ export function getSolution(codeKey: string): Solution | null {
     SECURITY_SOLUTIONS[codeKey] ??
     ALG_SOLUTIONS[codeKey] ??
     SQLAV_SOLUTIONS[codeKey] ??
+    JWT_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Autenticação & JWT ──────────────────────────────────
+export const JWT_SOLUTIONS: Record<string, Solution> = {
+  'jwt-ex1': {
+    explanation:
+      'b64url codifica o JSON; urlsafe_b64decode + json.loads decodifica. Base64 é reversível — payload visível.',
+    code: `import base64, json
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+payload = {"sub": "user-123", "nome": "Ana", "role": "dev"}
+codificado = b64url(json.dumps(payload).encode())
+print(f"payload: {codificado[:20]}...")
+
+decodificado = json.loads(base64.urlsafe_b64decode(codificado + "=="))
+print(f"nome: {decodificado['nome']}")`,
+  },
+  'jwt-ex2': {
+    explanation:
+      'Header (alg+typ) e payload codificados em base64. O JWT tem 3 partes: header.payload.assinatura.',
+    code: `import base64, json
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+header = {"alg": "HS256", "typ": "JWT"}
+payload = {"sub": "user-123", "nome": "Ana"}
+
+header_b64 = b64url(json.dumps(header).encode())
+payload_b64 = b64url(json.dumps(payload).encode())
+print(f"header: {header_b64}")
+print(f"partes: 3 (header.payload.assinatura)")`,
+  },
+  'jwt-projeto': {
+    explanation:
+      'Sessão codificada em base64 — qualquer um decodifica (admin está visível!). Por isso vem a assinatura.',
+    code: `import base64, json
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+usuario = {"id": 1, "nome": "Ana", "role": "admin"}
+codificado = b64url(json.dumps(usuario).encode())
+print(f"tamanho: {len(codificado)}")
+print(f"decodifica: {'admin' in base64.urlsafe_b64decode(codificado + '==').decode()}")`,
+  },
+  'jwt-a-ex1': {
+    explanation:
+      'Assinatura = b64url(HMAC-SHA256(segredo, header.corpo)). Token = header.corpo.assinatura → split dá 3.',
+    code: `import base64, json, hmac, hashlib
+
+SECRETO = b"meu-segredo-super-secreto"
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+def assinar(dados):
+    return hmac.new(SECRETO, dados.encode(), hashlib.sha256).digest()
+
+def criar_token(payload):
+    header = b64url(json.dumps({"alg": "HS256"}).encode())
+    corpo = b64url(json.dumps(payload).encode())
+    assinatura = b64url(assinar(f"{header}.{corpo}"))
+    return f"{header}.{corpo}.{assinatura}"
+
+token = criar_token({"sub": "user-123", "nome": "Ana"})
+print(f"partes: {len(token.split('.'))}")
+print(f"assinatura: {token.split('.')[2][:10]}...")`,
+  },
+  'jwt-a-ex2': {
+    explanation:
+      'Verificação = reassinar header.corpo e comparar com compare_digest. Token adulterado → assinatura difere → False.',
+    code: `import base64, json, hmac, hashlib
+
+SECRETO = b"meu-segredo-super-secreto"
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+def assinar(dados):
+    return hmac.new(SECRETO, dados.encode(), hashlib.sha256).digest()
+
+def criar_token(payload):
+    header = b64url(json.dumps({"alg": "HS256"}).encode())
+    corpo = b64url(json.dumps(payload).encode())
+    assinatura = b64url(assinar(f"{header}.{corpo}"))
+    return f"{header}.{corpo}.{assinatura}"
+
+def verificar_token(token):
+    header, corpo, sig = token.split(".")
+    esperado = b64url(assinar(f"{header}.{corpo}"))
+    return hmac.compare_digest(sig, esperado)
+
+token = criar_token({"sub": "user-123"})
+print(f"valido: {verificar_token(token)}")
+print(f"adulterado: {verificar_token(token[:-2] + 'xx')}")`,
+  },
+  'jwt-a-projeto': {
+    explanation:
+      'HMAC é determinístico: mesmo segredo + mesmo payload → mesma assinatura. t1 == t2 → True.',
+    code: `import base64, json, hmac, hashlib
+
+SECRETO = b"segredo-do-servidor"
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+def assinar(dados):
+    return hmac.new(SECRETO, dados.encode(), hashlib.sha256).digest()
+
+def criar_token(payload):
+    header = b64url(json.dumps({"alg": "HS256"}).encode())
+    corpo = b64url(json.dumps(payload).encode())
+    assinatura = b64url(assinar(f"{header}.{corpo}"))
+    return f"{header}.{corpo}.{assinatura}"
+
+t1 = criar_token({"sub": "user-1"})
+t2 = criar_token({"sub": "user-1"})
+print(f"deterministico: {t1 == t2}")`,
+  },
+  'jwt-p-ex1': {
+    explanation:
+      'exp = time.time() + 3600 (timestamp futuro). Verificação: assinatura OK + exp futuro → payload válido.',
+    code: `import base64, json, hmac, hashlib, time
+
+SECRETO = b"meu-segredo-super-secreto"
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+def assinar(dados):
+    return hmac.new(SECRETO, dados.encode(), hashlib.sha256).digest()
+
+def criar_token(payload, expira_em=3600):
+    payload["exp"] = int(time.time()) + expira_em
+    header = b64url(json.dumps({"alg": "HS256"}).encode())
+    corpo = b64url(json.dumps(payload).encode())
+    assinatura = b64url(assinar(f"{header}.{corpo}"))
+    return f"{header}.{corpo}.{assinatura}"
+
+def verificar_token(token):
+    try:
+        header, corpo, sig = token.split(".")
+        esperado = b64url(assinar(f"{header}.{corpo}"))
+        if not hmac.compare_digest(sig, esperado):
+            return None
+        payload = json.loads(base64.urlsafe_b64decode(corpo + "=="))
+        if payload.get("exp", 0) < time.time():
+            return None
+        return payload
+    except Exception:
+        return None
+
+token = criar_token({"sub": "user-123", "nome": "Ana"})
+dados = verificar_token(token)
+print(f"valido: {dados is not None}")
+print(f"nome: {dados['nome']}")`,
+  },
+  'jwt-p-ex2': {
+    explanation:
+      'expira_em=-10 → exp no passado. A verificação checa exp < now → devolve None → expirado True.',
+    code: `import base64, json, hmac, hashlib, time
+
+SECRETO = b"meu-segredo-super-secreto"
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+def assinar(dados):
+    return hmac.new(SECRETO, dados.encode(), hashlib.sha256).digest()
+
+def criar_token(payload, expira_em=3600):
+    payload["exp"] = int(time.time()) + expira_em
+    header = b64url(json.dumps({"alg": "HS256"}).encode())
+    corpo = b64url(json.dumps(payload).encode())
+    assinatura = b64url(assinar(f"{header}.{corpo}"))
+    return f"{header}.{corpo}.{assinatura}"
+
+def verificar_token(token):
+    try:
+        header, corpo, sig = token.split(".")
+        esperado = b64url(assinar(f"{header}.{corpo}"))
+        if not hmac.compare_digest(sig, esperado):
+            return None
+        payload = json.loads(base64.urlsafe_b64decode(corpo + "=="))
+        if payload.get("exp", 0) < time.time():
+            return None
+        return payload
+    except Exception:
+        return None
+
+token = criar_token({"sub": "user-123"}, expira_em=-10)
+print(f"expirado: {verificar_token(token) is None}")`,
+  },
+  'jwt-p-projeto': {
+    explanation:
+      'Login completo: hash da senha (segurança) → token com sub+email → verificação devolve o payload.',
+    code: `import base64, json, hmac, hashlib, time
+
+SECRETO = b"segredo-do-servidor"
+
+def b64url(dados):
+    return base64.urlsafe_b64encode(dados).rstrip(b"=").decode()
+
+def assinar(dados):
+    return hmac.new(SECRETO, dados.encode(), hashlib.sha256).digest()
+
+def criar_token(payload, expira_em=3600):
+    payload["exp"] = int(time.time()) + expira_em
+    header = b64url(json.dumps({"alg": "HS256"}).encode())
+    corpo = b64url(json.dumps(payload).encode())
+    assinatura = b64url(assinar(f"{header}.{corpo}"))
+    return f"{header}.{corpo}.{assinatura}"
+
+def verificar_token(token):
+    try:
+        header, corpo, sig = token.split(".")
+        esperado = b64url(assinar(f"{header}.{corpo}"))
+        if not hmac.compare_digest(sig, esperado):
+            return None
+        payload = json.loads(base64.urlsafe_b64decode(corpo + "=="))
+        if payload.get("exp", 0) < time.time():
+            return None
+        return payload
+    except Exception:
+        return None
+
+def login(email, senha):
+    armazenado = hashlib.sha256(b"segredo123").hexdigest()
+    if hashlib.sha256(senha.encode()).hexdigest() != armazenado:
+        return None
+    return criar_token({"sub": "user-1", "email": email})
+
+token = login("ana@x.com", "segredo123")
+dados = verificar_token(token)
+print(f"login ok: {dados is not None}")
+print(f"email: {dados['email']}")`,
+  },
 }
 
 // ── Curso SQL Avançado ────────────────────────────────────────

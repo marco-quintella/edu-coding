@@ -21,6 +21,7 @@ import { SCRAPING_CODES } from '../scraping-codes'
 import { SECURITY_CODES } from '../security-codes'
 import { ALG_CODES } from '../alg-codes'
 import { SQLAV_CODES } from '../sqlav-codes'
+import { JWT_CODES } from '../jwt-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -362,6 +363,19 @@ const EXPECTED_SLUGS = [
   'sqlav-w-ex1',
   'sqlav-w-ex2',
   'sqlav-w-projeto',
+  // Curso Autenticação & JWT
+  'jwt-base64',
+  'jwt-ex1',
+  'jwt-ex2',
+  'jwt-projeto',
+  'jwt-assinatura',
+  'jwt-a-ex1',
+  'jwt-a-ex2',
+  'jwt-a-projeto',
+  'jwt-producao',
+  'jwt-p-ex1',
+  'jwt-p-ex2',
+  'jwt-p-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -549,6 +563,14 @@ describe('INITIAL_CODES', () => {
     }
     // Códigos do curso SQL Avançado começam com import
     for (const [slug, code] of Object.entries(SQLAV_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é import em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso JWT começam com import
+    for (const [slug, code] of Object.entries(JWT_CODES)) {
       const firstLine = code.split('\n').find((l) => l.trim() !== '')
       expect(
         firstLine,
