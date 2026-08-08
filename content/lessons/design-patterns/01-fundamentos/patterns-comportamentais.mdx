@@ -1,0 +1,92 @@
+**Padrões comportamentais** resolvem "como objetos se comunicam?" — **Strategy** troca o algoritmo em runtime (frete normal vs expresso) e **Observer** notifica todos os inscritos (push, eventos). São os padrões de sistemas vivos.
+
+> **Por que importa?** "Novo tipo de frete = mexer no código inteiro?" → Strategy resolve. "Notificar email + SMS + push quando algo acontece?" → Observer.
+
+## Strategy — algoritmo trocável
+
+```python
+class FreteNormal:
+    def calcular(self, peso):
+        return peso * 5
+
+class FreteExpresso:
+    def calcular(self, peso):
+        return peso * 15
+
+class Pedido:
+    def __init__(self, frete):
+        self.frete = frete          # estrategia injetada
+    def custo_frete(self, peso):
+        return self.frete.calcular(peso)
+
+pedido = Pedido(FreteNormal())
+pedido.custo_frete(10)     # 50
+pedido.frete = FreteExpresso()
+pedido.custo_frete(10)     # 150 — trocou em runtime!
+```
+
+Novo frete = **nova classe** — sem tocar no Pedido.
+
+## Observer — notificar todos
+
+```python
+class Canal:
+    def __init__(self):
+        self.inscritos = []
+    def inscrever(self, nome):
+        self.inscritos.append(nome)
+    def notificar(self, msg):
+        return [f"{nome} recebeu: {msg}" for nome in self.inscritos]
+
+canal = Canal()
+canal.inscrever("ana")
+canal.inscrever("bob")
+canal.notificar("novo video!")
+# ['ana recebeu: novo video!', 'bob recebeu: novo video!']
+```
+
+O objeto mantém a lista de ouvintes e **notifica todos** quando algo muda.
+
+## Exercício 1: strategy
+
+Troque o frete em runtime.
+
+<Exercise
+  lessonSlug="patterns-comportamentais"
+  codeKey="patterns-ex1"
+  title="Strategy"
+  expectedOutput="expresso: 150"
+  hint="FreteNormal 10×5=50; FreteExpresso 10×15=150. Troca de classe em runtime."
+/>
+
+## Exercício 2: observer
+
+Notifique os inscritos.
+
+<Exercise
+  lessonSlug="patterns-comportamentais"
+  codeKey="patterns-ex2"
+  title="Observer"
+  expectedOutput="ana recebeu: novo video!"
+  hint="inscrever ana e bob; notificar devolve a lista — [0] é a ana."
+/>
+
+## Mini-projeto: alertas
+
+Sistema de alerta multi-canal.
+
+<Exercise
+  lessonSlug="patterns-comportamentais"
+  codeKey="patterns-projeto"
+  title="Mini-projeto — alertas"
+  expectedOutput="push: servidor caiu!"
+  hint="3 canais (email, sms, push); alerta notifica todos; [2] é o push."
+/>
+
+## Resumo
+
+- **Strategy**: algoritmo trocável — nova classe, sem tocar no código
+- **Observer**: lista de ouvintes + notificação a todos
+- Strategy = frete, desconto, validação
+- Observer = push, eventos, listeners de UI
+- Padrões comportamentais = comunicação entre objetos

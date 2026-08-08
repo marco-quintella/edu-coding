@@ -26,6 +26,7 @@ import { ESTAT_CODES } from '../estat-codes'
 import { GITAV_CODES } from '../gitav-codes'
 import { ML_CODES } from '../ml-codes'
 import { GRAFOS_CODES } from '../grafos-codes'
+import { PATTERNS_CODES } from '../patterns-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -431,6 +432,19 @@ const EXPECTED_SLUGS = [
   'grafos-a-ex1',
   'grafos-a-ex2',
   'grafos-a-projeto',
+  // Curso Design Patterns
+  'patterns-criacionais',
+  'patterns-ex1',
+  'patterns-ex2',
+  'patterns-projeto',
+  'patterns-comportamentais',
+  'patterns-c-ex1',
+  'patterns-c-ex2',
+  'patterns-c-projeto',
+  'patterns-estruturais',
+  'patterns-e-ex1',
+  'patterns-e-ex2',
+  'patterns-e-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -662,6 +676,14 @@ describe('INITIAL_CODES', () => {
       expect(
         firstLine,
         `primeira linha não é import/comentário em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|[a-zA-Z_])/)
+    }
+    // Códigos do curso Patterns começam com comentário
+    for (const [slug, code] of Object.entries(PATTERNS_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#|[a-zA-Z_])/)
     }
   })

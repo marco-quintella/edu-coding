@@ -2405,8 +2405,176 @@ export function getSolution(codeKey: string): Solution | null {
     GITAV_SOLUTIONS[codeKey] ??
     ML_SOLUTIONS[codeKey] ??
     GRAFOS_SOLUTIONS[codeKey] ??
+    PATTERNS_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Design Patterns ──────────────────────────────────────
+export const PATTERNS_SOLUTIONS: Record<string, Solution> = {
+  'patterns-ex1': {
+    explanation:
+      '__new__ guarda a instância na classe. c1 is c2 → True (mesma instância).',
+    code: `class Config:
+    _instancia = None
+
+    def __new__(cls):
+        if cls._instancia is None:
+            cls._instancia = super().__new__(cls)
+            cls._instancia.host = "localhost"
+        return cls._instancia
+
+c1 = Config()
+c2 = Config()
+print(f"mesma instancia: {c1 is c2}")
+print(f"host: {c1.host}")`,
+  },
+  'patterns-ex2': {
+    explanation:
+      'A factory decide o tipo: "pix" → Pagamento(pix), "cartao" → Pagamento(cartao). Ifs num lugar só.',
+    code: `class Pagamento:
+    def __init__(self, tipo):
+        self.tipo = tipo
+
+def criar_pagamento(tipo):
+    if tipo == "pix":
+        return Pagamento("pix")
+    elif tipo == "cartao":
+        return Pagamento("cartao")
+    return Pagamento("desconhecido")
+
+p1 = criar_pagamento("pix")
+p2 = criar_pagamento("cartao")
+print(f"p1: {p1.tipo}")
+print(f"p2: {p2.tipo}")`,
+  },
+  'patterns-projeto': {
+    explanation:
+      'Factory de conexões: conectar("sqlite") → Conexao("sqlite"). A lógica de escolha fica centralizada.',
+    code: `class Conexao:
+    def __init__(self, banco):
+        self.banco = banco
+
+def conectar(banco):
+    if banco == "postgres":
+        return Conexao("postgres")
+    elif banco == "mysql":
+        return Conexao("mysql")
+    elif banco == "sqlite":
+        return Conexao("sqlite")
+    return None
+
+print(f"pg: {conectar('postgres').banco}")
+print(f"sqlite: {conectar('sqlite').banco}")`,
+  },
+  'patterns-c-ex1': {
+    explanation:
+      'Estratégia injetada: normal 10×5=50, expresso 10×15=150. Troca em runtime sem tocar no Pedido.',
+    code: `class FreteNormal:
+    def calcular(self, peso):
+        return peso * 5
+
+class FreteExpresso:
+    def calcular(self, peso):
+        return peso * 15
+
+class Pedido:
+    def __init__(self, frete):
+        self.frete = frete
+    def custo_frete(self, peso):
+        return self.frete.calcular(peso)
+
+pedido = Pedido(FreteNormal())
+print(f"normal: {pedido.custo_frete(10)}")
+pedido.frete = FreteExpresso()
+print(f"expresso: {pedido.custo_frete(10)}")`,
+  },
+  'patterns-c-ex2': {
+    explanation:
+      'Observer: 2 inscritos; notificar devolve a lista de mensagens — [0] é a ana.',
+    code: `class Canal:
+    def __init__(self):
+        self.inscritos = []
+    def inscrever(self, nome):
+        self.inscritos.append(nome)
+    def notificar(self, msg):
+        return [f"{nome} recebeu: {msg}" for nome in self.inscritos]
+
+canal = Canal()
+canal.inscrever("ana")
+canal.inscrever("bob")
+print(f"inscritos: {len(canal.inscritos)}")
+print(canal.notificar("novo video!")[0])`,
+  },
+  'patterns-c-projeto': {
+    explanation:
+      '3 canais registrados; alerta notifica todos — [2] é o push. Observer em ação.',
+    code: `class Sistema:
+    def __init__(self):
+        self.listeners = []
+    def registrar(self, nome):
+        self.listeners.append(nome)
+    def alerta(self, msg):
+        return [f"{l}: {msg}" for l in self.listeners]
+
+sys = Sistema()
+sys.registrar("email")
+sys.registrar("sms")
+sys.registrar("push")
+print(f"canais: {len(sys.listeners)}")
+print(sys.alerta("servidor caiu!")[2])`,
+  },
+  'patterns-e-ex1': {
+    explanation:
+      '@com_log envolve soma: cada chamada vira log[resultado]. 2+3=5 → log[5]; 10+5=15 → log[15].',
+    code: `def com_log(func):
+    def wrapper(*args, **kwargs):
+        resultado = func(*args, **kwargs)
+        return f"log[{resultado}]"
+    return wrapper
+
+@com_log
+def soma(a, b):
+    return a + b
+
+print(soma(2, 3))
+print(soma(10, 5))`,
+  },
+  'patterns-e-ex2': {
+    explanation:
+      '__next__ retorna o atual e pula de 2 em 2. Para no maximo com StopIteration: 0 2 4 6.',
+    code: `class Contagem:
+    def __init__(self, maximo):
+        self.maximo = maximo
+    def __iter__(self):
+        self.atual = 0
+        return self
+    def __next__(self):
+        if self.atual >= self.maximo:
+            raise StopIteration
+        valor = self.atual
+        self.atual += 2
+        return valor
+
+for n in Contagem(8):
+    print(n, end=" ")
+print()`,
+  },
+  'patterns-e-projeto': {
+    explanation:
+      '@uppercase envolve saudacao: o retorno vira MAIÚSCULO. "ola ana" → "OLA ANA".',
+    code: `def uppercase(func):
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs).upper()
+    return wrapper
+
+@uppercase
+def saudacao(nome):
+    return f"ola {nome}"
+
+print(saudacao("ana"))
+print(saudacao("bob"))`,
+  },
 }
 
 // ── Curso Grafos ──────────────────────────────────────────────

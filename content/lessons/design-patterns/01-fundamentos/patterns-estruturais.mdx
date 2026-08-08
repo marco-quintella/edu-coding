@@ -1,0 +1,87 @@
+**Padrões estruturais** organizam classes e funções: o **Decorator** (@) adiciona comportamento sem mudar a função e o **Iterator** permite percorrer coleções com regras custom. Você usa os dois toda semana sem notar.
+
+> **Por que importa?** `@app.get("/")`, `@cache`, `for x in ...` — decorators e iterators estão em TODO framework. Entender o mecanismo é entender o framework.
+
+## Decorator — comportamento extra
+
+```python
+def com_log(func):
+    def wrapper(*args, **kwargs):
+        resultado = func(*args, **kwargs)
+        return f"log[{resultado}]"      # comportamento extra
+    return wrapper
+
+@com_log
+def soma(a, b):
+    return a + b
+
+soma(2, 3)    # 'log[5]' — a função NÃO mudou
+```
+
+O `@` **envolve** a função: toda chamada passa pelo wrapper.
+
+## Iterator — coleção custom
+
+```python
+class Contagem:
+    def __init__(self, maximo):
+        self.maximo = maximo
+    def __iter__(self):          # o for chama isto primeiro
+        self.atual = 0
+        return self
+    def __next__(self):          # o for chama a cada volta
+        if self.atual >= self.maximo:
+            raise StopIteration  # fim da iteração
+        valor = self.atual
+        self.atual += 2          # regra custom: pula de 2
+        return valor
+
+for n in Contagem(8):   # 0 2 4 6
+    print(n)
+```
+
+O `for` usa `__iter__` para começar e `__next__` para cada passo — `StopIteration` encerra.
+
+## Exercício 1: decorator com log
+
+Adicione log à soma.
+
+<Exercise
+  lessonSlug="patterns-estruturais"
+  codeKey="patterns-ex1"
+  title="Decorator"
+  expectedOutput="log[15]"
+  hint="@com_log envolve soma — cada chamada vira log[resultado]. 10+5=15 → log[15]."
+/>
+
+## Exercício 2: iterator custom
+
+Percorra pulando de 2 em 2.
+
+<Exercise
+  lessonSlug="patterns-estruturais"
+  codeKey="patterns-ex2"
+  title="Iterator"
+  expectedOutput="0 2 4 6"
+  hint="__next__ incrementa de 2 e para no maximo com StopIteration."
+/>
+
+## Mini-projeto: pipeline de texto
+
+Transforme a saída com decorator.
+
+<Exercise
+  lessonSlug="patterns-estruturais"
+  codeKey="patterns-projeto"
+  title="Mini-projeto — decorator"
+  expectedOutput="OLA BOB"
+  hint="@uppercase envolve saudacao — retorno vira MAIÚSCULO. 'ola bob' → 'OLA BOB'."
+/>
+
+## Resumo
+
+- **Decorator**: @ envolve a função — wrapper com comportamento extra
+- **Iterator**: `__iter__` + `__next__` — o `for` chama os dois
+- **StopIteration**: fim da iteração
+- `@app.get`, `@cache`, `for x in ...` usam esses padrões
+- Padrões estruturais = organizar classes e funções

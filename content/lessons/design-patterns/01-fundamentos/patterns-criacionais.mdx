@@ -1,0 +1,92 @@
+**Padrões criacionais** resolvem "como criar objetos?" — **Singleton** garante UMA instância (config global), **Factory** cria o tipo certo sem expor a lógica (pix vs cartão). São os primeiros padrões que todo dev aprende.
+
+> **Por que importa?** "Por que a config aparece diferente em cada módulo?" → falta de Singleton. "Por que esse if de tipo está em 10 lugares?" → falta de Factory.
+
+## Singleton — uma única instância
+
+```python
+class Config:
+    _instancia = None
+
+    def __new__(cls):
+        if cls._instancia is None:
+            cls._instancia = super().__new__(cls)
+            cls._instancia.host = "localhost"
+        return cls._instancia
+
+c1 = Config()
+c2 = Config()
+c1 is c2   # True — MESMA instância
+```
+
+O `__new__` guarda a instância na classe: a primeira chamada cria, as demais **reutilizam**.
+
+## Factory — cria o tipo certo
+
+```python
+class Pagamento:
+    def __init__(self, tipo):
+        self.tipo = tipo
+
+def criar_pagamento(tipo):
+    if tipo == "pix":
+        return Pagamento("pix")
+    elif tipo == "cartao":
+        return Pagamento("cartao")
+    return Pagamento("desconhecido")
+
+criar_pagamento("pix")      # Pagamento(pix)
+criar_pagamento("cartao")   # Pagamento(cartao)
+```
+
+A lógica "qual tipo criar" fica **num lugar só** — o chamador não precisa de ifs.
+
+## Quando usar?
+
+| Padrão | Use quando |
+|---|---|
+| Singleton | Uma fonte de verdade (config, logger, pool) |
+| Factory | O tipo depende de condição (forma de pagamento, conexão) |
+
+## Exercício 1: singleton
+
+Confirme a instância única.
+
+<Exercise
+  lessonSlug="patterns-criacionais"
+  codeKey="patterns-ex1"
+  title="Singleton"
+  expectedOutput="mesma instancia: True"
+  hint="c1 is c2 → True porque __new__ reutiliza a instância guardada."
+/>
+
+## Exercício 2: factory
+
+Crie pagamentos pelo tipo.
+
+<Exercise
+  lessonSlug="patterns-criacionais"
+  codeKey="patterns-ex2"
+  title="Factory"
+  expectedOutput="p2: cartao"
+  hint="criar_pagamento('cartao') retorna Pagamento com tipo 'cartao'."
+/>
+
+## Mini-projeto: conexões
+
+Factory de conexões de banco.
+
+<Exercise
+  lessonSlug="patterns-criacionais"
+  codeKey="patterns-projeto"
+  title="Mini-projeto — conexões"
+  expectedOutput="sqlite: sqlite"
+  hint="conectar('sqlite') → Conexao('sqlite'). postgres, mysql, sqlite."
+/>
+
+## Resumo
+
+- **Singleton**: `__new__` guarda e reutiliza a instância
+- **Factory**: função cria o tipo certo — ifs num lugar só
+- Singleton = config/logger · Factory = tipos por condição
+- Padrões criacionais = como criar objetos
