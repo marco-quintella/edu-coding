@@ -2398,8 +2398,142 @@ export function getSolution(codeKey: string): Solution | null {
     LINUX_SOLUTIONS[codeKey] ??
     SCRAPING_SOLUTIONS[codeKey] ??
     SECURITY_SOLUTIONS[codeKey] ??
+    ALG_SOLUTIONS[codeKey] ??
     null
   )
+}
+
+// ── Curso Algoritmos de Entrevista ────────────────────────────
+export const ALG_SOLUTIONS: Record<string, Solution> = {
+  'alg-ex1': {
+    explanation:
+      'Two pointers nos extremos, swap e avanço. Sem array novo — O(n) e O(1) memória.',
+    code: `def inverter(s):
+    chars = list(s)
+    esq, dir_ = 0, len(chars) - 1
+    while esq < dir_:
+        chars[esq], chars[dir_] = chars[dir_], chars[esq]
+        esq += 1
+        dir_ -= 1
+    return "".join(chars)
+
+print(inverter("abcde"))`,
+  },
+  'alg-ex2': {
+    explanation:
+      'Lista ordenada: soma pequena → esq avança; grande → dir recua. 2+5 = 7.',
+    code: `def achar_par(nums, alvo):
+    esq, dir_ = 0, len(nums) - 1
+    while esq < dir_:
+        soma = nums[esq] + nums[dir_]
+        if soma == alvo:
+            return (nums[esq], nums[dir_])
+        elif soma < alvo:
+            esq += 1
+        else:
+            dir_ -= 1
+    return None
+
+print(achar_par([1, 2, 3, 4, 5], 7))`,
+  },
+  'alg-projeto': {
+    explanation:
+      'Compara os extremos; qualquer diferença → False. arara é palíndromo; python e reconhecer não.',
+    code: `def e_palindromo(s):
+    esq, dir_ = 0, len(s) - 1
+    while esq < dir_:
+        if s[esq] != s[dir_]:
+            return False
+        esq += 1
+        dir_ -= 1
+    return True
+
+for s in ["arara", "python", "reconhecer"]:
+    print(f"{s}: {e_palindromo(s)}")`,
+  },
+  'alg-s-ex1': {
+    explanation:
+      'Janela fixa: soma += nums[i] - nums[i-k]. Janelas 8, 7, 9, 6 → maior 9.',
+    code: `def maior_soma(nums, k):
+    soma_atual = sum(nums[:k])
+    maior = soma_atual
+    for i in range(k, len(nums)):
+        soma_atual += nums[i] - nums[i - k]
+        maior = max(maior, soma_atual)
+    return maior
+
+print(maior_soma([2, 1, 5, 1, 3, 2], 3))`,
+  },
+  'alg-s-ex2': {
+    explanation:
+      'Janela dinâmica: expande com dir_, encolhe com while soma > k. [1,2,1,1] soma 5 → tamanho 4.',
+    code: `def mais_longo(nums, k):
+    esq = 0
+    soma = 0
+    melhor = 0
+    for dir_ in range(len(nums)):
+        soma += nums[dir_]
+        while soma > k:
+            soma -= nums[esq]
+            esq += 1
+        melhor = max(melhor, dir_ - esq + 1)
+    return melhor
+
+print(mais_longo([3, 1, 2, 1, 1], 5))`,
+  },
+  'alg-s-projeto': {
+    explanation:
+      'Encolha enquanto soma >= alvo e registre o menor tamanho. [4,3] soma 7 → tamanho 2.',
+    code: `def menor_subarray(nums, alvo):
+    esq = 0
+    soma = 0
+    melhor = float("inf")
+    for dir_ in range(len(nums)):
+        soma += nums[dir_]
+        while soma >= alvo:
+            melhor = min(melhor, dir_ - esq + 1)
+            soma -= nums[esq]
+            esq += 1
+    return 0 if melhor == float("inf") else melhor
+
+print(menor_subarray([2, 3, 1, 2, 4, 3], 7))`,
+  },
+  'alg-r-ex1': {
+    explanation:
+      'Caso base n <= 1; chamada menor fib(n-1) + fib(n-2). fib(10) = 55.',
+    code: `def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+print(fib(10))`,
+  },
+  'alg-r-ex2': {
+    explanation:
+      'Caso base n <= 1 → 1; chamada menor n * fatorial(n-1). 5*4*3*2*1 = 120.',
+    code: `def fatorial(n):
+    if n <= 1:
+        return 1
+    return n * fatorial(n - 1)
+
+print(fatorial(5))`,
+  },
+  'alg-r-projeto': {
+    explanation:
+      'contar(n) = [n] + contar(n-1) constrói a lista; soma_ate(n) = n + soma_ate(n-1) soma. 1+2+3+4+5 = 15.',
+    code: `def contar(n):
+    if n == 0:
+        return []
+    return [n] + contar(n - 1)
+
+def soma_ate(n):
+    if n <= 1:
+        return n
+    return n + soma_ate(n - 1)
+
+print(contar(5))
+print(soma_ate(5))`,
+  },
 }
 
 // ── Curso Cibersegurança ──────────────────────────────────────

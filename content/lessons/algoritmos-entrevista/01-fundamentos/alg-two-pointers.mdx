@@ -1,0 +1,93 @@
+**Two Pointers** é o padrão #1 de entrevista: dois índices — um no início, um no fim — andam em direção um ao outro. É o que transforma problemas O(n²) em O(n). Nesta lição você domina o padrão com inversão e busca de pares.
+
+> **Por que importa?** "Inverta esta string sem array extra", "ache o par que soma alvo" — são perguntas clássicas. E o padrão aparece em inúmeros problemas.
+
+## A ideia
+
+```
+esq →                    ← dir
+[1, 2, 3, 4, 5]          alvo = 7
+ esq                dir  → 1+5=6 (pequeno) → esq avança
+     esq            dir  → 2+5=7 ✓
+```
+
+Dois ponteiros opostos; cada passo move UM deles — **O(n)** total.
+
+## Inversão in-place
+
+```python
+def inverter(s):
+    chars = list(s)
+    esq, dir_ = 0, len(chars) - 1
+    while esq < dir_:
+        chars[esq], chars[dir_] = chars[dir_], chars[esq]  # swap
+        esq += 1
+        dir_ -= 1
+    return "".join(chars)
+
+print(inverter("abcde"))   # edcba
+```
+
+Sem array novo — os ponteiros trocam os extremos até se encontrar.
+
+## Par que soma alvo
+
+```python
+def achar_par(nums, alvo):
+    esq, dir_ = 0, len(nums) - 1
+    while esq < dir_:
+        soma = nums[esq] + nums[dir_]
+        if soma == alvo:
+            return (nums[esq], nums[dir_])
+        elif soma < alvo:
+            esq += 1        # soma pequena → aumenta
+        else:
+            dir_ -= 1       # soma grande → diminui
+    return None
+```
+
+**Requer lista ordenada** — a ordenação garante que andar esq aumenta a soma e andar dir diminui.
+
+## Exercício 1: invertendo
+
+Inverta a string com two pointers.
+
+<Exercise
+  lessonSlug="alg-two-pointers"
+  codeKey="alg-ex1"
+  title="Inversão in-place"
+  expectedOutput="edcba"
+  hint="Swap dos extremos com while esq < dir; esq += 1; dir -= 1."
+/>
+
+## Exercício 2: par que soma alvo
+
+Ache o par que soma 7.
+
+<Exercise
+  lessonSlug="alg-two-pointers"
+  codeKey="alg-ex2"
+  title="Par com soma alvo"
+  expectedOutput="(2, 5)"
+  hint="Lista [1,2,3,4,5], alvo 7. 1+5=6 → esq avança; 2+5=7 ✓."
+/>
+
+## Mini-projeto: palíndromo
+
+Verifique palíndromos com two pointers.
+
+<Exercise
+  lessonSlug="alg-two-pointers"
+  codeKey="alg-projeto"
+  title="Mini-projeto — palíndromo"
+  expectedOutput="arara: True"
+  hint="Compare s[esq] != s[dir] → False. arara é palíndromo; python não."
+/>
+
+## Resumo
+
+- **Two Pointers**: esq + dir andam em direção um ao outro
+- **O(n)**: cada elemento visitado uma vez
+- **Swap in-place**: chars[esq], chars[dir] = chars[dir], chars[esq]
+- **Par com soma**: lista ordenada — soma pequena → esq; grande → dir
+- Padrão #1 de entrevista

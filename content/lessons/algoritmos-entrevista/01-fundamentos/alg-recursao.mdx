@@ -1,0 +1,83 @@
+**Recursão** é a função que chama a si mesma — o jeito mais elegante de resolver problemas que contêm versões menores de si mesmos. Fibonacci e fatorial são os clássicos, e o padrão "caso base + chamada menor" aparece em árvores, grafos e divisão e conquista.
+
+> **Por que importa?** Recursão é a fundação de árvores (React, DOM), grafos e algoritmos de ordenação. Entrevistadores adoram: "explique o caso base do fibonacci".
+
+## A estrutura
+
+```python
+def fatorial(n):
+    if n <= 1:          # CASO BASE — para a recursão
+        return 1
+    return n * fatorial(n - 1)   # CHAMADA MENOR — resolve o problema reduzido
+```
+
+Toda recursão tem:
+1. **Caso base**: a condição que para (sem ele → RecursionError)
+2. **Chamada menor**: o problema reduzido (n-1)
+
+## Fibonacci
+
+```python
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+# fib(5): 0, 1, 1, 2, 3, 5 → 5
+```
+
+**Atenção:** a versão ingênua é O(2^n) — recomputa os mesmos valores. Em entrevista, mostre a limitação e sugira memoização.
+
+## Rastreando a recursão
+
+```
+fatorial(4)
+= 4 * fatorial(3)
+= 4 * (3 * fatorial(2))
+= 4 * (3 * (2 * fatorial(1)))
+= 4 * (3 * (2 * 1)) = 24
+```
+
+## Exercício 1: fibonacci
+
+Calcule o 10º número de Fibonacci.
+
+<Exercise
+  lessonSlug="alg-recursao"
+  codeKey="alg-ex1"
+  title="Fibonacci"
+  expectedOutput="55"
+  hint="Caso base n <= 1; return fib(n-1) + fib(n-2). fib(10) = 55."
+/>
+
+## Exercício 2: fatorial
+
+Calcule o fatorial de 5.
+
+<Exercise
+  lessonSlug="alg-recursao"
+  codeKey="alg-ex2"
+  title="Fatorial"
+  expectedOutput="120"
+  hint="n <= 1 → 1; return n * fatorial(n-1). 5*4*3*2*1 = 120."
+/>
+
+## Mini-projeto: recursão criativa
+
+Construa a contagem regressiva e some 1..n recursivamente.
+
+<Exercise
+  lessonSlug="alg-recursao"
+  codeKey="alg-projeto"
+  title="Mini-projeto — recursão"
+  expectedOutput="15"
+  hint="contar(n) = [n] + contar(n-1); soma_ate(n) = n + soma_ate(n-1). 1+2+3+4+5 = 15."
+/>
+
+## Resumo
+
+- **Caso base**: para a recursão (sem ele → RecursionError)
+- **Chamada menor**: resolve o problema reduzido
+- **fib(n)**: fib(n-1) + fib(n-2) — ingênuo é O(2^n)
+- **fatorial(n)**: n * fatorial(n-1)
+- Recursão = fundação de árvores e grafos

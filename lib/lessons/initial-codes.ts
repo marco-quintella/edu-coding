@@ -24,6 +24,7 @@ import { REACT_CODES } from './react-codes'
 import { LINUX_CODES } from './linux-codes'
 import { SCRAPING_CODES } from './scraping-codes'
 import { SECURITY_CODES } from './security-codes'
+import { ALG_CODES } from './alg-codes'
 
 export const INITIAL_CODES: Record<string, string> = {
   // Fase 01 — Fundamentos
@@ -1160,6 +1161,7 @@ export function getInitialCode(lessonSlug: string): string {
     LINUX_CODES[lessonSlug] ??
     SCRAPING_CODES[lessonSlug] ??
     SECURITY_CODES[lessonSlug] ??
+    ALG_CODES[lessonSlug] ??
     INITIAL_CODES[lessonSlug] ??
     ''
   )

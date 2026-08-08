@@ -19,6 +19,7 @@ import { REACT_CODES } from '../react-codes'
 import { LINUX_CODES } from '../linux-codes'
 import { SCRAPING_CODES } from '../scraping-codes'
 import { SECURITY_CODES } from '../security-codes'
+import { ALG_CODES } from '../alg-codes'
 
 // Slugs reais das lições do seed (scripts/seed-ia-para-devs.ts)
 const EXPECTED_SLUGS = [
@@ -334,6 +335,19 @@ const EXPECTED_SLUGS = [
   'security-p-ex1',
   'security-p-ex2',
   'security-p-projeto',
+  // Curso Algoritmos de Entrevista
+  'alg-two-pointers',
+  'alg-ex1',
+  'alg-ex2',
+  'alg-projeto',
+  'alg-sliding-window',
+  'alg-s-ex1',
+  'alg-s-ex2',
+  'alg-s-projeto',
+  'alg-recursao',
+  'alg-r-ex1',
+  'alg-r-ex2',
+  'alg-r-projeto',
 ]
 
 describe('INITIAL_CODES', () => {
@@ -510,6 +524,14 @@ describe('INITIAL_CODES', () => {
         firstLine,
         `primeira linha não é import em ${slug}: ${firstLine}`,
       ).toMatch(/^(import |from |#)/)
+    }
+    // Códigos do curso Algoritmos começam com comentário ou def
+    for (const [slug, code] of Object.entries(ALG_CODES)) {
+      const firstLine = code.split('\n').find((l) => l.trim() !== '')
+      expect(
+        firstLine,
+        `primeira linha não é comentário/def em ${slug}: ${firstLine}`,
+      ).toMatch(/^(import |from |#|def |[a-zA-Z_])/)
     }
   })
 
